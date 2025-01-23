@@ -254,64 +254,6 @@ impl Default for Insets {
     }
 }
 
-/// See [_cef_accelerated_paint_info_common_t] for more documentation.
-#[derive(Clone)]
-pub struct AcceleratedPaintInfoCommon {
-    pub timestamp: u64,
-    pub coded_size: Size,
-    pub visible_rect: Rect,
-    pub content_rect: Rect,
-    pub source_size: Size,
-    pub capture_update_rect: Rect,
-    pub region_capture_rect: Rect,
-    pub capture_counter: u64,
-    pub has_capture_update_rect: u8,
-    pub has_region_capture_rect: u8,
-    pub has_source_size: u8,
-    pub has_capture_counter: u8,
-}
-impl From<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
-    fn from(value: _cef_accelerated_paint_info_common_t) -> Self {
-        Self {
-            timestamp: value.timestamp.into(),
-            coded_size: value.coded_size.into(),
-            visible_rect: value.visible_rect.into(),
-            content_rect: value.content_rect.into(),
-            source_size: value.source_size.into(),
-            capture_update_rect: value.capture_update_rect.into(),
-            region_capture_rect: value.region_capture_rect.into(),
-            capture_counter: value.capture_counter.into(),
-            has_capture_update_rect: value.has_capture_update_rect.into(),
-            has_region_capture_rect: value.has_region_capture_rect.into(),
-            has_source_size: value.has_source_size.into(),
-            has_capture_counter: value.has_capture_counter.into(),
-        }
-    }
-}
-impl Into<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
-    fn into(self) -> _cef_accelerated_paint_info_common_t {
-        _cef_accelerated_paint_info_common_t {
-            timestamp: self.timestamp.into(),
-            coded_size: self.coded_size.into(),
-            visible_rect: self.visible_rect.into(),
-            content_rect: self.content_rect.into(),
-            source_size: self.source_size.into(),
-            capture_update_rect: self.capture_update_rect.into(),
-            region_capture_rect: self.region_capture_rect.into(),
-            capture_counter: self.capture_counter.into(),
-            has_capture_update_rect: self.has_capture_update_rect.into(),
-            has_region_capture_rect: self.has_region_capture_rect.into(),
-            has_source_size: self.has_source_size.into(),
-            has_capture_counter: self.has_capture_counter.into(),
-        }
-    }
-}
-impl Default for AcceleratedPaintInfoCommon {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
 /// See [_cef_main_args_t] for more documentation.
 #[derive(Clone)]
 pub struct MainArgs {
@@ -397,14 +339,12 @@ impl Default for WindowInfo {
 pub struct AcceleratedPaintInfo {
     pub shared_texture_handle: HANDLE,
     pub format: ColorType,
-    pub extra: AcceleratedPaintInfoCommon,
 }
 impl From<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
     fn from(value: _cef_accelerated_paint_info_t) -> Self {
         Self {
             shared_texture_handle: value.shared_texture_handle.into(),
             format: value.format.into(),
-            extra: value.extra.into(),
         }
     }
 }
@@ -413,7 +353,6 @@ impl Into<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
         _cef_accelerated_paint_info_t {
             shared_texture_handle: self.shared_texture_handle.into(),
             format: self.format.into(),
-            extra: self.extra.into(),
         }
     }
 }
@@ -431,6 +370,7 @@ pub struct Settings {
     pub browser_subprocess_path: CefStringUtf16,
     pub framework_dir_path: CefStringUtf16,
     pub main_bundle_path: CefStringUtf16,
+    pub chrome_runtime: ::std::os::raw::c_int,
     pub multi_threaded_message_loop: ::std::os::raw::c_int,
     pub external_message_pump: ::std::os::raw::c_int,
     pub windowless_rendering_enabled: ::std::os::raw::c_int,
@@ -438,6 +378,7 @@ pub struct Settings {
     pub cache_path: CefStringUtf16,
     pub root_cache_path: CefStringUtf16,
     pub persist_session_cookies: ::std::os::raw::c_int,
+    pub persist_user_preferences: ::std::os::raw::c_int,
     pub user_agent: CefStringUtf16,
     pub user_agent_product: CefStringUtf16,
     pub locale: CefStringUtf16,
@@ -447,6 +388,7 @@ pub struct Settings {
     pub javascript_flags: CefStringUtf16,
     pub resources_dir_path: CefStringUtf16,
     pub locales_dir_path: CefStringUtf16,
+    pub pack_loading_disabled: ::std::os::raw::c_int,
     pub remote_debugging_port: ::std::os::raw::c_int,
     pub uncaught_exception_stack_size: ::std::os::raw::c_int,
     pub background_color: u32,
@@ -464,6 +406,7 @@ impl From<_cef_settings_t> for Settings {
             browser_subprocess_path: value.browser_subprocess_path.into(),
             framework_dir_path: value.framework_dir_path.into(),
             main_bundle_path: value.main_bundle_path.into(),
+            chrome_runtime: value.chrome_runtime.into(),
             multi_threaded_message_loop: value.multi_threaded_message_loop.into(),
             external_message_pump: value.external_message_pump.into(),
             windowless_rendering_enabled: value.windowless_rendering_enabled.into(),
@@ -471,6 +414,7 @@ impl From<_cef_settings_t> for Settings {
             cache_path: value.cache_path.into(),
             root_cache_path: value.root_cache_path.into(),
             persist_session_cookies: value.persist_session_cookies.into(),
+            persist_user_preferences: value.persist_user_preferences.into(),
             user_agent: value.user_agent.into(),
             user_agent_product: value.user_agent_product.into(),
             locale: value.locale.into(),
@@ -480,6 +424,7 @@ impl From<_cef_settings_t> for Settings {
             javascript_flags: value.javascript_flags.into(),
             resources_dir_path: value.resources_dir_path.into(),
             locales_dir_path: value.locales_dir_path.into(),
+            pack_loading_disabled: value.pack_loading_disabled.into(),
             remote_debugging_port: value.remote_debugging_port.into(),
             uncaught_exception_stack_size: value.uncaught_exception_stack_size.into(),
             background_color: value.background_color.into(),
@@ -499,6 +444,7 @@ impl Into<_cef_settings_t> for Settings {
             browser_subprocess_path: self.browser_subprocess_path.into(),
             framework_dir_path: self.framework_dir_path.into(),
             main_bundle_path: self.main_bundle_path.into(),
+            chrome_runtime: self.chrome_runtime.into(),
             multi_threaded_message_loop: self.multi_threaded_message_loop.into(),
             external_message_pump: self.external_message_pump.into(),
             windowless_rendering_enabled: self.windowless_rendering_enabled.into(),
@@ -506,6 +452,7 @@ impl Into<_cef_settings_t> for Settings {
             cache_path: self.cache_path.into(),
             root_cache_path: self.root_cache_path.into(),
             persist_session_cookies: self.persist_session_cookies.into(),
+            persist_user_preferences: self.persist_user_preferences.into(),
             user_agent: self.user_agent.into(),
             user_agent_product: self.user_agent_product.into(),
             locale: self.locale.into(),
@@ -515,6 +462,7 @@ impl Into<_cef_settings_t> for Settings {
             javascript_flags: self.javascript_flags.into(),
             resources_dir_path: self.resources_dir_path.into(),
             locales_dir_path: self.locales_dir_path.into(),
+            pack_loading_disabled: self.pack_loading_disabled.into(),
             remote_debugging_port: self.remote_debugging_port.into(),
             uncaught_exception_stack_size: self.uncaught_exception_stack_size.into(),
             background_color: self.background_color.into(),
@@ -541,6 +489,7 @@ pub struct RequestContextSettings {
     pub size: usize,
     pub cache_path: CefStringUtf16,
     pub persist_session_cookies: ::std::os::raw::c_int,
+    pub persist_user_preferences: ::std::os::raw::c_int,
     pub accept_language_list: CefStringUtf16,
     pub cookieable_schemes_list: CefStringUtf16,
     pub cookieable_schemes_exclude_defaults: ::std::os::raw::c_int,
@@ -551,6 +500,7 @@ impl From<_cef_request_context_settings_t> for RequestContextSettings {
             size: value.size.into(),
             cache_path: value.cache_path.into(),
             persist_session_cookies: value.persist_session_cookies.into(),
+            persist_user_preferences: value.persist_user_preferences.into(),
             accept_language_list: value.accept_language_list.into(),
             cookieable_schemes_list: value.cookieable_schemes_list.into(),
             cookieable_schemes_exclude_defaults: value.cookieable_schemes_exclude_defaults.into(),
@@ -563,6 +513,7 @@ impl Into<_cef_request_context_settings_t> for RequestContextSettings {
             size: self.size.into(),
             cache_path: self.cache_path.into(),
             persist_session_cookies: self.persist_session_cookies.into(),
+            persist_user_preferences: self.persist_user_preferences.into(),
             accept_language_list: self.accept_language_list.into(),
             cookieable_schemes_list: self.cookieable_schemes_list.into(),
             cookieable_schemes_exclude_defaults: self.cookieable_schemes_exclude_defaults.into(),
@@ -860,40 +811,6 @@ impl Into<_cef_screen_info_t> for ScreenInfo {
     }
 }
 impl Default for ScreenInfo {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
-/// See [_cef_linux_window_properties_t] for more documentation.
-#[derive(Clone)]
-pub struct LinuxWindowProperties {
-    pub wayland_app_id: CefStringUtf16,
-    pub wm_class_class: CefStringUtf16,
-    pub wm_class_name: CefStringUtf16,
-    pub wm_role_name: CefStringUtf16,
-}
-impl From<_cef_linux_window_properties_t> for LinuxWindowProperties {
-    fn from(value: _cef_linux_window_properties_t) -> Self {
-        Self {
-            wayland_app_id: value.wayland_app_id.into(),
-            wm_class_class: value.wm_class_class.into(),
-            wm_class_name: value.wm_class_name.into(),
-            wm_role_name: value.wm_role_name.into(),
-        }
-    }
-}
-impl Into<_cef_linux_window_properties_t> for LinuxWindowProperties {
-    fn into(self) -> _cef_linux_window_properties_t {
-        _cef_linux_window_properties_t {
-            wayland_app_id: self.wayland_app_id.into(),
-            wm_class_class: self.wm_class_class.into(),
-            wm_class_name: self.wm_class_name.into(),
-            wm_role_name: self.wm_role_name.into(),
-        }
-    }
-}
-impl Default for LinuxWindowProperties {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -1401,55 +1318,6 @@ impl Into<_cef_touch_handle_state_t> for TouchHandleState {
     }
 }
 impl Default for TouchHandleState {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
-/// See [_cef_task_info_t] for more documentation.
-#[derive(Clone)]
-pub struct TaskInfo {
-    pub id: i64,
-    pub type_: TaskType,
-    pub is_killable: ::std::os::raw::c_int,
-    pub title: CefStringUtf16,
-    pub cpu_usage: f64,
-    pub number_of_processors: ::std::os::raw::c_int,
-    pub memory: i64,
-    pub gpu_memory: i64,
-    pub is_gpu_memory_inflated: ::std::os::raw::c_int,
-}
-impl From<_cef_task_info_t> for TaskInfo {
-    fn from(value: _cef_task_info_t) -> Self {
-        Self {
-            id: value.id.into(),
-            type_: value.type_.into(),
-            is_killable: value.is_killable.into(),
-            title: value.title.into(),
-            cpu_usage: value.cpu_usage.into(),
-            number_of_processors: value.number_of_processors.into(),
-            memory: value.memory.into(),
-            gpu_memory: value.gpu_memory.into(),
-            is_gpu_memory_inflated: value.is_gpu_memory_inflated.into(),
-        }
-    }
-}
-impl Into<_cef_task_info_t> for TaskInfo {
-    fn into(self) -> _cef_task_info_t {
-        _cef_task_info_t {
-            id: self.id.into(),
-            type_: self.type_.into(),
-            is_killable: self.is_killable.into(),
-            title: self.title.into(),
-            cpu_usage: self.cpu_usage.into(),
-            number_of_processors: self.number_of_processors.into(),
-            memory: self.memory.into(),
-            gpu_memory: self.gpu_memory.into(),
-            is_gpu_memory_inflated: self.is_gpu_memory_inflated.into(),
-        }
-    }
-}
-impl Default for TaskInfo {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -3611,8 +3479,6 @@ pub struct Frame {
     pub cut: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_frame_t)>,
     pub copy: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_frame_t)>,
     pub paste: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_frame_t)>,
-    pub paste_and_match_style:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_frame_t)>,
     pub del: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_frame_t)>,
     pub select_all: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_frame_t)>,
     pub view_source: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_frame_t)>,
@@ -3688,7 +3554,6 @@ impl From<_cef_frame_t> for Frame {
             cut: value.cut.into(),
             copy: value.copy.into(),
             paste: value.paste.into(),
-            paste_and_match_style: value.paste_and_match_style.into(),
             del: value.del.into(),
             select_all: value.select_all.into(),
             view_source: value.view_source.into(),
@@ -3721,7 +3586,6 @@ impl Into<_cef_frame_t> for Frame {
             cut: self.cut.into(),
             copy: self.copy.into(),
             paste: self.paste.into(),
-            paste_and_match_style: self.paste_and_match_style.into(),
             del: self.del.into(),
             select_all: self.select_all.into(),
             view_source: self.view_source.into(),
@@ -4328,6 +4192,215 @@ impl Default for DeleteCookiesCallback {
     }
 }
 
+/// See [_cef_extension_t] for more documentation.
+#[derive(Clone)]
+pub struct Extension {
+    pub base: BaseRefCounted,
+    pub get_identifier: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_extension_t) -> cef_string_userfree_t,
+    >,
+    pub get_path: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_extension_t) -> cef_string_userfree_t,
+    >,
+    pub get_manifest: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_extension_t) -> *mut _cef_dictionary_value_t,
+    >,
+    pub is_same: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_t,
+            that: *mut _cef_extension_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub get_handler: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_extension_t) -> *mut _cef_extension_handler_t,
+    >,
+    pub get_loader_context: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_extension_t) -> *mut _cef_request_context_t,
+    >,
+    pub is_loaded: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_extension_t) -> ::std::os::raw::c_int,
+    >,
+    pub unload: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_extension_t)>,
+}
+impl From<_cef_extension_t> for Extension {
+    fn from(value: _cef_extension_t) -> Self {
+        Self {
+            base: value.base.into(),
+            get_identifier: value.get_identifier.into(),
+            get_path: value.get_path.into(),
+            get_manifest: value.get_manifest.into(),
+            is_same: value.is_same.into(),
+            get_handler: value.get_handler.into(),
+            get_loader_context: value.get_loader_context.into(),
+            is_loaded: value.is_loaded.into(),
+            unload: value.unload.into(),
+        }
+    }
+}
+impl Into<_cef_extension_t> for Extension {
+    fn into(self) -> _cef_extension_t {
+        _cef_extension_t {
+            base: self.base.into(),
+            get_identifier: self.get_identifier.into(),
+            get_path: self.get_path.into(),
+            get_manifest: self.get_manifest.into(),
+            is_same: self.is_same.into(),
+            get_handler: self.get_handler.into(),
+            get_loader_context: self.get_loader_context.into(),
+            is_loaded: self.is_loaded.into(),
+            unload: self.unload.into(),
+        }
+    }
+}
+impl Default for Extension {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [_cef_get_extension_resource_callback_t] for more documentation.
+#[derive(Clone)]
+pub struct GetExtensionResourceCallback {
+    pub base: BaseRefCounted,
+    pub cont: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_get_extension_resource_callback_t,
+            stream: *mut _cef_stream_reader_t,
+        ),
+    >,
+    pub cancel: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_get_extension_resource_callback_t),
+    >,
+}
+impl From<_cef_get_extension_resource_callback_t> for GetExtensionResourceCallback {
+    fn from(value: _cef_get_extension_resource_callback_t) -> Self {
+        Self {
+            base: value.base.into(),
+            cont: value.cont.into(),
+            cancel: value.cancel.into(),
+        }
+    }
+}
+impl Into<_cef_get_extension_resource_callback_t> for GetExtensionResourceCallback {
+    fn into(self) -> _cef_get_extension_resource_callback_t {
+        _cef_get_extension_resource_callback_t {
+            base: self.base.into(),
+            cont: self.cont.into(),
+            cancel: self.cancel.into(),
+        }
+    }
+}
+impl Default for GetExtensionResourceCallback {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [_cef_extension_handler_t] for more documentation.
+#[derive(Clone)]
+pub struct ExtensionHandler {
+    pub base: BaseRefCounted,
+    pub on_extension_load_failed: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_extension_handler_t, result: cef_errorcode_t),
+    >,
+    pub on_extension_loaded: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_handler_t,
+            extension: *mut _cef_extension_t,
+        ),
+    >,
+    pub on_extension_unloaded: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_handler_t,
+            extension: *mut _cef_extension_t,
+        ),
+    >,
+    pub on_before_background_browser: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_handler_t,
+            extension: *mut _cef_extension_t,
+            url: *const cef_string_t,
+            client: *mut *mut _cef_client_t,
+            settings: *mut _cef_browser_settings_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub on_before_browser: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_handler_t,
+            extension: *mut _cef_extension_t,
+            browser: *mut _cef_browser_t,
+            active_browser: *mut _cef_browser_t,
+            index: ::std::os::raw::c_int,
+            url: *const cef_string_t,
+            active: ::std::os::raw::c_int,
+            windowInfo: *mut _cef_window_info_t,
+            client: *mut *mut _cef_client_t,
+            settings: *mut _cef_browser_settings_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub get_active_browser: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_handler_t,
+            extension: *mut _cef_extension_t,
+            browser: *mut _cef_browser_t,
+            include_incognito: ::std::os::raw::c_int,
+        ) -> *mut _cef_browser_t,
+    >,
+    pub can_access_browser: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_handler_t,
+            extension: *mut _cef_extension_t,
+            browser: *mut _cef_browser_t,
+            include_incognito: ::std::os::raw::c_int,
+            target_browser: *mut _cef_browser_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub get_extension_resource: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_handler_t,
+            extension: *mut _cef_extension_t,
+            browser: *mut _cef_browser_t,
+            file: *const cef_string_t,
+            callback: *mut _cef_get_extension_resource_callback_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+}
+impl From<_cef_extension_handler_t> for ExtensionHandler {
+    fn from(value: _cef_extension_handler_t) -> Self {
+        Self {
+            base: value.base.into(),
+            on_extension_load_failed: value.on_extension_load_failed.into(),
+            on_extension_loaded: value.on_extension_loaded.into(),
+            on_extension_unloaded: value.on_extension_unloaded.into(),
+            on_before_background_browser: value.on_before_background_browser.into(),
+            on_before_browser: value.on_before_browser.into(),
+            get_active_browser: value.get_active_browser.into(),
+            can_access_browser: value.can_access_browser.into(),
+            get_extension_resource: value.get_extension_resource.into(),
+        }
+    }
+}
+impl Into<_cef_extension_handler_t> for ExtensionHandler {
+    fn into(self) -> _cef_extension_handler_t {
+        _cef_extension_handler_t {
+            base: self.base.into(),
+            on_extension_load_failed: self.on_extension_load_failed.into(),
+            on_extension_loaded: self.on_extension_loaded.into(),
+            on_extension_unloaded: self.on_extension_unloaded.into(),
+            on_before_background_browser: self.on_before_background_browser.into(),
+            on_before_browser: self.on_before_browser.into(),
+            get_active_browser: self.get_active_browser.into(),
+            can_access_browser: self.can_access_browser.into(),
+            get_extension_resource: self.get_extension_resource.into(),
+        }
+    }
+}
+impl Default for ExtensionHandler {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
 /// See [_cef_media_router_t] for more documentation.
 #[derive(Clone)]
 pub struct MediaRouter {
@@ -4880,6 +4953,38 @@ pub struct RequestContext {
             callback: *mut _cef_resolve_callback_t,
         ),
     >,
+    pub load_extension: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_request_context_t,
+            root_directory: *const cef_string_t,
+            manifest: *mut _cef_dictionary_value_t,
+            handler: *mut _cef_extension_handler_t,
+        ),
+    >,
+    pub did_load_extension: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_request_context_t,
+            extension_id: *const cef_string_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub has_extension: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_request_context_t,
+            extension_id: *const cef_string_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub get_extensions: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_request_context_t,
+            extension_ids: cef_string_list_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub get_extension: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_request_context_t,
+            extension_id: *const cef_string_t,
+        ) -> *mut _cef_extension_t,
+    >,
     pub get_media_router: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_request_context_t,
@@ -4953,6 +5058,11 @@ impl From<_cef_request_context_t> for RequestContext {
             clear_http_auth_credentials: value.clear_http_auth_credentials.into(),
             close_all_connections: value.close_all_connections.into(),
             resolve_host: value.resolve_host.into(),
+            load_extension: value.load_extension.into(),
+            did_load_extension: value.did_load_extension.into(),
+            has_extension: value.has_extension.into(),
+            get_extensions: value.get_extensions.into(),
+            get_extension: value.get_extension.into(),
             get_media_router: value.get_media_router.into(),
             get_website_setting: value.get_website_setting.into(),
             set_website_setting: value.set_website_setting.into(),
@@ -4981,6 +5091,11 @@ impl Into<_cef_request_context_t> for RequestContext {
             clear_http_auth_credentials: self.clear_http_auth_credentials.into(),
             close_all_connections: self.close_all_connections.into(),
             resolve_host: self.resolve_host.into(),
+            load_extension: self.load_extension.into(),
+            did_load_extension: self.did_load_extension.into(),
+            has_extension: self.has_extension.into(),
+            get_extensions: self.get_extensions.into(),
+            get_extension: self.get_extension.into(),
             get_media_router: self.get_media_router.into(),
             get_website_setting: self.get_website_setting.into(),
             set_website_setting: self.set_website_setting.into(),
@@ -5282,9 +5397,6 @@ pub struct BrowserHost {
     pub try_close_browser: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> ::std::os::raw::c_int,
     >,
-    pub is_ready_to_be_closed: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> ::std::os::raw::c_int,
-    >,
     pub set_focus: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t, focus: ::std::os::raw::c_int),
     >,
@@ -5292,9 +5404,6 @@ pub struct BrowserHost {
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> HWND>,
     pub get_opener_window_handle:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> HWND>,
-    pub get_opener_identifier: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> ::std::os::raw::c_int,
-    >,
     pub has_view: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> ::std::os::raw::c_int,
     >,
@@ -5555,6 +5664,12 @@ pub struct BrowserHost {
             max_size: *const cef_size_t,
         ),
     >,
+    pub get_extension: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> *mut _cef_extension_t,
+    >,
+    pub is_background_host: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> ::std::os::raw::c_int,
+    >,
     pub set_audio_muted: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t, mute: ::std::os::raw::c_int),
     >,
@@ -5597,11 +5712,9 @@ impl From<_cef_browser_host_t> for BrowserHost {
             get_browser: value.get_browser.into(),
             close_browser: value.close_browser.into(),
             try_close_browser: value.try_close_browser.into(),
-            is_ready_to_be_closed: value.is_ready_to_be_closed.into(),
             set_focus: value.set_focus.into(),
             get_window_handle: value.get_window_handle.into(),
             get_opener_window_handle: value.get_opener_window_handle.into(),
-            get_opener_identifier: value.get_opener_identifier.into(),
             has_view: value.has_view.into(),
             get_client: value.get_client.into(),
             get_request_context: value.get_request_context.into(),
@@ -5654,6 +5767,8 @@ impl From<_cef_browser_host_t> for BrowserHost {
             get_visible_navigation_entry: value.get_visible_navigation_entry.into(),
             set_accessibility_state: value.set_accessibility_state.into(),
             set_auto_resize_enabled: value.set_auto_resize_enabled.into(),
+            get_extension: value.get_extension.into(),
+            is_background_host: value.is_background_host.into(),
             set_audio_muted: value.set_audio_muted.into(),
             is_audio_muted: value.is_audio_muted.into(),
             is_fullscreen: value.is_fullscreen.into(),
@@ -5672,11 +5787,9 @@ impl Into<_cef_browser_host_t> for BrowserHost {
             get_browser: self.get_browser.into(),
             close_browser: self.close_browser.into(),
             try_close_browser: self.try_close_browser.into(),
-            is_ready_to_be_closed: self.is_ready_to_be_closed.into(),
             set_focus: self.set_focus.into(),
             get_window_handle: self.get_window_handle.into(),
             get_opener_window_handle: self.get_opener_window_handle.into(),
-            get_opener_identifier: self.get_opener_identifier.into(),
             has_view: self.has_view.into(),
             get_client: self.get_client.into(),
             get_request_context: self.get_request_context.into(),
@@ -5729,6 +5842,8 @@ impl Into<_cef_browser_host_t> for BrowserHost {
             get_visible_navigation_entry: self.get_visible_navigation_entry.into(),
             set_accessibility_state: self.set_accessibility_state.into(),
             set_auto_resize_enabled: self.set_auto_resize_enabled.into(),
+            get_extension: self.get_extension.into(),
+            is_background_host: self.is_background_host.into(),
             set_audio_muted: self.set_audio_muted.into(),
             is_audio_muted: self.is_audio_muted.into(),
             is_fullscreen: self.is_fullscreen.into(),
@@ -7397,13 +7512,6 @@ pub struct FrameHandler {
             frame: *mut _cef_frame_t,
         ),
     >,
-    pub on_frame_destroyed: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_frame_handler_t,
-            browser: *mut _cef_browser_t,
-            frame: *mut _cef_frame_t,
-        ),
-    >,
     pub on_frame_attached: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_frame_handler_t,
@@ -7433,7 +7541,6 @@ impl From<_cef_frame_handler_t> for FrameHandler {
         Self {
             base: value.base.into(),
             on_frame_created: value.on_frame_created.into(),
-            on_frame_destroyed: value.on_frame_destroyed.into(),
             on_frame_attached: value.on_frame_attached.into(),
             on_frame_detached: value.on_frame_detached.into(),
             on_main_frame_changed: value.on_main_frame_changed.into(),
@@ -7445,7 +7552,6 @@ impl Into<_cef_frame_handler_t> for FrameHandler {
         _cef_frame_handler_t {
             base: self.base.into(),
             on_frame_created: self.on_frame_created.into(),
-            on_frame_destroyed: self.on_frame_destroyed.into(),
             on_frame_attached: self.on_frame_attached.into(),
             on_frame_detached: self.on_frame_detached.into(),
             on_main_frame_changed: self.on_main_frame_changed.into(),
@@ -7613,7 +7719,6 @@ pub struct LifeSpanHandler {
             self_: *mut _cef_life_span_handler_t,
             browser: *mut _cef_browser_t,
             frame: *mut _cef_frame_t,
-            popup_id: ::std::os::raw::c_int,
             target_url: *const cef_string_t,
             target_frame_name: *const cef_string_t,
             target_disposition: cef_window_open_disposition_t,
@@ -7625,13 +7730,6 @@ pub struct LifeSpanHandler {
             extra_info: *mut *mut _cef_dictionary_value_t,
             no_javascript_access: *mut ::std::os::raw::c_int,
         ) -> ::std::os::raw::c_int,
-    >,
-    pub on_before_popup_aborted: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_life_span_handler_t,
-            browser: *mut _cef_browser_t,
-            popup_id: ::std::os::raw::c_int,
-        ),
     >,
     pub on_before_dev_tools_popup: ::std::option::Option<
         unsafe extern "stdcall" fn(
@@ -7668,7 +7766,6 @@ impl From<_cef_life_span_handler_t> for LifeSpanHandler {
         Self {
             base: value.base.into(),
             on_before_popup: value.on_before_popup.into(),
-            on_before_popup_aborted: value.on_before_popup_aborted.into(),
             on_before_dev_tools_popup: value.on_before_dev_tools_popup.into(),
             on_after_created: value.on_after_created.into(),
             do_close: value.do_close.into(),
@@ -7681,7 +7778,6 @@ impl Into<_cef_life_span_handler_t> for LifeSpanHandler {
         _cef_life_span_handler_t {
             base: self.base.into(),
             on_before_popup: self.on_before_popup.into(),
-            on_before_popup_aborted: self.on_before_popup_aborted.into(),
             on_before_dev_tools_popup: self.on_before_dev_tools_popup.into(),
             on_after_created: self.on_after_created.into(),
             do_close: self.do_close.into(),
@@ -11222,9 +11318,6 @@ pub struct View {
     pub is_accessibility_focusable: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_view_t) -> ::std::os::raw::c_int,
     >,
-    pub has_focus: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_view_t) -> ::std::os::raw::c_int,
-    >,
     pub request_focus: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_view_t)>,
     pub set_background_color: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_view_t, color: cef_color_t),
@@ -11321,7 +11414,6 @@ impl From<_cef_view_t> for View {
             set_focusable: value.set_focusable.into(),
             is_focusable: value.is_focusable.into(),
             is_accessibility_focusable: value.is_accessibility_focusable.into(),
-            has_focus: value.has_focus.into(),
             request_focus: value.request_focus.into(),
             set_background_color: value.set_background_color.into(),
             get_background_color: value.get_background_color.into(),
@@ -11380,7 +11472,6 @@ impl Into<_cef_view_t> for View {
             set_focusable: self.set_focusable.into(),
             is_focusable: self.is_focusable.into(),
             is_accessibility_focusable: self.is_accessibility_focusable.into(),
-            has_focus: self.has_focus.into(),
             request_focus: self.request_focus.into(),
             set_background_color: self.set_background_color.into(),
             get_background_color: self.get_background_color.into(),
@@ -12619,13 +12710,6 @@ pub struct WindowDelegate {
     pub get_window_runtime_style: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_window_delegate_t) -> cef_runtime_style_t,
     >,
-    pub get_linux_window_properties: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_window_delegate_t,
-            window: *mut _cef_window_t,
-            properties: *mut _cef_linux_window_properties_t,
-        ) -> ::std::os::raw::c_int,
-    >,
 }
 impl From<_cef_window_delegate_t> for WindowDelegate {
     fn from(value: _cef_window_delegate_t) -> Self {
@@ -12653,7 +12737,6 @@ impl From<_cef_window_delegate_t> for WindowDelegate {
             on_key_event: value.on_key_event.into(),
             on_theme_colors_changed: value.on_theme_colors_changed.into(),
             get_window_runtime_style: value.get_window_runtime_style.into(),
-            get_linux_window_properties: value.get_linux_window_properties.into(),
         }
     }
 }
@@ -12683,7 +12766,6 @@ impl Into<_cef_window_delegate_t> for WindowDelegate {
             on_key_event: self.on_key_event.into(),
             on_theme_colors_changed: self.on_theme_colors_changed.into(),
             get_window_runtime_style: self.get_window_runtime_style.into(),
-            get_linux_window_properties: self.get_linux_window_properties.into(),
         }
     }
 }
@@ -12738,9 +12820,6 @@ pub struct Window {
     >,
     pub is_fullscreen: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_window_t) -> ::std::os::raw::c_int,
-    >,
-    pub get_focused_view: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_window_t) -> *mut _cef_view_t,
     >,
     pub set_title: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_window_t, title: *const cef_string_t),
@@ -12864,7 +12943,6 @@ impl From<_cef_window_t> for Window {
             is_maximized: value.is_maximized.into(),
             is_minimized: value.is_minimized.into(),
             is_fullscreen: value.is_fullscreen.into(),
-            get_focused_view: value.get_focused_view.into(),
             set_title: value.set_title.into(),
             get_title: value.get_title.into(),
             set_window_icon: value.set_window_icon.into(),
@@ -12913,7 +12991,6 @@ impl Into<_cef_window_t> for Window {
             is_maximized: self.is_maximized.into(),
             is_minimized: self.is_minimized.into(),
             is_fullscreen: self.is_fullscreen.into(),
-            get_focused_view: self.get_focused_view.into(),
             set_title: self.set_title.into(),
             get_title: self.get_title.into(),
             set_window_icon: self.set_window_icon.into(),
@@ -15729,35 +15806,6 @@ impl Default for ColorVariant {
     }
 }
 
-/// See [cef_task_type_t] for more documentation.
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub struct TaskType(cef_task_type_t);
-impl AsRef<cef_task_type_t> for TaskType {
-    fn as_ref(&self) -> &cef_task_type_t {
-        &self.0
-    }
-}
-impl AsMut<cef_task_type_t> for TaskType {
-    fn as_mut(&mut self) -> &mut cef_task_type_t {
-        &mut self.0
-    }
-}
-impl From<cef_task_type_t> for TaskType {
-    fn from(value: cef_task_type_t) -> Self {
-        Self(value)
-    }
-}
-impl Into<cef_task_type_t> for TaskType {
-    fn into(self) -> cef_task_type_t {
-        self.0
-    }
-}
-impl Default for TaskType {
-    fn default() -> Self {
-        Self(cef_task_type_t::CEF_TASK_TYPE_UNKNOWN)
-    }
-}
-
 /// See [cef_sandbox_info_create] for more documentation.
 pub fn sandbox_info_create() -> *mut ::std::os::raw::c_void {
     unsafe {
@@ -17249,22 +17297,6 @@ pub fn browser_host_create_browser_sync(
     }
 }
 
-/// See [cef_browser_host_get_browser_by_identifier] for more documentation.
-pub fn browser_host_get_browser_by_identifier(
-    browser_id: ::std::os::raw::c_int,
-) -> Option<Browser> {
-    unsafe {
-        let arg_browser_id = browser_id;
-        let arg_browser_id = arg_browser_id;
-        let result = cef_browser_host_get_browser_by_identifier(arg_browser_id);
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
-    }
-}
-
 /// See [cef_menu_model_create] for more documentation.
 pub fn menu_model_create(delegate: Option<&mut MenuModelDelegate>) -> Option<MenuModel> {
     unsafe {
@@ -17609,21 +17641,6 @@ pub fn v8value_create_array_buffer(
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
         let result = cef_v8value_create_array_buffer(arg_buffer, arg_length, arg_release_callback);
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
-    }
-}
-
-/// See [cef_v8value_create_array_buffer_with_copy] for more documentation.
-pub fn v8value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) -> Option<V8value> {
-    unsafe {
-        let (arg_buffer, arg_length) = (buffer, length);
-        let arg_buffer = arg_buffer as *mut _;
-        let arg_length = arg_length;
-        let result = cef_v8value_create_array_buffer_with_copy(arg_buffer, arg_length);
         if result.is_null() {
             None
         } else {

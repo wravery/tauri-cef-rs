@@ -488,7 +488,7 @@ unsafe extern "C" {
 }
 #[repr(i32)]
 #[non_exhaustive]
-#[doc = "\n Supported content setting types. Some types are platform-specific or only\n supported with Chrome style. Should be kept in sync with Chromium's\n ContentSettingsType type.\n"]
+#[doc = "\n Supported content setting types. Some types are platform-specific or only\n supported with the Chrome runtime. Should be kept in sync with Chromium's\n ContentSettingsType type.\n"]
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub enum cef_content_setting_types_t {
     #[doc = " provided context. However, it may be overridden by other settings. This\n enum should NOT be read directly to determine whether cookies are enabled;\n the client should instead rely on the CookieSettings API."]
@@ -557,8 +557,8 @@ pub enum cef_content_setting_types_t {
     CEF_CONTENT_SETTING_TYPE_CLIENT_HINTS = 31,
     #[doc = " Generic Sensor API covering ambient-light-sensor, accelerometer, gyroscope\n and magnetometer are all mapped to a single content_settings_type.\n Setting for the Generic Sensor API covering ambient-light-sensor,\n accelerometer, gyroscope and magnetometer. These are all mapped to a\n single ContentSettingsType."]
     CEF_CONTENT_SETTING_TYPE_SENSORS = 32,
-    #[doc = " Content setting which stores whether or not the user has granted the site\n permission to respond to accessibility events, which can be used to\n provide a custom accessibility experience. Requires explicit user consent\n because some users may not want sites to know they're using assistive\n technology. Deprecated in M131."]
-    CEF_CONTENT_SETTING_TYPE_DEPRECATED_ACCESSIBILITY_EVENTS = 33,
+    #[doc = " Content setting which stores whether or not the user has granted the site\n permission to respond to accessibility events, which can be used to\n provide a custom accessibility experience. Requires explicit user consent\n because some users may not want sites to know they're using assistive\n technology."]
+    CEF_CONTENT_SETTING_TYPE_ACCESSIBILITY_EVENTS = 33,
     #[doc = " Used to store whether to allow a website to install a payment handler."]
     CEF_CONTENT_SETTING_TYPE_PAYMENT_HANDLER = 34,
     #[doc = " Content setting which stores whether to allow sites to ask for permission\n to access USB devices. If this is allowed specific device permissions are\n stored under USB_CHOOSER_DATA."]
@@ -706,21 +706,9 @@ pub enum cef_content_setting_types_t {
     #[doc = " Pointer Lock API allows a site to hide the cursor and have exclusive\n access to mouse inputs."]
     CEF_CONTENT_SETTING_TYPE_POINTER_LOCK = 106,
     #[doc = " Website setting which is used for UnusedSitePermissionsService to store\n auto-revoked notification permissions from abusive sites."]
-    CEF_CONTENT_SETTING_TYPE_REVOKED_ABUSIVE_NOTIFICATION_PERMISSIONS = 107,
+    REVOKED_ABUSIVE_NOTIFICATION_PERMISSIONS = 107,
     #[doc = " Content setting that controls tracking protection status per site.\n BLOCK: Protections enabled. This is the default state.\n ALLOW: Protections disabled."]
-    CEF_CONTENT_SETTING_TYPE_TRACKING_PROTECTION = 108,
-    #[doc = " With this permission, when the application calls `getDisplayMedia()`, a\n system audio track can be returned without showing the display media\n selection picker. The application can explicitly specify\n `systemAudio: 'exclude'` or `video: true` to still show the display media\n selection picker if needed. Please note that the setting only works for\n WebUI."]
-    CEF_CONTENT_SETTING_TYPE_DISPLAY_MEDIA_SYSTEM_AUDIO = 109,
-    #[doc = " Whether to use the higher-tier v8 optimizers for running JavaScript on the\n page."]
-    CEF_CONTENT_SETTING_TYPE_JAVASCRIPT_OPTIMIZER = 110,
-    #[doc = " Content Setting for the Storage Access Headers persistent origin trial\n that allows origins to opt into the storage access header behavior. Should\n be scoped to `REQUESTING_ORIGIN_AND_TOP_SCHEMEFUL_SITE_SCOPE` in order to\n correspond to the design of persistent origin trials. See also:\n https://github.com/cfredric/storage-access-headers\n ALLOW: storage access request headers will be attached to cross-site\n        requests, and url requests will look for response headers from\n        origins to retry a request or load with storage access.\n BLOCK (default): no effect."]
-    CEF_CONTENT_SETTING_TYPE_STORAGE_ACCESS_HEADER_ORIGIN_TRIAL = 111,
-    #[doc = " Whether or not sites can request Hand Tracking data within WebXR Sessions."]
-    CEF_CONTENT_SETTING_TYPE_HAND_TRACKING = 112,
-    #[doc = " Website setting to indicate whether user has opted in to allow web apps to\n install other web apps."]
-    CEF_CONTENT_SETTING_TYPE_WEB_APP_INSTALLATION = 113,
-    #[doc = " Content settings for private network access in the context of the\n Direct Sockets API."]
-    CEF_CONTENT_SETTING_TYPE_DIRECT_SOCKETS_PRIVATE_NETWORK_ACCESS = 114,
+    TRACKING_PROTECTION = 108,
 }
 #[repr(i32)]
 #[non_exhaustive]
@@ -916,88 +904,16 @@ pub enum cef_color_type_t {
     #[doc = "\n BGRA with 8 bits per pixel (32bits total).\n"]
     CEF_COLOR_TYPE_BGRA_8888 = 1,
 }
-#[doc = "\n Structure containing shared texture common metadata.\n For documentation on each field, please refer to\n src/media/base/video_frame_metadata.h for actual details.\n"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _cef_accelerated_paint_info_common_t {
-    #[doc = "\n Timestamp of the frame in microseconds since capture start.\n"]
-    pub timestamp: u64,
-    #[doc = "\n The full dimensions of the video frame.\n"]
-    pub coded_size: cef_size_t,
-    #[doc = "\n The visible area of the video frame.\n"]
-    pub visible_rect: cef_rect_t,
-    #[doc = "\n The region of the video frame that capturer would like to populate.\n"]
-    pub content_rect: cef_rect_t,
-    #[doc = "\n Full size of the source frame.\n"]
-    pub source_size: cef_size_t,
-    #[doc = "\n Updated area of frame, can be considered as the `dirty` area.\n"]
-    pub capture_update_rect: cef_rect_t,
-    #[doc = "\n May reflects where the frame's contents originate from if region\n capture is used internally.\n"]
-    pub region_capture_rect: cef_rect_t,
-    #[doc = "\n The increamental counter of the frame.\n"]
-    pub capture_counter: u64,
-    #[doc = "\n Optional flag of capture_update_rect\n"]
-    pub has_capture_update_rect: u8,
-    #[doc = "\n Optional flag of region_capture_rect\n"]
-    pub has_region_capture_rect: u8,
-    #[doc = "\n Optional flag of source_size\n"]
-    pub has_source_size: u8,
-    #[doc = "\n Optional flag of capture_counter\n"]
-    pub has_capture_counter: u8,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of _cef_accelerated_paint_info_common_t"]
-        [::std::mem::size_of::<_cef_accelerated_paint_info_common_t>() - 104usize];
-    ["Alignment of _cef_accelerated_paint_info_common_t"]
-        [::std::mem::align_of::<_cef_accelerated_paint_info_common_t>() - 8usize];
-    ["Offset of field: _cef_accelerated_paint_info_common_t::timestamp"]
-        [::std::mem::offset_of!(_cef_accelerated_paint_info_common_t, timestamp) - 0usize];
-    ["Offset of field: _cef_accelerated_paint_info_common_t::coded_size"]
-        [::std::mem::offset_of!(_cef_accelerated_paint_info_common_t, coded_size) - 8usize];
-    ["Offset of field: _cef_accelerated_paint_info_common_t::visible_rect"]
-        [::std::mem::offset_of!(_cef_accelerated_paint_info_common_t, visible_rect) - 16usize];
-    ["Offset of field: _cef_accelerated_paint_info_common_t::content_rect"]
-        [::std::mem::offset_of!(_cef_accelerated_paint_info_common_t, content_rect) - 32usize];
-    ["Offset of field: _cef_accelerated_paint_info_common_t::source_size"]
-        [::std::mem::offset_of!(_cef_accelerated_paint_info_common_t, source_size) - 48usize];
-    ["Offset of field: _cef_accelerated_paint_info_common_t::capture_update_rect"][::std::mem::offset_of!(
-        _cef_accelerated_paint_info_common_t,
-        capture_update_rect
-    ) - 56usize];
-    ["Offset of field: _cef_accelerated_paint_info_common_t::region_capture_rect"][::std::mem::offset_of!(
-        _cef_accelerated_paint_info_common_t,
-        region_capture_rect
-    ) - 72usize];
-    ["Offset of field: _cef_accelerated_paint_info_common_t::capture_counter"]
-        [::std::mem::offset_of!(_cef_accelerated_paint_info_common_t, capture_counter) - 88usize];
-    ["Offset of field: _cef_accelerated_paint_info_common_t::has_capture_update_rect"][::std::mem::offset_of!(
-        _cef_accelerated_paint_info_common_t,
-        has_capture_update_rect
-    ) - 96usize];
-    ["Offset of field: _cef_accelerated_paint_info_common_t::has_region_capture_rect"][::std::mem::offset_of!(
-        _cef_accelerated_paint_info_common_t,
-        has_region_capture_rect
-    ) - 97usize];
-    ["Offset of field: _cef_accelerated_paint_info_common_t::has_source_size"]
-        [::std::mem::offset_of!(_cef_accelerated_paint_info_common_t, has_source_size) - 98usize];
-    ["Offset of field: _cef_accelerated_paint_info_common_t::has_capture_counter"][::std::mem::offset_of!(
-        _cef_accelerated_paint_info_common_t,
-        has_capture_counter
-    ) - 99usize];
-};
-#[doc = "\n Structure containing shared texture common metadata.\n For documentation on each field, please refer to\n src/media/base/video_frame_metadata.h for actual details.\n"]
-pub type cef_accelerated_paint_info_common_t = _cef_accelerated_paint_info_common_t;
 #[repr(i32)]
 #[non_exhaustive]
-#[doc = "\n CEF supports both a Chrome runtime style (based on the Chrome UI layer) and\n an Alloy runtime style (based on the Chromium content layer). Chrome style\n provides the full Chrome UI and browser functionality whereas Alloy style\n provides less default browser functionality but adds additional client\n callbacks and support for windowless (off-screen) rendering. The style type\n is individually configured for each window/browser at creation time and\n different styles can be mixed during runtime. For additional comparative\n details on runtime styles see\n https://bitbucket.org/chromiumembedded/cef/wiki/Architecture.md#markdown-header-cef3\n\n Windowless rendering will always use Alloy style. Windowed rendering with a\n default window or client-provided parent window can configure the style via\n CefWindowInfo.runtime_style. Windowed rendering with the Views framework can\n configure the style via CefWindowDelegate::GetWindowRuntimeStyle and\n CefBrowserViewDelegate::GetBrowserRuntimeStyle. Alloy style Windows with the\n Views framework can host only Alloy style BrowserViews but Chrome style\n Windows can host both style BrowserViews. Additionally, a Chrome style\n Window can host at most one Chrome style BrowserView but potentially\n multiple Alloy style BrowserViews. See CefWindowInfo.runtime_style\n documentation for any additional platform-specific limitations.\n"]
+#[doc = "\n CEF supports both a Chrome runtime (based on the Chrome UI layer) and an\n Alloy runtime (based on the Chromium content layer). The Chrome runtime\n provides the full Chrome UI and browser functionality whereas the Alloy\n runtime provides less default browser functionality but adds additional\n client callbacks and support for windowless (off-screen) rendering. For\n additional comparative details on runtime types see\n https://bitbucket.org/chromiumembedded/cef/wiki/Architecture.md#markdown-header-cef3\n\n Each runtime is composed of a bootstrap component and a style component. The\n bootstrap component is configured via CefSettings.chrome_runtime and cannot\n be changed after CefInitialize. The style component is individually\n configured for each window/browser at creation time and, in combination with\n the Chrome bootstrap, different styles can be mixed during runtime.\n\n Windowless rendering will always use Alloy style. Windowed rendering with a\n default window or client-provided parent window can configure the style via\n CefWindowInfo.runtime_style. Windowed rendering with the Views framework can\n configure the style via CefWindowDelegate::GetWindowRuntimeStyle and\n CefBrowserViewDelegate::GetBrowserRuntimeStyle. Alloy style Windows with the\n Views framework can host only Alloy style BrowserViews but Chrome style\n Windows can host both style BrowserViews. Additionally, a Chrome style\n Window can host at most one Chrome style BrowserView but potentially\n multiple Alloy style BrowserViews. See CefWindowInfo.runtime_style\n documentation for any additional platform-specific limitations.\n"]
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub enum cef_runtime_style_t {
-    #[doc = "\n Use the default style. See above documentation for exceptions.\n"]
+    #[doc = "\n Use the default runtime style. The default style will match the\n CefSettings.chrome_runtime value in most cases. See above documentation\n for exceptions.\n"]
     CEF_RUNTIME_STYLE_DEFAULT = 0,
-    #[doc = "\n Use Chrome style.\n"]
+    #[doc = "\n Use the Chrome runtime style. Only supported with the Chrome runtime.\n"]
     CEF_RUNTIME_STYLE_CHROME = 1,
-    #[doc = "\n Use Alloy style.\n"]
+    #[doc = "\n Use the Alloy runtime style. Supported with both the Alloy and Chrome\n runtime.\n"]
     CEF_RUNTIME_STYLE_ALLOY = 2,
 }
 #[doc = "\n Structure representing CefExecuteProcess arguments.\n"]
@@ -1073,21 +989,17 @@ pub struct _cef_accelerated_paint_info_t {
     pub shared_texture_handle: HANDLE,
     #[doc = "\n The pixel format of the texture.\n"]
     pub format: cef_color_type_t,
-    #[doc = "\n The extra common info.\n"]
-    pub extra: cef_accelerated_paint_info_common_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
     ["Size of _cef_accelerated_paint_info_t"]
-        [::std::mem::size_of::<_cef_accelerated_paint_info_t>() - 112usize];
+        [::std::mem::size_of::<_cef_accelerated_paint_info_t>() - 8usize];
     ["Alignment of _cef_accelerated_paint_info_t"]
-        [::std::mem::align_of::<_cef_accelerated_paint_info_t>() - 8usize];
+        [::std::mem::align_of::<_cef_accelerated_paint_info_t>() - 4usize];
     ["Offset of field: _cef_accelerated_paint_info_t::shared_texture_handle"]
         [::std::mem::offset_of!(_cef_accelerated_paint_info_t, shared_texture_handle) - 0usize];
     ["Offset of field: _cef_accelerated_paint_info_t::format"]
         [::std::mem::offset_of!(_cef_accelerated_paint_info_t, format) - 4usize];
-    ["Offset of field: _cef_accelerated_paint_info_t::extra"]
-        [::std::mem::offset_of!(_cef_accelerated_paint_info_t, extra) - 8usize];
 };
 #[doc = "\n Structure containing shared texture information for the OnAcceleratedPaint\n callback. Resources will be released to the underlying pool for reuse when\n the callback returns from client code.\n"]
 pub type cef_accelerated_paint_info_t = _cef_accelerated_paint_info_t;
@@ -1159,6 +1071,8 @@ pub struct _cef_settings_t {
     pub framework_dir_path: cef_string_t,
     #[doc = "\n The path to the main bundle on macOS. If this value is empty then it\n defaults to the top-level app bundle. If this value is non-empty then it\n must be an absolute path. Also configurable using the \"main-bundle-path\"\n command-line switch.\n"]
     pub main_bundle_path: cef_string_t,
+    #[doc = "\n Set to true (1) to enable use of the Chrome runtime in CEF. This feature\n is considered experimental and is not recommended for most users at this\n time. See issue #2969 for details.\n"]
+    pub chrome_runtime: ::std::os::raw::c_int,
     #[doc = "\n Set to true (1) to have the browser process message loop run in a separate\n thread. If false (0) then the CefDoMessageLoopWork() function must be\n called from your application message loop. This option is only supported\n on Windows and Linux.\n"]
     pub multi_threaded_message_loop: ::std::os::raw::c_int,
     #[doc = "\n Set to true (1) to control browser process main (UI) thread message pump\n scheduling via the CefBrowserProcessHandler::OnScheduleMessagePumpWork()\n callback. This option is recommended for use in combination with the\n CefDoMessageLoopWork() function in cases where the CEF message loop must\n be integrated into an existing application message loop (see additional\n comments and warnings on CefDoMessageLoopWork). Enabling this option is\n not recommended for most users; leave this option disabled and use either\n the CefRunMessageLoop() function or multi_threaded_message_loop if\n possible.\n"]
@@ -1167,12 +1081,14 @@ pub struct _cef_settings_t {
     pub windowless_rendering_enabled: ::std::os::raw::c_int,
     #[doc = "\n Set to true (1) to disable configuration of browser process features using\n standard CEF and Chromium command-line arguments. Configuration can still\n be specified using CEF data structures or via the\n CefApp::OnBeforeCommandLineProcessing() method.\n"]
     pub command_line_args_disabled: ::std::os::raw::c_int,
-    #[doc = "\n The directory where data for the global browser cache will be stored on\n disk. If this value is non-empty then it must be an absolute path that is\n either equal to or a child directory of CefSettings.root_cache_path. If\n this value is empty then browsers will be created in \"incognito mode\"\n where in-memory caches are used for storage and no profile-specific data\n is persisted to disk (installation-specific data will still be persisted\n in root_cache_path). HTML5 databases such as localStorage will only\n persist across sessions if a cache path is specified. Can be overridden\n for individual CefRequestContext instances via the\n CefRequestContextSettings.cache_path value. Any child directory value will\n be ignored and the \"default\" profile (also a child directory) will be used\n instead.\n"]
+    #[doc = "\n The directory where data for the global browser cache will be stored on\n disk. If this value is non-empty then it must be an absolute path that is\n either equal to or a child directory of CefSettings.root_cache_path. If\n this value is empty then browsers will be created in \"incognito mode\"\n where in-memory caches are used for storage and no profile-specific data\n is persisted to disk (installation-specific data will still be persisted\n in root_cache_path). HTML5 databases such as localStorage will only\n persist across sessions if a cache path is specified. Can be overridden\n for individual CefRequestContext instances via the\n CefRequestContextSettings.cache_path value. When using the Chrome runtime\n any child directory value will be ignored and the \"default\" profile (also\n a child directory) will be used instead.\n"]
     pub cache_path: cef_string_t,
     #[doc = "\n The root directory for installation-specific data and the parent directory\n for profile-specific data. All CefSettings.cache_path and\n CefRequestContextSettings.cache_path values must have this parent\n directory in common. If this value is empty and CefSettings.cache_path is\n non-empty then it will default to the CefSettings.cache_path value. Any\n non-empty value must be an absolute path. If both values are empty then\n the default platform-specific directory will be used\n (\"~/.config/cef_user_data\" directory on Linux, \"~/Library/Application\n Support/CEF/User Data\" directory on MacOS, \"AppData\\Local\\CEF\\User Data\"\n directory under the user profile directory on Windows). Use of the default\n directory is not recommended in production applications (see below).\n\n Multiple application instances writing to the same root_cache_path\n directory could result in data corruption. A process singleton lock based\n on the root_cache_path value is therefore used to protect against this.\n This singleton behavior applies to all CEF-based applications using\n version 120 or newer. You should customize root_cache_path for your\n application and implement CefBrowserProcessHandler::\n OnAlreadyRunningAppRelaunch, which will then be called on any app relaunch\n with the same root_cache_path value.\n\n Failure to set the root_cache_path value correctly may result in startup\n crashes or other unexpected behaviors (for example, the sandbox blocking\n read/write access to certain files).\n"]
     pub root_cache_path: cef_string_t,
     #[doc = "\n To persist session cookies (cookies without an expiry date or validity\n interval) by default when using the global cookie manager set this value\n to true (1). Session cookies are generally intended to be transient and\n most Web browsers do not persist them. A |cache_path| value must also be\n specified to enable this feature. Also configurable using the\n \"persist-session-cookies\" command-line switch. Can be overridden for\n individual CefRequestContext instances via the\n CefRequestContextSettings.persist_session_cookies value.\n"]
     pub persist_session_cookies: ::std::os::raw::c_int,
+    #[doc = "\n To persist user preferences as a JSON file in the cache path directory set\n this value to true (1). A |cache_path| value must also be specified\n to enable this feature. Also configurable using the\n \"persist-user-preferences\" command-line switch. Can be overridden for\n individual CefRequestContext instances via the\n CefRequestContextSettings.persist_user_preferences value.\n"]
+    pub persist_user_preferences: ::std::os::raw::c_int,
     #[doc = "\n Value that will be returned as the User-Agent HTTP header. If empty the\n default User-Agent string will be used. Also configurable using the\n \"user-agent\" command-line switch.\n"]
     pub user_agent: cef_string_t,
     #[doc = "\n Value that will be inserted as the product portion of the default\n User-Agent string. If empty the Chromium product version will be used. If\n |userAgent| is specified this value will be ignored. Also configurable\n using the \"user-agent-product\" command-line switch.\n"]
@@ -1191,6 +1107,8 @@ pub struct _cef_settings_t {
     pub resources_dir_path: cef_string_t,
     #[doc = "\n The fully qualified path for the locales directory. If this value is empty\n the locales directory must be located in the module directory. If this\n value is non-empty then it must be an absolute path. This value is ignored\n on MacOS where pack files are always loaded from the app bundle Resources\n directory. Also configurable using the \"locales-dir-path\" command-line\n switch.\n"]
     pub locales_dir_path: cef_string_t,
+    #[doc = "\n Set to true (1) to disable loading of pack files for resources and\n locales. A resource bundle handler must be provided for the browser and\n render processes via CefApp::GetResourceBundleHandler() if loading of pack\n files is disabled. Also configurable using the \"disable-pack-loading\"\n command- line switch.\n"]
+    pub pack_loading_disabled: ::std::os::raw::c_int,
     #[doc = "\n Set to a value between 1024 and 65535 to enable remote debugging on the\n specified port. Also configurable using the \"remote-debugging-port\"\n command-line switch. Specifying 0 via the command-line switch will result\n in the selection of an ephemeral port and the port number will be printed\n as part of the WebSocket endpoint URL to stderr. If a cache directory path\n is provided the port will also be written to the\n <cache-dir>/DevToolsActivePort file. Remote debugging can be accessed by\n loading the chrome://inspect page in Google Chrome. Port numbers 9222 and\n 9229 are discoverable by default. Other port numbers may need to be\n configured via \"Discover network targets\" on the Devices tab.\n"]
     pub remote_debugging_port: ::std::os::raw::c_int,
     #[doc = "\n The number of stack trace frames to capture for uncaught exceptions.\n Specify a positive value to enable the\n CefRenderProcessHandler::OnUncaughtException() callback. Specify 0\n (default value) and OnUncaughtException() will not be called. Also\n configurable using the \"uncaught-exception-stack-size\" command-line\n switch.\n"]
@@ -1202,14 +1120,14 @@ pub struct _cef_settings_t {
     #[doc = "\n Comma delimited list of schemes supported by the associated\n CefCookieManager. If |cookieable_schemes_exclude_defaults| is false (0)\n the default schemes (\"http\", \"https\", \"ws\" and \"wss\") will also be\n supported. Not specifying a |cookieable_schemes_list| value and setting\n |cookieable_schemes_exclude_defaults| to true (1) will disable all loading\n and saving of cookies. These settings will only impact the global\n CefRequestContext. Individual CefRequestContext instances can be\n configured via the CefRequestContextSettings.cookieable_schemes_list and\n CefRequestContextSettings.cookieable_schemes_exclude_defaults values.\n"]
     pub cookieable_schemes_list: cef_string_t,
     pub cookieable_schemes_exclude_defaults: ::std::os::raw::c_int,
-    #[doc = "\n Specify an ID to enable Chrome policy management via Platform and OS-user\n policies. On Windows, this is a registry key like\n \"SOFTWARE\\\\Policies\\\\Google\\\\Chrome\". On MacOS, this is a bundle ID like\n \"com.google.Chrome\". On Linux, this is an absolute directory path like\n \"/etc/opt/chrome/policies\". Only supported with Chrome style. See\n https://support.google.com/chrome/a/answer/9037717 for details.\n\n Chrome Browser Cloud Management integration, when enabled via the\n \"enable-chrome-browser-cloud-management\" command-line flag, will also use\n the specified ID. See https://support.google.com/chrome/a/answer/9116814\n for details.\n"]
+    #[doc = "\n Specify an ID to enable Chrome policy management via Platform and OS-user\n policies. On Windows, this is a registry key like\n \"SOFTWARE\\\\Policies\\\\Google\\\\Chrome\". On MacOS, this is a bundle ID like\n \"com.google.Chrome\". On Linux, this is an absolute directory path like\n \"/etc/opt/chrome/policies\". Only supported with the Chrome runtime. See\n https://support.google.com/chrome/a/answer/9037717 for details.\n\n Chrome Browser Cloud Management integration, when enabled via the\n \"enable-chrome-browser-cloud-management\" command-line flag, will also use\n the specified ID. See https://support.google.com/chrome/a/answer/9116814\n for details.\n"]
     pub chrome_policy_id: cef_string_t,
-    #[doc = "\n Specify an ID for an ICON resource that can be loaded from the main\n executable and used when creating default Chrome windows such as DevTools\n and Task Manager. If unspecified the default Chromium ICON (IDR_MAINFRAME\n [101]) will be loaded from libcef.dll. Only supported with Chrome style on\n Windows.\n"]
+    #[doc = "\n Specify an ID for an ICON resource that can be loaded from the main\n executable and used when creating default Chrome windows such as DevTools\n and Task Manager. If unspecified the default Chromium ICON (IDR_MAINFRAME\n [101]) will be loaded from libcef.dll. Only supported with the Chrome\n runtime on Windows.\n"]
     pub chrome_app_icon_id: ::std::os::raw::c_int,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_settings_t"][::std::mem::size_of::<_cef_settings_t>() - 236usize];
+    ["Size of _cef_settings_t"][::std::mem::size_of::<_cef_settings_t>() - 248usize];
     ["Alignment of _cef_settings_t"][::std::mem::align_of::<_cef_settings_t>() - 4usize];
     ["Offset of field: _cef_settings_t::size"]
         [::std::mem::offset_of!(_cef_settings_t, size) - 0usize];
@@ -1221,54 +1139,60 @@ const _: () = {
         [::std::mem::offset_of!(_cef_settings_t, framework_dir_path) - 20usize];
     ["Offset of field: _cef_settings_t::main_bundle_path"]
         [::std::mem::offset_of!(_cef_settings_t, main_bundle_path) - 32usize];
+    ["Offset of field: _cef_settings_t::chrome_runtime"]
+        [::std::mem::offset_of!(_cef_settings_t, chrome_runtime) - 44usize];
     ["Offset of field: _cef_settings_t::multi_threaded_message_loop"]
-        [::std::mem::offset_of!(_cef_settings_t, multi_threaded_message_loop) - 44usize];
+        [::std::mem::offset_of!(_cef_settings_t, multi_threaded_message_loop) - 48usize];
     ["Offset of field: _cef_settings_t::external_message_pump"]
-        [::std::mem::offset_of!(_cef_settings_t, external_message_pump) - 48usize];
+        [::std::mem::offset_of!(_cef_settings_t, external_message_pump) - 52usize];
     ["Offset of field: _cef_settings_t::windowless_rendering_enabled"]
-        [::std::mem::offset_of!(_cef_settings_t, windowless_rendering_enabled) - 52usize];
+        [::std::mem::offset_of!(_cef_settings_t, windowless_rendering_enabled) - 56usize];
     ["Offset of field: _cef_settings_t::command_line_args_disabled"]
-        [::std::mem::offset_of!(_cef_settings_t, command_line_args_disabled) - 56usize];
+        [::std::mem::offset_of!(_cef_settings_t, command_line_args_disabled) - 60usize];
     ["Offset of field: _cef_settings_t::cache_path"]
-        [::std::mem::offset_of!(_cef_settings_t, cache_path) - 60usize];
+        [::std::mem::offset_of!(_cef_settings_t, cache_path) - 64usize];
     ["Offset of field: _cef_settings_t::root_cache_path"]
-        [::std::mem::offset_of!(_cef_settings_t, root_cache_path) - 72usize];
+        [::std::mem::offset_of!(_cef_settings_t, root_cache_path) - 76usize];
     ["Offset of field: _cef_settings_t::persist_session_cookies"]
-        [::std::mem::offset_of!(_cef_settings_t, persist_session_cookies) - 84usize];
+        [::std::mem::offset_of!(_cef_settings_t, persist_session_cookies) - 88usize];
+    ["Offset of field: _cef_settings_t::persist_user_preferences"]
+        [::std::mem::offset_of!(_cef_settings_t, persist_user_preferences) - 92usize];
     ["Offset of field: _cef_settings_t::user_agent"]
-        [::std::mem::offset_of!(_cef_settings_t, user_agent) - 88usize];
+        [::std::mem::offset_of!(_cef_settings_t, user_agent) - 96usize];
     ["Offset of field: _cef_settings_t::user_agent_product"]
-        [::std::mem::offset_of!(_cef_settings_t, user_agent_product) - 100usize];
+        [::std::mem::offset_of!(_cef_settings_t, user_agent_product) - 108usize];
     ["Offset of field: _cef_settings_t::locale"]
-        [::std::mem::offset_of!(_cef_settings_t, locale) - 112usize];
+        [::std::mem::offset_of!(_cef_settings_t, locale) - 120usize];
     ["Offset of field: _cef_settings_t::log_file"]
-        [::std::mem::offset_of!(_cef_settings_t, log_file) - 124usize];
+        [::std::mem::offset_of!(_cef_settings_t, log_file) - 132usize];
     ["Offset of field: _cef_settings_t::log_severity"]
-        [::std::mem::offset_of!(_cef_settings_t, log_severity) - 136usize];
+        [::std::mem::offset_of!(_cef_settings_t, log_severity) - 144usize];
     ["Offset of field: _cef_settings_t::log_items"]
-        [::std::mem::offset_of!(_cef_settings_t, log_items) - 140usize];
+        [::std::mem::offset_of!(_cef_settings_t, log_items) - 148usize];
     ["Offset of field: _cef_settings_t::javascript_flags"]
-        [::std::mem::offset_of!(_cef_settings_t, javascript_flags) - 144usize];
+        [::std::mem::offset_of!(_cef_settings_t, javascript_flags) - 152usize];
     ["Offset of field: _cef_settings_t::resources_dir_path"]
-        [::std::mem::offset_of!(_cef_settings_t, resources_dir_path) - 156usize];
+        [::std::mem::offset_of!(_cef_settings_t, resources_dir_path) - 164usize];
     ["Offset of field: _cef_settings_t::locales_dir_path"]
-        [::std::mem::offset_of!(_cef_settings_t, locales_dir_path) - 168usize];
+        [::std::mem::offset_of!(_cef_settings_t, locales_dir_path) - 176usize];
+    ["Offset of field: _cef_settings_t::pack_loading_disabled"]
+        [::std::mem::offset_of!(_cef_settings_t, pack_loading_disabled) - 188usize];
     ["Offset of field: _cef_settings_t::remote_debugging_port"]
-        [::std::mem::offset_of!(_cef_settings_t, remote_debugging_port) - 180usize];
+        [::std::mem::offset_of!(_cef_settings_t, remote_debugging_port) - 192usize];
     ["Offset of field: _cef_settings_t::uncaught_exception_stack_size"]
-        [::std::mem::offset_of!(_cef_settings_t, uncaught_exception_stack_size) - 184usize];
+        [::std::mem::offset_of!(_cef_settings_t, uncaught_exception_stack_size) - 196usize];
     ["Offset of field: _cef_settings_t::background_color"]
-        [::std::mem::offset_of!(_cef_settings_t, background_color) - 188usize];
+        [::std::mem::offset_of!(_cef_settings_t, background_color) - 200usize];
     ["Offset of field: _cef_settings_t::accept_language_list"]
-        [::std::mem::offset_of!(_cef_settings_t, accept_language_list) - 192usize];
+        [::std::mem::offset_of!(_cef_settings_t, accept_language_list) - 204usize];
     ["Offset of field: _cef_settings_t::cookieable_schemes_list"]
-        [::std::mem::offset_of!(_cef_settings_t, cookieable_schemes_list) - 204usize];
+        [::std::mem::offset_of!(_cef_settings_t, cookieable_schemes_list) - 216usize];
     ["Offset of field: _cef_settings_t::cookieable_schemes_exclude_defaults"]
-        [::std::mem::offset_of!(_cef_settings_t, cookieable_schemes_exclude_defaults) - 216usize];
+        [::std::mem::offset_of!(_cef_settings_t, cookieable_schemes_exclude_defaults) - 228usize];
     ["Offset of field: _cef_settings_t::chrome_policy_id"]
-        [::std::mem::offset_of!(_cef_settings_t, chrome_policy_id) - 220usize];
+        [::std::mem::offset_of!(_cef_settings_t, chrome_policy_id) - 232usize];
     ["Offset of field: _cef_settings_t::chrome_app_icon_id"]
-        [::std::mem::offset_of!(_cef_settings_t, chrome_app_icon_id) - 232usize];
+        [::std::mem::offset_of!(_cef_settings_t, chrome_app_icon_id) - 244usize];
 };
 #[doc = "\n Initialization settings. Specify NULL or 0 to get the recommended default\n values. Many of these and other settings can also configured using command-\n line switches.\n"]
 pub type cef_settings_t = _cef_settings_t;
@@ -1282,6 +1206,8 @@ pub struct _cef_request_context_settings_t {
     pub cache_path: cef_string_t,
     #[doc = "\n To persist session cookies (cookies without an expiry date or validity\n interval) by default when using the global cookie manager set this value\n to true (1). Session cookies are generally intended to be transient and\n most Web browsers do not persist them. Can be set globally using the\n CefSettings.persist_session_cookies value. This value will be ignored if\n |cache_path| is empty or if it matches the CefSettings.cache_path value.\n"]
     pub persist_session_cookies: ::std::os::raw::c_int,
+    #[doc = "\n To persist user preferences as a JSON file in the cache path directory set\n this value to true (1). Can be set globally using the\n CefSettings.persist_user_preferences value. This value will be ignored if\n |cache_path| is empty or if it matches the CefSettings.cache_path value.\n"]
+    pub persist_user_preferences: ::std::os::raw::c_int,
     #[doc = "\n Comma delimited ordered list of language codes without any whitespace that\n will be used in the \"Accept-Language\" HTTP request header and\n \"navigator.language\" JS attribute. Can be set globally using the\n CefSettings.accept_language_list value. If all values are empty then\n \"en-US,en\" will be used. This value will be ignored if |cache_path|\n matches the CefSettings.cache_path value.\n"]
     pub accept_language_list: cef_string_t,
     #[doc = "\n Comma delimited list of schemes supported by the associated\n CefCookieManager. If |cookieable_schemes_exclude_defaults| is false (0)\n the default schemes (\"http\", \"https\", \"ws\" and \"wss\") will also be\n supported. Not specifying a |cookieable_schemes_list| value and setting\n |cookieable_schemes_exclude_defaults| to true (1) will disable all loading\n and saving of cookies. These values will be ignored if |cache_path|\n matches the CefSettings.cache_path value.\n"]
@@ -1291,7 +1217,7 @@ pub struct _cef_request_context_settings_t {
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
     ["Size of _cef_request_context_settings_t"]
-        [::std::mem::size_of::<_cef_request_context_settings_t>() - 48usize];
+        [::std::mem::size_of::<_cef_request_context_settings_t>() - 52usize];
     ["Alignment of _cef_request_context_settings_t"]
         [::std::mem::align_of::<_cef_request_context_settings_t>() - 4usize];
     ["Offset of field: _cef_request_context_settings_t::size"]
@@ -1302,17 +1228,21 @@ const _: () = {
         _cef_request_context_settings_t,
         persist_session_cookies
     ) - 16usize];
+    ["Offset of field: _cef_request_context_settings_t::persist_user_preferences"][::std::mem::offset_of!(
+        _cef_request_context_settings_t,
+        persist_user_preferences
+    ) - 20usize];
     ["Offset of field: _cef_request_context_settings_t::accept_language_list"]
-        [::std::mem::offset_of!(_cef_request_context_settings_t, accept_language_list) - 20usize];
+        [::std::mem::offset_of!(_cef_request_context_settings_t, accept_language_list) - 24usize];
     ["Offset of field: _cef_request_context_settings_t::cookieable_schemes_list"][::std::mem::offset_of!(
         _cef_request_context_settings_t,
         cookieable_schemes_list
-    ) - 32usize];
+    ) - 36usize];
     ["Offset of field: _cef_request_context_settings_t::cookieable_schemes_exclude_defaults"][::std::mem::offset_of!(
         _cef_request_context_settings_t,
         cookieable_schemes_exclude_defaults
     )
-        - 44usize];
+        - 48usize];
 };
 #[doc = "\n Request context initialization settings. Specify NULL or 0 to get the\n recommended default values.\n"]
 pub type cef_request_context_settings_t = _cef_request_context_settings_t;
@@ -1363,9 +1293,9 @@ pub struct _cef_browser_settings_t {
     pub webgl: cef_state_t,
     #[doc = "\n Background color used for the browser before a document is loaded and when\n no document color is specified. The alpha component must be either fully\n opaque (0xFF) or fully transparent (0x00). If the alpha component is fully\n opaque then the RGB components will be used as the background color. If\n the alpha component is fully transparent for a windowed browser then the\n CefSettings.background_color value will be used. If the alpha component is\n fully transparent for a windowless (off-screen) browser then transparent\n painting will be enabled.\n"]
     pub background_color: cef_color_t,
-    #[doc = "\n Controls whether the Chrome status bubble will be used. Only supported\n with Chrome style. For details about the status bubble see\n https://www.chromium.org/user-experience/status-bubble/\n"]
+    #[doc = "\n Controls whether the Chrome status bubble will be used. Only supported\n with the Chrome runtime. For details about the status bubble see\n https://www.chromium.org/user-experience/status-bubble/\n"]
     pub chrome_status_bubble: cef_state_t,
-    #[doc = "\n Controls whether the Chrome zoom bubble will be shown when zooming. Only\n supported with Chrome style.\n"]
+    #[doc = "\n Controls whether the Chrome zoom bubble will be shown when zooming. Only\n supported with the Chrome runtime.\n"]
     pub chrome_zoom_bubble: cef_state_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -1930,7 +1860,7 @@ pub enum cef_resultcode_t {
     #[doc = " The browser process exited because system resources are exhausted. The\n system state can't be recovered and will be unstable."]
     CEF_RESULT_CODE_SYSTEM_RESOURCE_EXHAUSTED = 37,
     #[doc = " The browser process exited because system resources are exhausted. The\n system state can't be recovered and will be unstable."]
-    CEF_RESULT_CODE_CHROME_LAST = 38,
+    CEF_RESULT_CODE_CHROME_LAST = 39,
     #[doc = " The browser process exited because system resources are exhausted. The\n system state can't be recovered and will be unstable."]
     CEF_RESULT_CODE_SANDBOX_FATAL_FIRST = 7006,
     #[doc = " Windows sandbox could not lower the token."]
@@ -1948,9 +1878,7 @@ pub enum cef_resultcode_t {
     #[doc = " Windows sandbox failed to warmup."]
     CEF_RESULT_CODE_SANDBOX_FATAL_WARMUP = 7013,
     #[doc = " Windows sandbox failed to warmup."]
-    CEF_RESULT_CODE_SANDBOX_FATAL_BROKER_SHUTDOWN_HUNG = 7014,
-    #[doc = " Windows sandbox failed to warmup."]
-    CEF_RESULT_CODE_SANDBOX_FATAL_LAST = 7015,
+    CEF_RESULT_CODE_SANDBOX_FATAL_LAST = 7014,
 }
 impl cef_window_open_disposition_t {
     pub const CEF_WOD_MAX_VALUE: cef_window_open_disposition_t =
@@ -2136,23 +2064,23 @@ pub enum cef_transition_type_t {
     TT_LINK = 0,
     #[doc = "\n Source is some other \"explicit\" navigation. This is the default value for\n navigations where the actual type is unknown. See also\n TT_DIRECT_LOAD_FLAG.\n"]
     TT_EXPLICIT = 1,
-    #[doc = "\n User got to this page through a suggestion in the UI (for example, via the\n destinations page). Chrome style only.\n"]
+    #[doc = "\n User got to this page through a suggestion in the UI (for example, via the\n destinations page). Chrome runtime only.\n"]
     TT_AUTO_BOOKMARK = 2,
     #[doc = "\n Source is a subframe navigation. This is any content that is automatically\n loaded in a non-toplevel frame. For example, if a page consists of several\n frames containing ads, those ad URLs will have this transition type.\n The user may not even realize the content in these pages is a separate\n frame, so may not care about the URL.\n"]
     TT_AUTO_SUBFRAME = 3,
     #[doc = "\n Source is a subframe navigation explicitly requested by the user that will\n generate new navigation entries in the back/forward list. These are\n probably more important than frames that were automatically loaded in\n the background because the user probably cares about the fact that this\n link was loaded.\n"]
     TT_MANUAL_SUBFRAME = 4,
-    #[doc = "\n User got to this page by typing in the URL bar and selecting an entry\n that did not look like a URL.  For example, a match might have the URL\n of a Google search result page, but appear like \"Search Google for ...\".\n These are not quite the same as EXPLICIT navigations because the user\n didn't type or see the destination URL. Chrome style only.\n See also TT_KEYWORD.\n"]
+    #[doc = "\n User got to this page by typing in the URL bar and selecting an entry\n that did not look like a URL.  For example, a match might have the URL\n of a Google search result page, but appear like \"Search Google for ...\".\n These are not quite the same as EXPLICIT navigations because the user\n didn't type or see the destination URL. Chrome runtime only.\n See also TT_KEYWORD.\n"]
     TT_GENERATED = 5,
-    #[doc = "\n This is a toplevel navigation. This is any content that is automatically\n loaded in a toplevel frame.  For example, opening a tab to show the ASH\n screen saver, opening the devtools window, opening the NTP after the safe\n browsing warning, opening web-based dialog boxes are examples of\n AUTO_TOPLEVEL navigations. Chrome style only.\n"]
+    #[doc = "\n This is a toplevel navigation. This is any content that is automatically\n loaded in a toplevel frame.  For example, opening a tab to show the ASH\n screen saver, opening the devtools window, opening the NTP after the safe\n browsing warning, opening web-based dialog boxes are examples of\n AUTO_TOPLEVEL navigations. Chrome runtime only.\n"]
     TT_AUTO_TOPLEVEL = 6,
     #[doc = "\n Source is a form submission by the user. NOTE: In some situations\n submitting a form does not result in this transition type. This can happen\n if the form uses a script to submit the contents.\n"]
     TT_FORM_SUBMIT = 7,
     #[doc = "\n Source is a \"reload\" of the page via the Reload function or by re-visiting\n the same URL. NOTE: This is distinct from the concept of whether a\n particular load uses \"reload semantics\" (i.e. bypasses cached data).\n"]
     TT_RELOAD = 8,
-    #[doc = "\n The url was generated from a replaceable keyword other than the default\n search provider. If the user types a keyword (which also applies to\n tab-to-search) in the omnibox this qualifier is applied to the transition\n type of the generated url. TemplateURLModel then may generate an\n additional visit with a transition type of TT_KEYWORD_GENERATED against\n the url 'http://' + keyword. For example, if you do a tab-to-search\n against wikipedia the generated url has a transition qualifer of\n TT_KEYWORD, and TemplateURLModel generates a visit for 'wikipedia.org'\n with a transition type of TT_KEYWORD_GENERATED. Chrome style only.\n"]
+    #[doc = "\n The url was generated from a replaceable keyword other than the default\n search provider. If the user types a keyword (which also applies to\n tab-to-search) in the omnibox this qualifier is applied to the transition\n type of the generated url. TemplateURLModel then may generate an\n additional visit with a transition type of TT_KEYWORD_GENERATED against\n the url 'http://' + keyword. For example, if you do a tab-to-search\n against wikipedia the generated url has a transition qualifer of\n TT_KEYWORD, and TemplateURLModel generates a visit for 'wikipedia.org'\n with a transition type of TT_KEYWORD_GENERATED. Chrome runtime only.\n"]
     TT_KEYWORD = 9,
-    #[doc = "\n Corresponds to a visit generated for a keyword. See description of\n TT_KEYWORD for more details. Chrome style only.\n"]
+    #[doc = "\n Corresponds to a visit generated for a keyword. See description of\n TT_KEYWORD for more details. Chrome runtime only.\n"]
     TT_KEYWORD_GENERATED = 10,
     #[doc = "\n General mask defining the bits used for the source values.\n"]
     TT_SOURCE_MASK = 255,
@@ -2162,9 +2090,9 @@ pub enum cef_transition_type_t {
     TT_FORWARD_BACK_FLAG = 16777216,
     #[doc = "\n Loaded a URL directly via CreateBrowser, LoadURL or LoadRequest.\n"]
     TT_DIRECT_LOAD_FLAG = 33554432,
-    #[doc = "\n User is navigating to the home page. Chrome style only.\n"]
+    #[doc = "\n User is navigating to the home page. Chrome runtime only.\n"]
     TT_HOME_PAGE_FLAG = 67108864,
-    #[doc = "\n The transition originated from an external application; the exact\n definition of this is embedder dependent. Chrome style only.\n"]
+    #[doc = "\n The transition originated from an external application; the exact\n definition of this is embedder dependent. Chrome runtime and\n extension system only.\n"]
     TT_FROM_API_FLAG = 134217728,
     #[doc = "\n The beginning of a navigation chain.\n"]
     TT_CHAIN_START_FLAG = 268435456,
@@ -2368,36 +2296,6 @@ const _: () = {
 };
 #[doc = "\n Screen information used when window rendering is disabled. This structure is\n passed as a parameter to CefRenderHandler::GetScreenInfo and should be\n filled in by the client.\n"]
 pub type cef_screen_info_t = _cef_screen_info_t;
-#[doc = "\n Linux window properties, such as X11's WM_CLASS or Wayland's app_id.\n Those are passed to CefWindowDelegate, so the client can set them\n for the CefWindow's top-level. Thus, allowing window managers to correctly\n display the application's information (e.g., icons).\n"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _cef_linux_window_properties_t {
-    #[doc = "\n Main window's Wayland's app_id\n"]
-    pub wayland_app_id: cef_string_t,
-    #[doc = "\n Main window's WM_CLASS_CLASS in X11\n"]
-    pub wm_class_class: cef_string_t,
-    #[doc = "\n Main window's WM_CLASS_NAME in X11\n"]
-    pub wm_class_name: cef_string_t,
-    #[doc = "\n Main window's WM_WINDOW_ROLE in X11\n"]
-    pub wm_role_name: cef_string_t,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of _cef_linux_window_properties_t"]
-        [::std::mem::size_of::<_cef_linux_window_properties_t>() - 48usize];
-    ["Alignment of _cef_linux_window_properties_t"]
-        [::std::mem::align_of::<_cef_linux_window_properties_t>() - 4usize];
-    ["Offset of field: _cef_linux_window_properties_t::wayland_app_id"]
-        [::std::mem::offset_of!(_cef_linux_window_properties_t, wayland_app_id) - 0usize];
-    ["Offset of field: _cef_linux_window_properties_t::wm_class_class"]
-        [::std::mem::offset_of!(_cef_linux_window_properties_t, wm_class_class) - 12usize];
-    ["Offset of field: _cef_linux_window_properties_t::wm_class_name"]
-        [::std::mem::offset_of!(_cef_linux_window_properties_t, wm_class_name) - 24usize];
-    ["Offset of field: _cef_linux_window_properties_t::wm_role_name"]
-        [::std::mem::offset_of!(_cef_linux_window_properties_t, wm_role_name) - 36usize];
-};
-#[doc = "\n Linux window properties, such as X11's WM_CLASS or Wayland's app_id.\n Those are passed to CefWindowDelegate, so the client can set them\n for the CefWindow's top-level. Thus, allowing window managers to correctly\n display the application's information (e.g., icons).\n"]
-pub type cef_linux_window_properties_t = _cef_linux_window_properties_t;
 impl cef_menu_id_t {
     pub const MENU_ID_SPELLCHECK_SUGGESTION_LAST: cef_menu_id_t =
         cef_menu_id_t::MENU_ID_SPELLCHECK_SUGGESTION_4;
@@ -2417,9 +2315,8 @@ pub enum cef_menu_id_t {
     MENU_ID_CUT = 112,
     MENU_ID_COPY = 113,
     MENU_ID_PASTE = 114,
-    MENU_ID_PASTE_MATCH_STYLE = 115,
-    MENU_ID_DELETE = 116,
-    MENU_ID_SELECT_ALL = 117,
+    MENU_ID_DELETE = 115,
+    MENU_ID_SELECT_ALL = 116,
     MENU_ID_FIND = 130,
     MENU_ID_PRINT = 131,
     MENU_ID_VIEW_SOURCE = 132,
@@ -2893,34 +2790,36 @@ pub enum cef_dom_form_control_type_t {
     DOM_FORM_CONTROL_TYPE_BUTTON_BUTTON = 1,
     DOM_FORM_CONTROL_TYPE_BUTTON_SUBMIT = 2,
     DOM_FORM_CONTROL_TYPE_BUTTON_RESET = 3,
-    DOM_FORM_CONTROL_TYPE_BUTTON_POPOVER = 4,
-    DOM_FORM_CONTROL_TYPE_FIELDSET = 5,
-    DOM_FORM_CONTROL_TYPE_INPUT_BUTTON = 6,
-    DOM_FORM_CONTROL_TYPE_INPUT_CHECKBOX = 7,
-    DOM_FORM_CONTROL_TYPE_INPUT_COLOR = 8,
-    DOM_FORM_CONTROL_TYPE_INPUT_DATE = 9,
-    DOM_FORM_CONTROL_TYPE_INPUT_DATETIME_LOCAL = 10,
-    DOM_FORM_CONTROL_TYPE_INPUT_EMAIL = 11,
-    DOM_FORM_CONTROL_TYPE_INPUT_FILE = 12,
-    DOM_FORM_CONTROL_TYPE_INPUT_HIDDEN = 13,
-    DOM_FORM_CONTROL_TYPE_INPUT_IMAGE = 14,
-    DOM_FORM_CONTROL_TYPE_INPUT_MONTH = 15,
-    DOM_FORM_CONTROL_TYPE_INPUT_NUMBER = 16,
-    DOM_FORM_CONTROL_TYPE_INPUT_PASSWORD = 17,
-    DOM_FORM_CONTROL_TYPE_INPUT_RADIO = 18,
-    DOM_FORM_CONTROL_TYPE_INPUT_RANGE = 19,
-    DOM_FORM_CONTROL_TYPE_INPUT_RESET = 20,
-    DOM_FORM_CONTROL_TYPE_INPUT_SEARCH = 21,
-    DOM_FORM_CONTROL_TYPE_INPUT_SUBMIT = 22,
-    DOM_FORM_CONTROL_TYPE_INPUT_TELEPHONE = 23,
-    DOM_FORM_CONTROL_TYPE_INPUT_TEXT = 24,
-    DOM_FORM_CONTROL_TYPE_INPUT_TIME = 25,
-    DOM_FORM_CONTROL_TYPE_INPUT_URL = 26,
-    DOM_FORM_CONTROL_TYPE_INPUT_WEEK = 27,
-    DOM_FORM_CONTROL_TYPE_OUTPUT = 28,
-    DOM_FORM_CONTROL_TYPE_SELECT_ONE = 29,
-    DOM_FORM_CONTROL_TYPE_SELECT_MULTIPLE = 30,
-    DOM_FORM_CONTROL_TYPE_TEXT_AREA = 31,
+    DOM_FORM_CONTROL_TYPE_BUTTON_SELECT_LIST = 4,
+    DOM_FORM_CONTROL_TYPE_BUTTON_POPOVER = 5,
+    DOM_FORM_CONTROL_TYPE_FIELDSET = 6,
+    DOM_FORM_CONTROL_TYPE_INPUT_BUTTON = 7,
+    DOM_FORM_CONTROL_TYPE_INPUT_CHECKBOX = 8,
+    DOM_FORM_CONTROL_TYPE_INPUT_COLOR = 9,
+    DOM_FORM_CONTROL_TYPE_INPUT_DATE = 10,
+    DOM_FORM_CONTROL_TYPE_INPUT_DATETIME_LOCAL = 11,
+    DOM_FORM_CONTROL_TYPE_INPUT_EMAIL = 12,
+    DOM_FORM_CONTROL_TYPE_INPUT_FILE = 13,
+    DOM_FORM_CONTROL_TYPE_INPUT_HIDDEN = 14,
+    DOM_FORM_CONTROL_TYPE_INPUT_IMAGE = 15,
+    DOM_FORM_CONTROL_TYPE_INPUT_MONTH = 16,
+    DOM_FORM_CONTROL_TYPE_INPUT_NUMBER = 17,
+    DOM_FORM_CONTROL_TYPE_INPUT_PASSWORD = 18,
+    DOM_FORM_CONTROL_TYPE_INPUT_RADIO = 19,
+    DOM_FORM_CONTROL_TYPE_INPUT_RANGE = 20,
+    DOM_FORM_CONTROL_TYPE_INPUT_RESET = 21,
+    DOM_FORM_CONTROL_TYPE_INPUT_SEARCH = 22,
+    DOM_FORM_CONTROL_TYPE_INPUT_SUBMIT = 23,
+    DOM_FORM_CONTROL_TYPE_INPUT_TELEPHONE = 24,
+    DOM_FORM_CONTROL_TYPE_INPUT_TEXT = 25,
+    DOM_FORM_CONTROL_TYPE_INPUT_TIME = 26,
+    DOM_FORM_CONTROL_TYPE_INPUT_URL = 27,
+    DOM_FORM_CONTROL_TYPE_INPUT_WEEK = 28,
+    DOM_FORM_CONTROL_TYPE_OUTPUT = 29,
+    DOM_FORM_CONTROL_TYPE_SELECT_ONE = 30,
+    DOM_FORM_CONTROL_TYPE_SELECT_MULTIPLE = 31,
+    DOM_FORM_CONTROL_TYPE_SELECT_LIST = 32,
+    DOM_FORM_CONTROL_TYPE_TEXT_AREA = 33,
 }
 #[repr(i32)]
 #[non_exhaustive]
@@ -3675,7 +3574,7 @@ pub enum cef_chrome_toolbar_type_t {
 }
 impl cef_chrome_page_action_icon_type_t {
     pub const CEF_CPAIT_MAX_VALUE: cef_chrome_page_action_icon_type_t =
-        cef_chrome_page_action_icon_type_t::CEF_CPAIT_DISCOUNTS;
+        cef_chrome_page_action_icon_type_t::CEF_CPAIT_LENS_OVERLAY;
 }
 #[repr(i32)]
 #[non_exhaustive]
@@ -3712,7 +3611,6 @@ pub enum cef_chrome_page_action_icon_type_t {
     CEF_CPAIT_PRICE_READ_ANYTHING = 27,
     CEF_CPAIT_PRODUCT_SPECIFICATIONS = 28,
     CEF_CPAIT_LENS_OVERLAY = 29,
-    CEF_CPAIT_DISCOUNTS = 30,
 }
 impl cef_chrome_toolbar_button_type_t {
     pub const CEF_CTBT_MAX_VALUE: cef_chrome_toolbar_button_type_t =
@@ -3821,20 +3719,20 @@ pub enum cef_media_access_permission_types_t {
 }
 #[repr(i32)]
 #[non_exhaustive]
-#[doc = "\n Permission types used with OnShowPermissionPrompt. Some types are\n platform-specific or only supported with Chrome style. Should be kept\n in sync with Chromium's permissions::RequestType type.\n"]
+#[doc = "\n Permission types used with OnShowPermissionPrompt. Some types are\n platform-specific or only supported with the Chrome runtime. Should be kept\n in sync with Chromium's permissions::RequestType type.\n"]
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub enum cef_permission_request_types_t {
     CEF_PERMISSION_TYPE_NONE = 0,
-    CEF_PERMISSION_TYPE_AR_SESSION = 1,
-    CEF_PERMISSION_TYPE_CAMERA_PAN_TILT_ZOOM = 2,
-    CEF_PERMISSION_TYPE_CAMERA_STREAM = 4,
-    CEF_PERMISSION_TYPE_CAPTURED_SURFACE_CONTROL = 8,
-    CEF_PERMISSION_TYPE_CLIPBOARD = 16,
-    CEF_PERMISSION_TYPE_TOP_LEVEL_STORAGE_ACCESS = 32,
-    CEF_PERMISSION_TYPE_DISK_QUOTA = 64,
-    CEF_PERMISSION_TYPE_LOCAL_FONTS = 128,
-    CEF_PERMISSION_TYPE_GEOLOCATION = 256,
-    CEF_PERMISSION_TYPE_HAND_TRACKING = 512,
+    CEF_PERMISSION_TYPE_ACCESSIBILITY_EVENTS = 1,
+    CEF_PERMISSION_TYPE_AR_SESSION = 2,
+    CEF_PERMISSION_TYPE_CAMERA_PAN_TILT_ZOOM = 4,
+    CEF_PERMISSION_TYPE_CAMERA_STREAM = 8,
+    CEF_PERMISSION_TYPE_CAPTURED_SURFACE_CONTROL = 16,
+    CEF_PERMISSION_TYPE_CLIPBOARD = 32,
+    CEF_PERMISSION_TYPE_TOP_LEVEL_STORAGE_ACCESS = 64,
+    CEF_PERMISSION_TYPE_DISK_QUOTA = 128,
+    CEF_PERMISSION_TYPE_LOCAL_FONTS = 256,
+    CEF_PERMISSION_TYPE_GEOLOCATION = 512,
     CEF_PERMISSION_TYPE_IDENTITY_PROVIDER = 1024,
     CEF_PERMISSION_TYPE_IDLE_DETECTION = 2048,
     CEF_PERMISSION_TYPE_MIC_STREAM = 4096,
@@ -3847,9 +3745,8 @@ pub enum cef_permission_request_types_t {
     CEF_PERMISSION_TYPE_REGISTER_PROTOCOL_HANDLER = 524288,
     CEF_PERMISSION_TYPE_STORAGE_ACCESS = 1048576,
     CEF_PERMISSION_TYPE_VR_SESSION = 2097152,
-    CEF_PERMISSION_TYPE_WEB_APP_INSTALLATION = 4194304,
-    CEF_PERMISSION_TYPE_WINDOW_MANAGEMENT = 8388608,
-    CEF_PERMISSION_TYPE_FILE_SYSTEM_ACCESS = 16777216,
+    CEF_PERMISSION_TYPE_WINDOW_MANAGEMENT = 4194304,
+    CEF_PERMISSION_TYPE_FILE_SYSTEM_ACCESS = 8388608,
 }
 #[repr(i32)]
 #[non_exhaustive]
@@ -3982,85 +3879,6 @@ pub enum cef_color_variant_t {
     CEF_COLOR_VARIANT_VIBRANT = 5,
     CEF_COLOR_VARIANT_EXPRESSIVE = 6,
 }
-#[repr(i32)]
-#[non_exhaustive]
-#[doc = "\n Specifies the task type variants supported by CefTaskManager.\n Should be kept in sync with Chromium's task_manager::Task::Type type.\n"]
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub enum cef_task_type_t {
-    CEF_TASK_TYPE_UNKNOWN = 0,
-    #[doc = " The main browser process."]
-    CEF_TASK_TYPE_BROWSER = 1,
-    #[doc = " A graphics process."]
-    CEF_TASK_TYPE_GPU = 2,
-    #[doc = " A Linux zygote process."]
-    CEF_TASK_TYPE_ZYGOTE = 3,
-    #[doc = " A browser utility process."]
-    CEF_TASK_TYPE_UTILITY = 4,
-    #[doc = " A normal WebContents renderer process."]
-    CEF_TASK_TYPE_RENDERER = 5,
-    #[doc = " An extension or app process."]
-    CEF_TASK_TYPE_EXTENSION = 6,
-    #[doc = " A browser plugin guest process."]
-    CEF_TASK_TYPE_GUEST = 7,
-    #[doc = " A plugin process."]
-    CEF_TASK_TYPE_PLUGIN = 8,
-    #[doc = " A sandbox helper process"]
-    CEF_TASK_TYPE_SANDBOX_HELPER = 9,
-    #[doc = " A dedicated worker running on the renderer process."]
-    CEF_TASK_TYPE_DEDICATED_WORKER = 10,
-    #[doc = " A shared worker running on the renderer process."]
-    CEF_TASK_TYPE_SHARED_WORKER = 11,
-    #[doc = " A service worker running on the renderer process."]
-    CEF_TASK_TYPE_SERVICE_WORKER = 12,
-}
-#[doc = "\n Structure representing task information provided by CefTaskManager.\n"]
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _cef_task_info_t {
-    #[doc = " The task ID."]
-    pub id: i64,
-    #[doc = " The task type."]
-    pub type_: cef_task_type_t,
-    #[doc = " Set to true (1) if the task is killable."]
-    pub is_killable: ::std::os::raw::c_int,
-    #[doc = " The task title."]
-    pub title: cef_string_t,
-    #[doc = " The CPU usage of the process on which the task is running. The value is\n in the range zero to number_of_processors * 100%."]
-    pub cpu_usage: f64,
-    #[doc = " The number of processors available on the system."]
-    pub number_of_processors: ::std::os::raw::c_int,
-    #[doc = " The memory footprint of the task in bytes. A value of -1 means no valid\n value is currently available."]
-    pub memory: i64,
-    #[doc = " The GPU memory usage of the task in bytes. A value of -1 means no valid\n value is currently available."]
-    pub gpu_memory: i64,
-    #[doc = " Set to true (1) if this task process' GPU resource count is inflated\n because it is counting other processes' resources (e.g, the GPU process\n has this value set to true because it is the aggregate of all processes)."]
-    pub is_gpu_memory_inflated: ::std::os::raw::c_int,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of _cef_task_info_t"][::std::mem::size_of::<_cef_task_info_t>() - 72usize];
-    ["Alignment of _cef_task_info_t"][::std::mem::align_of::<_cef_task_info_t>() - 8usize];
-    ["Offset of field: _cef_task_info_t::id"]
-        [::std::mem::offset_of!(_cef_task_info_t, id) - 0usize];
-    ["Offset of field: _cef_task_info_t::type_"]
-        [::std::mem::offset_of!(_cef_task_info_t, type_) - 8usize];
-    ["Offset of field: _cef_task_info_t::is_killable"]
-        [::std::mem::offset_of!(_cef_task_info_t, is_killable) - 12usize];
-    ["Offset of field: _cef_task_info_t::title"]
-        [::std::mem::offset_of!(_cef_task_info_t, title) - 16usize];
-    ["Offset of field: _cef_task_info_t::cpu_usage"]
-        [::std::mem::offset_of!(_cef_task_info_t, cpu_usage) - 32usize];
-    ["Offset of field: _cef_task_info_t::number_of_processors"]
-        [::std::mem::offset_of!(_cef_task_info_t, number_of_processors) - 40usize];
-    ["Offset of field: _cef_task_info_t::memory"]
-        [::std::mem::offset_of!(_cef_task_info_t, memory) - 48usize];
-    ["Offset of field: _cef_task_info_t::gpu_memory"]
-        [::std::mem::offset_of!(_cef_task_info_t, gpu_memory) - 56usize];
-    ["Offset of field: _cef_task_info_t::is_gpu_memory_inflated"]
-        [::std::mem::offset_of!(_cef_task_info_t, is_gpu_memory_inflated) - 64usize];
-};
-#[doc = "\n Structure representing task information provided by CefTaskManager.\n"]
-pub type cef_task_info_t = _cef_task_info_t;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct _cef_base_ref_counted_t {
@@ -6347,9 +6165,6 @@ pub struct _cef_frame_t {
     pub copy: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_frame_t)>,
     #[doc = "\n Execute paste in this frame.\n"]
     pub paste: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_frame_t)>,
-    #[doc = "\n Execute paste and match style in this frame.\n"]
-    pub paste_and_match_style:
-        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_frame_t)>,
     #[doc = "\n Execute delete in this frame.\n"]
     pub del: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_frame_t)>,
     #[doc = "\n Execute select all in this frame.\n"]
@@ -6436,7 +6251,7 @@ pub struct _cef_frame_t {
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_frame_t"][::std::mem::size_of::<_cef_frame_t>() - 124usize];
+    ["Size of _cef_frame_t"][::std::mem::size_of::<_cef_frame_t>() - 120usize];
     ["Alignment of _cef_frame_t"][::std::mem::align_of::<_cef_frame_t>() - 4usize];
     ["Offset of field: _cef_frame_t::base"][::std::mem::offset_of!(_cef_frame_t, base) - 0usize];
     ["Offset of field: _cef_frame_t::is_valid"]
@@ -6446,45 +6261,43 @@ const _: () = {
     ["Offset of field: _cef_frame_t::cut"][::std::mem::offset_of!(_cef_frame_t, cut) - 32usize];
     ["Offset of field: _cef_frame_t::copy"][::std::mem::offset_of!(_cef_frame_t, copy) - 36usize];
     ["Offset of field: _cef_frame_t::paste"][::std::mem::offset_of!(_cef_frame_t, paste) - 40usize];
-    ["Offset of field: _cef_frame_t::paste_and_match_style"]
-        [::std::mem::offset_of!(_cef_frame_t, paste_and_match_style) - 44usize];
-    ["Offset of field: _cef_frame_t::del"][::std::mem::offset_of!(_cef_frame_t, del) - 48usize];
+    ["Offset of field: _cef_frame_t::del"][::std::mem::offset_of!(_cef_frame_t, del) - 44usize];
     ["Offset of field: _cef_frame_t::select_all"]
-        [::std::mem::offset_of!(_cef_frame_t, select_all) - 52usize];
+        [::std::mem::offset_of!(_cef_frame_t, select_all) - 48usize];
     ["Offset of field: _cef_frame_t::view_source"]
-        [::std::mem::offset_of!(_cef_frame_t, view_source) - 56usize];
+        [::std::mem::offset_of!(_cef_frame_t, view_source) - 52usize];
     ["Offset of field: _cef_frame_t::get_source"]
-        [::std::mem::offset_of!(_cef_frame_t, get_source) - 60usize];
+        [::std::mem::offset_of!(_cef_frame_t, get_source) - 56usize];
     ["Offset of field: _cef_frame_t::get_text"]
-        [::std::mem::offset_of!(_cef_frame_t, get_text) - 64usize];
+        [::std::mem::offset_of!(_cef_frame_t, get_text) - 60usize];
     ["Offset of field: _cef_frame_t::load_request"]
-        [::std::mem::offset_of!(_cef_frame_t, load_request) - 68usize];
+        [::std::mem::offset_of!(_cef_frame_t, load_request) - 64usize];
     ["Offset of field: _cef_frame_t::load_url"]
-        [::std::mem::offset_of!(_cef_frame_t, load_url) - 72usize];
+        [::std::mem::offset_of!(_cef_frame_t, load_url) - 68usize];
     ["Offset of field: _cef_frame_t::execute_java_script"]
-        [::std::mem::offset_of!(_cef_frame_t, execute_java_script) - 76usize];
+        [::std::mem::offset_of!(_cef_frame_t, execute_java_script) - 72usize];
     ["Offset of field: _cef_frame_t::is_main"]
-        [::std::mem::offset_of!(_cef_frame_t, is_main) - 80usize];
+        [::std::mem::offset_of!(_cef_frame_t, is_main) - 76usize];
     ["Offset of field: _cef_frame_t::is_focused"]
-        [::std::mem::offset_of!(_cef_frame_t, is_focused) - 84usize];
+        [::std::mem::offset_of!(_cef_frame_t, is_focused) - 80usize];
     ["Offset of field: _cef_frame_t::get_name"]
-        [::std::mem::offset_of!(_cef_frame_t, get_name) - 88usize];
+        [::std::mem::offset_of!(_cef_frame_t, get_name) - 84usize];
     ["Offset of field: _cef_frame_t::get_identifier"]
-        [::std::mem::offset_of!(_cef_frame_t, get_identifier) - 92usize];
+        [::std::mem::offset_of!(_cef_frame_t, get_identifier) - 88usize];
     ["Offset of field: _cef_frame_t::get_parent"]
-        [::std::mem::offset_of!(_cef_frame_t, get_parent) - 96usize];
+        [::std::mem::offset_of!(_cef_frame_t, get_parent) - 92usize];
     ["Offset of field: _cef_frame_t::get_url"]
-        [::std::mem::offset_of!(_cef_frame_t, get_url) - 100usize];
+        [::std::mem::offset_of!(_cef_frame_t, get_url) - 96usize];
     ["Offset of field: _cef_frame_t::get_browser"]
-        [::std::mem::offset_of!(_cef_frame_t, get_browser) - 104usize];
+        [::std::mem::offset_of!(_cef_frame_t, get_browser) - 100usize];
     ["Offset of field: _cef_frame_t::get_v8context"]
-        [::std::mem::offset_of!(_cef_frame_t, get_v8context) - 108usize];
+        [::std::mem::offset_of!(_cef_frame_t, get_v8context) - 104usize];
     ["Offset of field: _cef_frame_t::visit_dom"]
-        [::std::mem::offset_of!(_cef_frame_t, visit_dom) - 112usize];
+        [::std::mem::offset_of!(_cef_frame_t, visit_dom) - 108usize];
     ["Offset of field: _cef_frame_t::create_urlrequest"]
-        [::std::mem::offset_of!(_cef_frame_t, create_urlrequest) - 116usize];
+        [::std::mem::offset_of!(_cef_frame_t, create_urlrequest) - 112usize];
     ["Offset of field: _cef_frame_t::send_process_message"]
-        [::std::mem::offset_of!(_cef_frame_t, send_process_message) - 120usize];
+        [::std::mem::offset_of!(_cef_frame_t, send_process_message) - 116usize];
 };
 #[doc = "\n Structure used to represent a frame in the browser window. When used in the\n browser process the functions of this structure may be called on any thread\n unless otherwise indicated in the comments. When used in the render process\n the functions of this structure may only be called on the main thread.\n"]
 pub type cef_frame_t = _cef_frame_t;
@@ -6980,6 +6793,210 @@ const _: () = {
 };
 #[doc = "\n Structure to implement to be notified of asynchronous completion via\n cef_cookie_manager_t::delete_cookies().\n"]
 pub type cef_delete_cookies_callback_t = _cef_delete_cookies_callback_t;
+#[doc = "\n Object representing an extension. Methods may be called on any thread unless\n otherwise indicated.\n\n WARNING: This API is deprecated and will be removed in ~M127.\n"]
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct _cef_extension_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Returns the unique extension identifier. This is calculated based on the\n extension public key, if available, or on the extension path. See\n https://developer.chrome.com/extensions/manifest/key for details.\n"]
+    pub get_identifier: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_extension_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns the absolute path to the extension directory on disk. This value\n will be prefixed with PK_DIR_RESOURCES if a relative path was passed to\n cef_request_context_t::LoadExtension.\n"]
+    pub get_path: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_extension_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns the extension manifest contents as a cef_dictionary_value_t\n object. See https://developer.chrome.com/extensions/manifest for details.\n"]
+    pub get_manifest: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_extension_t) -> *mut _cef_dictionary_value_t,
+    >,
+    #[doc = "\n Returns true (1) if this object is the same extension as |that| object.\n Extensions are considered the same if identifier, path and loader context\n match.\n"]
+    pub is_same: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_t,
+            that: *mut _cef_extension_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the handler for this extension. Will return NULL for internal\n extensions or if no handler was passed to\n cef_request_context_t::LoadExtension.\n"]
+    pub get_handler: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_extension_t) -> *mut _cef_extension_handler_t,
+    >,
+    #[doc = "\n Returns the request context that loaded this extension. Will return NULL\n for internal extensions or if the extension has been unloaded. See the\n cef_request_context_t::LoadExtension documentation for more information\n about loader contexts. Must be called on the browser process UI thread.\n"]
+    pub get_loader_context: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_extension_t) -> *mut _cef_request_context_t,
+    >,
+    #[doc = "\n Returns true (1) if this extension is currently loaded. Must be called on\n the browser process UI thread.\n"]
+    pub is_loaded: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_extension_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Unload this extension if it is not an internal extension and is currently\n loaded. Will result in a call to\n cef_extension_handler_t::OnExtensionUnloaded on success.\n"]
+    pub unload: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_extension_t)>,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_extension_t"][::std::mem::size_of::<_cef_extension_t>() - 52usize];
+    ["Alignment of _cef_extension_t"][::std::mem::align_of::<_cef_extension_t>() - 4usize];
+    ["Offset of field: _cef_extension_t::base"]
+        [::std::mem::offset_of!(_cef_extension_t, base) - 0usize];
+    ["Offset of field: _cef_extension_t::get_identifier"]
+        [::std::mem::offset_of!(_cef_extension_t, get_identifier) - 20usize];
+    ["Offset of field: _cef_extension_t::get_path"]
+        [::std::mem::offset_of!(_cef_extension_t, get_path) - 24usize];
+    ["Offset of field: _cef_extension_t::get_manifest"]
+        [::std::mem::offset_of!(_cef_extension_t, get_manifest) - 28usize];
+    ["Offset of field: _cef_extension_t::is_same"]
+        [::std::mem::offset_of!(_cef_extension_t, is_same) - 32usize];
+    ["Offset of field: _cef_extension_t::get_handler"]
+        [::std::mem::offset_of!(_cef_extension_t, get_handler) - 36usize];
+    ["Offset of field: _cef_extension_t::get_loader_context"]
+        [::std::mem::offset_of!(_cef_extension_t, get_loader_context) - 40usize];
+    ["Offset of field: _cef_extension_t::is_loaded"]
+        [::std::mem::offset_of!(_cef_extension_t, is_loaded) - 44usize];
+    ["Offset of field: _cef_extension_t::unload"]
+        [::std::mem::offset_of!(_cef_extension_t, unload) - 48usize];
+};
+#[doc = "\n Object representing an extension. Methods may be called on any thread unless\n otherwise indicated.\n\n WARNING: This API is deprecated and will be removed in ~M127.\n"]
+pub type cef_extension_t = _cef_extension_t;
+#[doc = "\n Callback structure used for asynchronous continuation of\n cef_extension_handler_t::GetExtensionResource.\n"]
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct _cef_get_extension_resource_callback_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Continue the request. Read the resource contents from |stream|.\n"]
+    pub cont: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_get_extension_resource_callback_t,
+            stream: *mut _cef_stream_reader_t,
+        ),
+    >,
+    #[doc = "\n Cancel the request.\n"]
+    pub cancel: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_get_extension_resource_callback_t),
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_get_extension_resource_callback_t"]
+        [::std::mem::size_of::<_cef_get_extension_resource_callback_t>() - 28usize];
+    ["Alignment of _cef_get_extension_resource_callback_t"]
+        [::std::mem::align_of::<_cef_get_extension_resource_callback_t>() - 4usize];
+    ["Offset of field: _cef_get_extension_resource_callback_t::base"]
+        [::std::mem::offset_of!(_cef_get_extension_resource_callback_t, base) - 0usize];
+    ["Offset of field: _cef_get_extension_resource_callback_t::cont"]
+        [::std::mem::offset_of!(_cef_get_extension_resource_callback_t, cont) - 20usize];
+    ["Offset of field: _cef_get_extension_resource_callback_t::cancel"]
+        [::std::mem::offset_of!(_cef_get_extension_resource_callback_t, cancel) - 24usize];
+};
+#[doc = "\n Callback structure used for asynchronous continuation of\n cef_extension_handler_t::GetExtensionResource.\n"]
+pub type cef_get_extension_resource_callback_t = _cef_get_extension_resource_callback_t;
+#[doc = "\n Implement this structure to handle events related to browser extensions. The\n functions of this structure will be called on the UI thread. See\n cef_request_context_t::LoadExtension for information about extension\n loading.\n\n WARNING: This API is deprecated and will be removed in ~M127.\n"]
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct _cef_extension_handler_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Called if the cef_request_context_t::LoadExtension request fails. |result|\n will be the error code.\n"]
+    pub on_extension_load_failed: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_extension_handler_t, result: cef_errorcode_t),
+    >,
+    #[doc = "\n Called if the cef_request_context_t::LoadExtension request succeeds.\n |extension| is the loaded extension.\n"]
+    pub on_extension_loaded: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_handler_t,
+            extension: *mut _cef_extension_t,
+        ),
+    >,
+    #[doc = "\n Called after the cef_extension_t::Unload request has completed.\n"]
+    pub on_extension_unloaded: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_handler_t,
+            extension: *mut _cef_extension_t,
+        ),
+    >,
+    #[doc = "\n Called when an extension needs a browser to host a background script\n specified via the \"background\" manifest key. The browser will have no\n visible window and cannot be displayed. |extension| is the extension that\n is loading the background script. |url| is an internally generated\n reference to an HTML page that will be used to load the background script\n via a \"<script>\" src attribute. To allow creation of the browser\n optionally modify |client| and |settings| and return false (0). To cancel\n creation of the browser (and consequently cancel load of the background\n script) return true (1). Successful creation will be indicated by a call\n to cef_life_span_handler_t::OnAfterCreated, and\n cef_browser_host_t::IsBackgroundHost will return true (1) for the\n resulting browser. See https://developer.chrome.com/extensions/event_pages\n for more information about extension background script usage.\n"]
+    pub on_before_background_browser: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_handler_t,
+            extension: *mut _cef_extension_t,
+            url: *const cef_string_t,
+            client: *mut *mut _cef_client_t,
+            settings: *mut _cef_browser_settings_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Called when an extension API (e.g. chrome.tabs.create) requests creation\n of a new browser. |extension| and |browser| are the source of the API\n call. |active_browser| may optionally be specified via the windowId\n property or returned via the get_active_browser() callback and provides\n the default |client| and |settings| values for the new browser. |index| is\n the position value optionally specified via the index property. |url| is\n the URL that will be loaded in the browser. |active| is true (1) if the\n new browser should be active when opened.  To allow creation of the\n browser optionally modify |windowInfo|, |client| and |settings| and return\n false (0). To cancel creation of the browser return true (1). Successful\n creation will be indicated by a call to\n cef_life_span_handler_t::OnAfterCreated. Any modifications to |windowInfo|\n will be ignored if |active_browser| is wrapped in a cef_browser_view_t.\n"]
+    pub on_before_browser: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_handler_t,
+            extension: *mut _cef_extension_t,
+            browser: *mut _cef_browser_t,
+            active_browser: *mut _cef_browser_t,
+            index: ::std::os::raw::c_int,
+            url: *const cef_string_t,
+            active: ::std::os::raw::c_int,
+            windowInfo: *mut _cef_window_info_t,
+            client: *mut *mut _cef_client_t,
+            settings: *mut _cef_browser_settings_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Called when no tabId is specified to an extension API call that accepts a\n tabId parameter (e.g. chrome.tabs.*). |extension| and |browser| are the\n source of the API call. Return the browser that will be acted on by the\n API call or return NULL to act on |browser|. The returned browser must\n share the same cef_request_context_t as |browser|. Incognito browsers\n should not be considered unless the source extension has incognito access\n enabled, in which case |include_incognito| will be true (1).\n"]
+    pub get_active_browser: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_handler_t,
+            extension: *mut _cef_extension_t,
+            browser: *mut _cef_browser_t,
+            include_incognito: ::std::os::raw::c_int,
+        ) -> *mut _cef_browser_t,
+    >,
+    #[doc = "\n Called when the tabId associated with |target_browser| is specified to an\n extension API call that accepts a tabId parameter (e.g. chrome.tabs.*).\n |extension| and |browser| are the source of the API call. Return true (1)\n to allow access of false (0) to deny access. Access to incognito browsers\n should not be allowed unless the source extension has incognito access\n enabled, in which case |include_incognito| will be true (1).\n"]
+    pub can_access_browser: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_handler_t,
+            extension: *mut _cef_extension_t,
+            browser: *mut _cef_browser_t,
+            include_incognito: ::std::os::raw::c_int,
+            target_browser: *mut _cef_browser_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Called to retrieve an extension resource that would normally be loaded\n from disk (e.g. if a file parameter is specified to\n chrome.tabs.executeScript). |extension| and |browser| are the source of\n the resource request. |file| is the requested relative file path. To\n handle the resource request return true (1) and execute |callback| either\n synchronously or asynchronously. For the default behavior which reads the\n resource from the extension directory on disk return false (0).\n Localization substitutions will not be applied to resources handled via\n this function.\n"]
+    pub get_extension_resource: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_extension_handler_t,
+            extension: *mut _cef_extension_t,
+            browser: *mut _cef_browser_t,
+            file: *const cef_string_t,
+            callback: *mut _cef_get_extension_resource_callback_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_extension_handler_t"]
+        [::std::mem::size_of::<_cef_extension_handler_t>() - 52usize];
+    ["Alignment of _cef_extension_handler_t"]
+        [::std::mem::align_of::<_cef_extension_handler_t>() - 4usize];
+    ["Offset of field: _cef_extension_handler_t::base"]
+        [::std::mem::offset_of!(_cef_extension_handler_t, base) - 0usize];
+    ["Offset of field: _cef_extension_handler_t::on_extension_load_failed"]
+        [::std::mem::offset_of!(_cef_extension_handler_t, on_extension_load_failed) - 20usize];
+    ["Offset of field: _cef_extension_handler_t::on_extension_loaded"]
+        [::std::mem::offset_of!(_cef_extension_handler_t, on_extension_loaded) - 24usize];
+    ["Offset of field: _cef_extension_handler_t::on_extension_unloaded"]
+        [::std::mem::offset_of!(_cef_extension_handler_t, on_extension_unloaded) - 28usize];
+    ["Offset of field: _cef_extension_handler_t::on_before_background_browser"]
+        [::std::mem::offset_of!(_cef_extension_handler_t, on_before_background_browser) - 32usize];
+    ["Offset of field: _cef_extension_handler_t::on_before_browser"]
+        [::std::mem::offset_of!(_cef_extension_handler_t, on_before_browser) - 36usize];
+    ["Offset of field: _cef_extension_handler_t::get_active_browser"]
+        [::std::mem::offset_of!(_cef_extension_handler_t, get_active_browser) - 40usize];
+    ["Offset of field: _cef_extension_handler_t::can_access_browser"]
+        [::std::mem::offset_of!(_cef_extension_handler_t, can_access_browser) - 44usize];
+    ["Offset of field: _cef_extension_handler_t::get_extension_resource"]
+        [::std::mem::offset_of!(_cef_extension_handler_t, get_extension_resource) - 48usize];
+};
+#[doc = "\n Implement this structure to handle events related to browser extensions. The\n functions of this structure will be called on the UI thread. See\n cef_request_context_t::LoadExtension for information about extension\n loading.\n\n WARNING: This API is deprecated and will be removed in ~M127.\n"]
+pub type cef_extension_handler_t = _cef_extension_handler_t;
 #[doc = "\n Supports discovery of and communication with media devices on the local\n network via the Cast and DIAL protocols. The functions of this structure may\n be called on any browser process thread unless otherwise indicated.\n"]
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -7515,6 +7532,43 @@ pub struct _cef_request_context_t {
             callback: *mut _cef_resolve_callback_t,
         ),
     >,
+    #[doc = "\n Load an extension.\n\n If extension resources will be read from disk using the default load\n implementation then |root_directory| should be the absolute path to the\n extension resources directory and |manifest| should be NULL. If extension\n resources will be provided by the client (e.g. via cef_request_handler_t\n and/or cef_extension_handler_t) then |root_directory| should be a path\n component unique to the extension (if not absolute this will be internally\n prefixed with the PK_DIR_RESOURCES path) and |manifest| should contain the\n contents that would otherwise be read from the \"manifest.json\" file on\n disk.\n\n The loaded extension will be accessible in all contexts sharing the same\n storage (HasExtension returns true (1)). However, only the context on\n which this function was called is considered the loader (DidLoadExtension\n returns true (1)) and only the loader will receive\n cef_request_context_handler_t callbacks for the extension.\n\n cef_extension_handler_t::OnExtensionLoaded will be called on load success\n or cef_extension_handler_t::OnExtensionLoadFailed will be called on load\n failure.\n\n If the extension specifies a background script via the \"background\"\n manifest key then cef_extension_handler_t::OnBeforeBackgroundBrowser will\n be called to create the background browser. See that function for\n additional information about background scripts.\n\n For visible extension views the client application should evaluate the\n manifest to determine the correct extension URL to load and then pass that\n URL to the cef_browser_host_t::CreateBrowser* function after the extension\n has loaded. For example, the client can look for the \"browser_action\"\n manifest key as documented at\n https://developer.chrome.com/extensions/browserAction. Extension URLs take\n the form \"chrome-extension://<extension_id>/<path>\".\n\n Browsers that host extensions differ from normal browsers as follows:\n  - Can access chrome.* JavaScript APIs if allowed by the manifest. Visit\n    chrome://extensions-support for the list of extension APIs currently\n    supported by CEF.\n  - Main frame navigation to non-extension content is blocked.\n  - Pinch-zooming is disabled.\n  - CefBrowserHost::GetExtension returns the hosted extension.\n  - CefBrowserHost::IsBackgroundHost returns true for background hosts.\n\n See https://developer.chrome.com/extensions for extension implementation\n and usage documentation.\n\n WARNING: This function is deprecated and will be removed in ~M127.\n"]
+    pub load_extension: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_request_context_t,
+            root_directory: *const cef_string_t,
+            manifest: *mut _cef_dictionary_value_t,
+            handler: *mut _cef_extension_handler_t,
+        ),
+    >,
+    #[doc = "\n Returns true (1) if this context was used to load the extension identified\n by |extension_id|. Other contexts sharing the same storage will also have\n access to the extension (see HasExtension). This function must be called\n on the browser process UI thread.\n\n WARNING: This function is deprecated and will be removed in ~M127.\n"]
+    pub did_load_extension: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_request_context_t,
+            extension_id: *const cef_string_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns true (1) if this context has access to the extension identified by\n |extension_id|. This may not be the context that was used to load the\n extension (see DidLoadExtension). This function must be called on the\n browser process UI thread.\n\n WARNING: This function is deprecated and will be removed in ~M127.\n"]
+    pub has_extension: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_request_context_t,
+            extension_id: *const cef_string_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Retrieve the list of all extensions that this context has access to (see\n HasExtension). |extension_ids| will be populated with the list of\n extension ID values. Returns true (1) on success. This function must be\n called on the browser process UI thread.\n\n WARNING: This function is deprecated and will be removed in ~M127.\n"]
+    pub get_extensions: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_request_context_t,
+            extension_ids: cef_string_list_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the extension matching |extension_id| or NULL if no matching\n extension is accessible in this context (see HasExtension). This function\n must be called on the browser process UI thread.\n\n WARNING: This function is deprecated and will be removed in ~M127.\n"]
+    pub get_extension: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_request_context_t,
+            extension_id: *const cef_string_t,
+        ) -> *mut _cef_extension_t,
+    >,
     #[doc = "\n Returns the MediaRouter object associated with this context.  If\n |callback| is non-NULL it will be executed asnychronously on the UI thread\n after the manager's context has been initialized.\n"]
     pub get_media_router: ::std::option::Option<
         unsafe extern "stdcall" fn(
@@ -7583,7 +7637,7 @@ pub struct _cef_request_context_t {
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_request_context_t"][::std::mem::size_of::<_cef_request_context_t>() - 124usize];
+    ["Size of _cef_request_context_t"][::std::mem::size_of::<_cef_request_context_t>() - 144usize];
     ["Alignment of _cef_request_context_t"]
         [::std::mem::align_of::<_cef_request_context_t>() - 4usize];
     ["Offset of field: _cef_request_context_t::base"]
@@ -7612,26 +7666,36 @@ const _: () = {
         [::std::mem::offset_of!(_cef_request_context_t, close_all_connections) - 80usize];
     ["Offset of field: _cef_request_context_t::resolve_host"]
         [::std::mem::offset_of!(_cef_request_context_t, resolve_host) - 84usize];
+    ["Offset of field: _cef_request_context_t::load_extension"]
+        [::std::mem::offset_of!(_cef_request_context_t, load_extension) - 88usize];
+    ["Offset of field: _cef_request_context_t::did_load_extension"]
+        [::std::mem::offset_of!(_cef_request_context_t, did_load_extension) - 92usize];
+    ["Offset of field: _cef_request_context_t::has_extension"]
+        [::std::mem::offset_of!(_cef_request_context_t, has_extension) - 96usize];
+    ["Offset of field: _cef_request_context_t::get_extensions"]
+        [::std::mem::offset_of!(_cef_request_context_t, get_extensions) - 100usize];
+    ["Offset of field: _cef_request_context_t::get_extension"]
+        [::std::mem::offset_of!(_cef_request_context_t, get_extension) - 104usize];
     ["Offset of field: _cef_request_context_t::get_media_router"]
-        [::std::mem::offset_of!(_cef_request_context_t, get_media_router) - 88usize];
+        [::std::mem::offset_of!(_cef_request_context_t, get_media_router) - 108usize];
     ["Offset of field: _cef_request_context_t::get_website_setting"]
-        [::std::mem::offset_of!(_cef_request_context_t, get_website_setting) - 92usize];
+        [::std::mem::offset_of!(_cef_request_context_t, get_website_setting) - 112usize];
     ["Offset of field: _cef_request_context_t::set_website_setting"]
-        [::std::mem::offset_of!(_cef_request_context_t, set_website_setting) - 96usize];
+        [::std::mem::offset_of!(_cef_request_context_t, set_website_setting) - 116usize];
     ["Offset of field: _cef_request_context_t::get_content_setting"]
-        [::std::mem::offset_of!(_cef_request_context_t, get_content_setting) - 100usize];
+        [::std::mem::offset_of!(_cef_request_context_t, get_content_setting) - 120usize];
     ["Offset of field: _cef_request_context_t::set_content_setting"]
-        [::std::mem::offset_of!(_cef_request_context_t, set_content_setting) - 104usize];
+        [::std::mem::offset_of!(_cef_request_context_t, set_content_setting) - 124usize];
     ["Offset of field: _cef_request_context_t::set_chrome_color_scheme"]
-        [::std::mem::offset_of!(_cef_request_context_t, set_chrome_color_scheme) - 108usize];
+        [::std::mem::offset_of!(_cef_request_context_t, set_chrome_color_scheme) - 128usize];
     ["Offset of field: _cef_request_context_t::get_chrome_color_scheme_mode"]
-        [::std::mem::offset_of!(_cef_request_context_t, get_chrome_color_scheme_mode) - 112usize];
+        [::std::mem::offset_of!(_cef_request_context_t, get_chrome_color_scheme_mode) - 132usize];
     ["Offset of field: _cef_request_context_t::get_chrome_color_scheme_color"]
-        [::std::mem::offset_of!(_cef_request_context_t, get_chrome_color_scheme_color) - 116usize];
+        [::std::mem::offset_of!(_cef_request_context_t, get_chrome_color_scheme_color) - 136usize];
     ["Offset of field: _cef_request_context_t::get_chrome_color_scheme_variant"][::std::mem::offset_of!(
         _cef_request_context_t,
         get_chrome_color_scheme_variant
-    ) - 120usize];
+    ) - 140usize];
 };
 #[doc = "\n A request context provides request handling for a set of related browser or\n URL request objects. A request context can be specified when creating a new\n browser via the cef_browser_host_t static factory functions or when creating\n a new URL request via the cef_urlrequest_t static factory functions. Browser\n objects with different request contexts will never be hosted in the same\n render process. Browser objects with the same request context may or may not\n be hosted in the same render process depending on the process model. Browser\n objects created indirectly via the JavaScript window.open function or\n targeted links will share the same render process and the same request\n context as the source browser. When running in single-process mode there is\n only a single render process (the main process) and so all browsers created\n in single-process mode will share the same request context. This will be the\n first request context passed into a cef_browser_host_t static factory\n function and all other request context objects will be ignored.\n"]
 pub type cef_request_context_t = _cef_request_context_t;
@@ -7922,19 +7986,15 @@ pub struct _cef_browser_host_t {
     pub get_browser: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> *mut _cef_browser_t,
     >,
-    #[doc = "\n Request that the browser close. Closing a browser is a multi-stage process\n that may complete either synchronously or asynchronously, and involves\n callbacks such as cef_life_span_handler_t::DoClose (Alloy style only),\n cef_life_span_handler_t::OnBeforeClose, and a top-level window close\n handler such as cef_window_delegate_t::CanClose (or platform-specific\n equivalent). In some cases a close request may be delayed or canceled by\n the user. Using try_close_browser() instead of close_browser() is\n recommended for most use cases. See cef_life_span_handler_t::do_close()\n documentation for detailed usage and examples.\n\n If |force_close| is false (0) then JavaScript unload handlers, if any, may\n be fired and the close may be delayed or canceled by the user. If\n |force_close| is true (1) then the user will not be prompted and the close\n will proceed immediately (possibly asynchronously). If browser close is\n delayed and not canceled the default behavior is to call the top-level\n window close handler once the browser is ready to be closed. This default\n behavior can be changed for Alloy style browsers by implementing\n cef_life_span_handler_t::do_close(). is_ready_to_be_closed() can be used\n to detect mandatory browser close events when customizing close behavior\n on the browser process UI thread.\n"]
+    #[doc = "\n Request that the browser close. The JavaScript 'onbeforeunload' event will\n be fired. If |force_close| is false (0) the event handler, if any, will be\n allowed to prompt the user and the user can optionally cancel the close.\n If |force_close| is true (1) the prompt will not be displayed and the\n close will proceed. Results in a call to\n cef_life_span_handler_t::do_close() if the event handler allows the close\n or if |force_close| is true (1). See cef_life_span_handler_t::do_close()\n documentation for additional usage information.\n"]
     pub close_browser: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_browser_host_t,
             force_close: ::std::os::raw::c_int,
         ),
     >,
-    #[doc = "\n Helper for closing a browser. This is similar in behavior to\n CLoseBrowser(false (0)) but returns a boolean to reflect the immediate\n close status. Call this function from a top-level window close handler\n such as cef_window_delegate_t::CanClose (or platform-specific equivalent)\n to request that the browser close, and return the result to indicate if\n the window close should proceed. Returns false (0) if the close will be\n delayed (JavaScript unload handlers triggered but still pending) or true\n (1) if the close will proceed immediately (possibly asynchronously). See\n close_browser() documentation for additional usage information. This\n function must be called on the browser process UI thread.\n"]
+    #[doc = "\n Helper for closing a browser. Call this function from the top-level window\n close handler (if any). Internally this calls CloseBrowser(false (0)) if\n the close has not yet been initiated. This function returns false (0)\n while the close is pending and true (1) after the close has completed. See\n close_browser() and cef_life_span_handler_t::do_close() documentation for\n additional usage information. This function must be called on the browser\n process UI thread.\n"]
     pub try_close_browser: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Returns true (1) if the browser is ready to be closed, meaning that the\n close has already been initiated and that JavaScript unload handlers have\n already executed or should be ignored. This can be used from a top-level\n window close handler such as cef_window_delegate_t::CanClose (or platform-\n specific equivalent) to distringuish between potentially cancelable\n browser close events (like the user clicking the top-level window close\n button before browser close has started) and mandatory browser close\n events (like JavaScript `window.close()` or after browser close has\n started in response to [Try]close_browser()). Not completing the browser\n close for mandatory close events (when this function returns true (1))\n will leave the browser in a partially closed state that interferes with\n proper functioning. See close_browser() documentation for additional usage\n information. This function must be called on the browser process UI\n thread.\n"]
-    pub is_ready_to_be_closed: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> ::std::os::raw::c_int,
     >,
     #[doc = "\n Set whether the browser is focused.\n"]
@@ -7947,10 +8007,6 @@ pub struct _cef_browser_host_t {
     #[doc = "\n Retrieve the window handle (if any) of the browser that opened this\n browser. Will return NULL for non-popup browsers or if this browser is\n wrapped in a cef_browser_view_t. This function can be used in combination\n with custom handling of modal windows.\n"]
     pub get_opener_window_handle:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> HWND>,
-    #[doc = "\n Retrieve the unique identifier of the browser that opened this browser.\n Will return 0 for non-popup browsers.\n"]
-    pub get_opener_identifier: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> ::std::os::raw::c_int,
-    >,
     #[doc = "\n Returns true (1) if this browser is wrapped in a cef_browser_view_t.\n"]
     pub has_view: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> ::std::os::raw::c_int,
@@ -7974,7 +8030,7 @@ pub struct _cef_browser_host_t {
     pub zoom: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t, command: cef_zoom_command_t),
     >,
-    #[doc = "\n Get the default zoom level. This value will be 0.0 by default but can be\n configured. This function can only be called on the UI thread.\n"]
+    #[doc = "\n Get the default zoom level. This value will be 0.0 by default but can be\n configured with the Chrome runtime. This function can only be called on\n the UI thread.\n"]
     pub get_default_zoom_level:
         ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> f64>,
     #[doc = "\n Get the current zoom level. This function can only be called on the UI\n thread.\n"]
@@ -8263,6 +8319,14 @@ pub struct _cef_browser_host_t {
             max_size: *const cef_size_t,
         ),
     >,
+    #[doc = "\n Returns the extension hosted in this browser or NULL if no extension is\n hosted. See cef_request_context_t::LoadExtension for details.\n\n WARNING: This function is deprecated and will be removed in ~M127.\n"]
+    pub get_extension: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> *mut _cef_extension_t,
+    >,
+    #[doc = "\n Returns true (1) if this browser is hosting an extension background\n script. Background hosts do not have a window and are not displayable. See\n cef_request_context_t::LoadExtension for details.\n\n WARNING: This function is deprecated and will be removed in ~M127.\n"]
+    pub is_background_host: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> ::std::os::raw::c_int,
+    >,
     #[doc = "\n Set whether the browser's audio is muted.\n"]
     pub set_audio_muted: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t, mute: ::std::os::raw::c_int),
@@ -8275,21 +8339,21 @@ pub struct _cef_browser_host_t {
     pub is_fullscreen: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_host_t) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Requests the renderer to exit browser fullscreen. In most cases exiting\n window fullscreen should also exit browser fullscreen. With Alloy style\n this function should be called in response to a user action such as\n clicking the green traffic light button on MacOS\n (cef_window_delegate_t::OnWindowFullscreenTransition callback) or pressing\n the \"ESC\" key (cef_keyboard_handler_t::OnPreKeyEvent callback). With\n Chrome style these standard exit actions are handled internally but\n new/additional user actions can use this function. Set |will_cause_resize|\n to true (1) if exiting browser fullscreen will cause a view resize.\n"]
+    #[doc = "\n Requests the renderer to exit browser fullscreen. In most cases exiting\n window fullscreen should also exit browser fullscreen. With the Alloy\n runtime this function should be called in response to a user action such\n as clicking the green traffic light button on MacOS\n (cef_window_delegate_t::OnWindowFullscreenTransition callback) or pressing\n the \"ESC\" key (cef_keyboard_handler_t::OnPreKeyEvent callback). With the\n Chrome runtime these standard exit actions are handled internally but\n new/additional user actions can use this function. Set |will_cause_resize|\n to true (1) if exiting browser fullscreen will cause a view resize.\n"]
     pub exit_fullscreen: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_browser_host_t,
             will_cause_resize: ::std::os::raw::c_int,
         ),
     >,
-    #[doc = "\n Returns true (1) if a Chrome command is supported and enabled. Values for\n |command_id| can be found in the cef_command_ids.h file. This function can\n only be called on the UI thread. Only used with Chrome style.\n"]
+    #[doc = "\n Returns true (1) if a Chrome command is supported and enabled. Values for\n |command_id| can be found in the cef_command_ids.h file. This function can\n only be called on the UI thread. Only used with the Chrome runtime.\n"]
     pub can_execute_chrome_command: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_browser_host_t,
             command_id: ::std::os::raw::c_int,
         ) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Execute a Chrome command. Values for |command_id| can be found in the\n cef_command_ids.h file. |disposition| provides information about the\n intended command target. Only used with Chrome style.\n"]
+    #[doc = "\n Execute a Chrome command. Values for |command_id| can be found in the\n cef_command_ids.h file. |disposition| provides information about the\n intended command target. Only used with the Chrome runtime.\n"]
     pub execute_chrome_command: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_browser_host_t,
@@ -8318,120 +8382,120 @@ const _: () = {
         [::std::mem::offset_of!(_cef_browser_host_t, close_browser) - 24usize];
     ["Offset of field: _cef_browser_host_t::try_close_browser"]
         [::std::mem::offset_of!(_cef_browser_host_t, try_close_browser) - 28usize];
-    ["Offset of field: _cef_browser_host_t::is_ready_to_be_closed"]
-        [::std::mem::offset_of!(_cef_browser_host_t, is_ready_to_be_closed) - 32usize];
     ["Offset of field: _cef_browser_host_t::set_focus"]
-        [::std::mem::offset_of!(_cef_browser_host_t, set_focus) - 36usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, set_focus) - 32usize];
     ["Offset of field: _cef_browser_host_t::get_window_handle"]
-        [::std::mem::offset_of!(_cef_browser_host_t, get_window_handle) - 40usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, get_window_handle) - 36usize];
     ["Offset of field: _cef_browser_host_t::get_opener_window_handle"]
-        [::std::mem::offset_of!(_cef_browser_host_t, get_opener_window_handle) - 44usize];
-    ["Offset of field: _cef_browser_host_t::get_opener_identifier"]
-        [::std::mem::offset_of!(_cef_browser_host_t, get_opener_identifier) - 48usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, get_opener_window_handle) - 40usize];
     ["Offset of field: _cef_browser_host_t::has_view"]
-        [::std::mem::offset_of!(_cef_browser_host_t, has_view) - 52usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, has_view) - 44usize];
     ["Offset of field: _cef_browser_host_t::get_client"]
-        [::std::mem::offset_of!(_cef_browser_host_t, get_client) - 56usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, get_client) - 48usize];
     ["Offset of field: _cef_browser_host_t::get_request_context"]
-        [::std::mem::offset_of!(_cef_browser_host_t, get_request_context) - 60usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, get_request_context) - 52usize];
     ["Offset of field: _cef_browser_host_t::can_zoom"]
-        [::std::mem::offset_of!(_cef_browser_host_t, can_zoom) - 64usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, can_zoom) - 56usize];
     ["Offset of field: _cef_browser_host_t::zoom"]
-        [::std::mem::offset_of!(_cef_browser_host_t, zoom) - 68usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, zoom) - 60usize];
     ["Offset of field: _cef_browser_host_t::get_default_zoom_level"]
-        [::std::mem::offset_of!(_cef_browser_host_t, get_default_zoom_level) - 72usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, get_default_zoom_level) - 64usize];
     ["Offset of field: _cef_browser_host_t::get_zoom_level"]
-        [::std::mem::offset_of!(_cef_browser_host_t, get_zoom_level) - 76usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, get_zoom_level) - 68usize];
     ["Offset of field: _cef_browser_host_t::set_zoom_level"]
-        [::std::mem::offset_of!(_cef_browser_host_t, set_zoom_level) - 80usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, set_zoom_level) - 72usize];
     ["Offset of field: _cef_browser_host_t::run_file_dialog"]
-        [::std::mem::offset_of!(_cef_browser_host_t, run_file_dialog) - 84usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, run_file_dialog) - 76usize];
     ["Offset of field: _cef_browser_host_t::start_download"]
-        [::std::mem::offset_of!(_cef_browser_host_t, start_download) - 88usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, start_download) - 80usize];
     ["Offset of field: _cef_browser_host_t::download_image"]
-        [::std::mem::offset_of!(_cef_browser_host_t, download_image) - 92usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, download_image) - 84usize];
     ["Offset of field: _cef_browser_host_t::print"]
-        [::std::mem::offset_of!(_cef_browser_host_t, print) - 96usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, print) - 88usize];
     ["Offset of field: _cef_browser_host_t::print_to_pdf"]
-        [::std::mem::offset_of!(_cef_browser_host_t, print_to_pdf) - 100usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, print_to_pdf) - 92usize];
     ["Offset of field: _cef_browser_host_t::find"]
-        [::std::mem::offset_of!(_cef_browser_host_t, find) - 104usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, find) - 96usize];
     ["Offset of field: _cef_browser_host_t::stop_finding"]
-        [::std::mem::offset_of!(_cef_browser_host_t, stop_finding) - 108usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, stop_finding) - 100usize];
     ["Offset of field: _cef_browser_host_t::show_dev_tools"]
-        [::std::mem::offset_of!(_cef_browser_host_t, show_dev_tools) - 112usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, show_dev_tools) - 104usize];
     ["Offset of field: _cef_browser_host_t::close_dev_tools"]
-        [::std::mem::offset_of!(_cef_browser_host_t, close_dev_tools) - 116usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, close_dev_tools) - 108usize];
     ["Offset of field: _cef_browser_host_t::has_dev_tools"]
-        [::std::mem::offset_of!(_cef_browser_host_t, has_dev_tools) - 120usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, has_dev_tools) - 112usize];
     ["Offset of field: _cef_browser_host_t::send_dev_tools_message"]
-        [::std::mem::offset_of!(_cef_browser_host_t, send_dev_tools_message) - 124usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, send_dev_tools_message) - 116usize];
     ["Offset of field: _cef_browser_host_t::execute_dev_tools_method"]
-        [::std::mem::offset_of!(_cef_browser_host_t, execute_dev_tools_method) - 128usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, execute_dev_tools_method) - 120usize];
     ["Offset of field: _cef_browser_host_t::add_dev_tools_message_observer"]
-        [::std::mem::offset_of!(_cef_browser_host_t, add_dev_tools_message_observer) - 132usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, add_dev_tools_message_observer) - 124usize];
     ["Offset of field: _cef_browser_host_t::get_navigation_entries"]
-        [::std::mem::offset_of!(_cef_browser_host_t, get_navigation_entries) - 136usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, get_navigation_entries) - 128usize];
     ["Offset of field: _cef_browser_host_t::replace_misspelling"]
-        [::std::mem::offset_of!(_cef_browser_host_t, replace_misspelling) - 140usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, replace_misspelling) - 132usize];
     ["Offset of field: _cef_browser_host_t::add_word_to_dictionary"]
-        [::std::mem::offset_of!(_cef_browser_host_t, add_word_to_dictionary) - 144usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, add_word_to_dictionary) - 136usize];
     ["Offset of field: _cef_browser_host_t::is_window_rendering_disabled"]
-        [::std::mem::offset_of!(_cef_browser_host_t, is_window_rendering_disabled) - 148usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, is_window_rendering_disabled) - 140usize];
     ["Offset of field: _cef_browser_host_t::was_resized"]
-        [::std::mem::offset_of!(_cef_browser_host_t, was_resized) - 152usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, was_resized) - 144usize];
     ["Offset of field: _cef_browser_host_t::was_hidden"]
-        [::std::mem::offset_of!(_cef_browser_host_t, was_hidden) - 156usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, was_hidden) - 148usize];
     ["Offset of field: _cef_browser_host_t::notify_screen_info_changed"]
-        [::std::mem::offset_of!(_cef_browser_host_t, notify_screen_info_changed) - 160usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, notify_screen_info_changed) - 152usize];
     ["Offset of field: _cef_browser_host_t::invalidate"]
-        [::std::mem::offset_of!(_cef_browser_host_t, invalidate) - 164usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, invalidate) - 156usize];
     ["Offset of field: _cef_browser_host_t::send_external_begin_frame"]
-        [::std::mem::offset_of!(_cef_browser_host_t, send_external_begin_frame) - 168usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, send_external_begin_frame) - 160usize];
     ["Offset of field: _cef_browser_host_t::send_key_event"]
-        [::std::mem::offset_of!(_cef_browser_host_t, send_key_event) - 172usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, send_key_event) - 164usize];
     ["Offset of field: _cef_browser_host_t::send_mouse_click_event"]
-        [::std::mem::offset_of!(_cef_browser_host_t, send_mouse_click_event) - 176usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, send_mouse_click_event) - 168usize];
     ["Offset of field: _cef_browser_host_t::send_mouse_move_event"]
-        [::std::mem::offset_of!(_cef_browser_host_t, send_mouse_move_event) - 180usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, send_mouse_move_event) - 172usize];
     ["Offset of field: _cef_browser_host_t::send_mouse_wheel_event"]
-        [::std::mem::offset_of!(_cef_browser_host_t, send_mouse_wheel_event) - 184usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, send_mouse_wheel_event) - 176usize];
     ["Offset of field: _cef_browser_host_t::send_touch_event"]
-        [::std::mem::offset_of!(_cef_browser_host_t, send_touch_event) - 188usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, send_touch_event) - 180usize];
     ["Offset of field: _cef_browser_host_t::send_capture_lost_event"]
-        [::std::mem::offset_of!(_cef_browser_host_t, send_capture_lost_event) - 192usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, send_capture_lost_event) - 184usize];
     ["Offset of field: _cef_browser_host_t::notify_move_or_resize_started"]
-        [::std::mem::offset_of!(_cef_browser_host_t, notify_move_or_resize_started) - 196usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, notify_move_or_resize_started) - 188usize];
     ["Offset of field: _cef_browser_host_t::get_windowless_frame_rate"]
-        [::std::mem::offset_of!(_cef_browser_host_t, get_windowless_frame_rate) - 200usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, get_windowless_frame_rate) - 192usize];
     ["Offset of field: _cef_browser_host_t::set_windowless_frame_rate"]
-        [::std::mem::offset_of!(_cef_browser_host_t, set_windowless_frame_rate) - 204usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, set_windowless_frame_rate) - 196usize];
     ["Offset of field: _cef_browser_host_t::ime_set_composition"]
-        [::std::mem::offset_of!(_cef_browser_host_t, ime_set_composition) - 208usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, ime_set_composition) - 200usize];
     ["Offset of field: _cef_browser_host_t::ime_commit_text"]
-        [::std::mem::offset_of!(_cef_browser_host_t, ime_commit_text) - 212usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, ime_commit_text) - 204usize];
     ["Offset of field: _cef_browser_host_t::ime_finish_composing_text"]
-        [::std::mem::offset_of!(_cef_browser_host_t, ime_finish_composing_text) - 216usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, ime_finish_composing_text) - 208usize];
     ["Offset of field: _cef_browser_host_t::ime_cancel_composition"]
-        [::std::mem::offset_of!(_cef_browser_host_t, ime_cancel_composition) - 220usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, ime_cancel_composition) - 212usize];
     ["Offset of field: _cef_browser_host_t::drag_target_drag_enter"]
-        [::std::mem::offset_of!(_cef_browser_host_t, drag_target_drag_enter) - 224usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, drag_target_drag_enter) - 216usize];
     ["Offset of field: _cef_browser_host_t::drag_target_drag_over"]
-        [::std::mem::offset_of!(_cef_browser_host_t, drag_target_drag_over) - 228usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, drag_target_drag_over) - 220usize];
     ["Offset of field: _cef_browser_host_t::drag_target_drag_leave"]
-        [::std::mem::offset_of!(_cef_browser_host_t, drag_target_drag_leave) - 232usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, drag_target_drag_leave) - 224usize];
     ["Offset of field: _cef_browser_host_t::drag_target_drop"]
-        [::std::mem::offset_of!(_cef_browser_host_t, drag_target_drop) - 236usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, drag_target_drop) - 228usize];
     ["Offset of field: _cef_browser_host_t::drag_source_ended_at"]
-        [::std::mem::offset_of!(_cef_browser_host_t, drag_source_ended_at) - 240usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, drag_source_ended_at) - 232usize];
     ["Offset of field: _cef_browser_host_t::drag_source_system_drag_ended"]
-        [::std::mem::offset_of!(_cef_browser_host_t, drag_source_system_drag_ended) - 244usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, drag_source_system_drag_ended) - 236usize];
     ["Offset of field: _cef_browser_host_t::get_visible_navigation_entry"]
-        [::std::mem::offset_of!(_cef_browser_host_t, get_visible_navigation_entry) - 248usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, get_visible_navigation_entry) - 240usize];
     ["Offset of field: _cef_browser_host_t::set_accessibility_state"]
-        [::std::mem::offset_of!(_cef_browser_host_t, set_accessibility_state) - 252usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, set_accessibility_state) - 244usize];
     ["Offset of field: _cef_browser_host_t::set_auto_resize_enabled"]
-        [::std::mem::offset_of!(_cef_browser_host_t, set_auto_resize_enabled) - 256usize];
+        [::std::mem::offset_of!(_cef_browser_host_t, set_auto_resize_enabled) - 248usize];
+    ["Offset of field: _cef_browser_host_t::get_extension"]
+        [::std::mem::offset_of!(_cef_browser_host_t, get_extension) - 252usize];
+    ["Offset of field: _cef_browser_host_t::is_background_host"]
+        [::std::mem::offset_of!(_cef_browser_host_t, is_background_host) - 256usize];
     ["Offset of field: _cef_browser_host_t::set_audio_muted"]
         [::std::mem::offset_of!(_cef_browser_host_t, set_audio_muted) - 260usize];
     ["Offset of field: _cef_browser_host_t::is_audio_muted"]
@@ -8471,12 +8535,6 @@ unsafe extern "C" {
         settings: *const _cef_browser_settings_t,
         extra_info: *mut _cef_dictionary_value_t,
         request_context: *mut _cef_request_context_t,
-    ) -> *mut cef_browser_t;
-}
-unsafe extern "C" {
-    #[doc = "\n Returns the browser (if any) with the specified identifier.\n"]
-    pub fn cef_browser_host_get_browser_by_identifier(
-        browser_id: ::std::os::raw::c_int,
     ) -> *mut cef_browser_t;
 }
 #[doc = "\n Implement this structure to handle audio events.\n"]
@@ -8550,7 +8608,7 @@ pub type cef_audio_handler_t = _cef_audio_handler_t;
 pub struct _cef_command_handler_t {
     #[doc = "\n Base structure.\n"]
     pub base: cef_base_ref_counted_t,
-    #[doc = "\n Called to execute a Chrome command triggered via menu selection or\n keyboard shortcut. Values for |command_id| can be found in the\n cef_command_ids.h file. |disposition| provides information about the\n intended command target. Return true (1) if the command was handled or\n false (0) for the default implementation. For context menu commands this\n will be called after cef_context_menu_handler_t::OnContextMenuCommand.\n Only used with Chrome style.\n"]
+    #[doc = "\n Called to execute a Chrome command triggered via menu selection or\n keyboard shortcut. Values for |command_id| can be found in the\n cef_command_ids.h file. |disposition| provides information about the\n intended command target. Return true (1) if the command was handled or\n false (0) for the default implementation. For context menu commands this\n will be called after cef_context_menu_handler_t::OnContextMenuCommand.\n Only used with the Chrome runtime.\n"]
     pub on_chrome_command: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_command_handler_t,
@@ -8559,7 +8617,7 @@ pub struct _cef_command_handler_t {
             disposition: cef_window_open_disposition_t,
         ) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Called to check if a Chrome app menu item should be visible. Values for\n |command_id| can be found in the cef_command_ids.h file. Only called for\n menu items that would be visible by default. Only used with Chrome style.\n"]
+    #[doc = "\n Called to check if a Chrome app menu item should be visible. Values for\n |command_id| can be found in the cef_command_ids.h file. Only called for\n menu items that would be visible by default. Only used with the Chrome\n runtime.\n"]
     pub is_chrome_app_menu_item_visible: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_command_handler_t,
@@ -8567,7 +8625,7 @@ pub struct _cef_command_handler_t {
             command_id: ::std::os::raw::c_int,
         ) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Called to check if a Chrome app menu item should be enabled. Values for\n |command_id| can be found in the cef_command_ids.h file. Only called for\n menu items that would be enabled by default. Only used with Chrome style.\n"]
+    #[doc = "\n Called to check if a Chrome app menu item should be enabled. Values for\n |command_id| can be found in the cef_command_ids.h file. Only called for\n menu items that would be enabled by default. Only used with the Chrome\n runtime.\n"]
     pub is_chrome_app_menu_item_enabled: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_command_handler_t,
@@ -8575,14 +8633,14 @@ pub struct _cef_command_handler_t {
             command_id: ::std::os::raw::c_int,
         ) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Called during browser creation to check if a Chrome page action icon\n should be visible. Only called for icons that would be visible by default.\n Only used with Chrome style.\n"]
+    #[doc = "\n Called during browser creation to check if a Chrome page action icon\n should be visible. Only called for icons that would be visible by default.\n Only used with the Chrome runtime.\n"]
     pub is_chrome_page_action_icon_visible: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_command_handler_t,
             icon_type: cef_chrome_page_action_icon_type_t,
         ) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Called during browser creation to check if a Chrome toolbar button should\n be visible. Only called for buttons that would be visible by default. Only\n used with Chrome style.\n"]
+    #[doc = "\n Called during browser creation to check if a Chrome toolbar button should\n be visible. Only called for buttons that would be visible by default. Only\n used with the Chrome runtime.\n"]
     pub is_chrome_toolbar_button_visible: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_command_handler_t,
@@ -9680,7 +9738,7 @@ pub struct _cef_display_handler_t {
             icon_urls: cef_string_list_t,
         ),
     >,
-    #[doc = "\n Called when web content in the page has toggled fullscreen mode. If\n |fullscreen| is true (1) the content will automatically be sized to fill\n the browser content area. If |fullscreen| is false (0) the content will\n automatically return to its original size and position. With Alloy style\n the client is responsible for triggering the fullscreen transition (for\n example, by calling cef_window_t::SetFullscreen when using Views). With\n Chrome style the fullscreen transition will be triggered automatically.\n The cef_window_delegate_t::OnWindowFullscreenTransition function will be\n called during the fullscreen transition for notification purposes.\n"]
+    #[doc = "\n Called when web content in the page has toggled fullscreen mode. If\n |fullscreen| is true (1) the content will automatically be sized to fill\n the browser content area. If |fullscreen| is false (0) the content will\n automatically return to its original size and position. With the Alloy\n runtime the client is responsible for triggering the fullscreen transition\n (for example, by calling cef_window_t::SetFullscreen when using Views).\n With the Chrome runtime the fullscreen transition will be triggered\n automatically. The cef_window_delegate_t::OnWindowFullscreenTransition\n function will be called during the fullscreen transition for notification\n purposes.\n"]
     pub on_fullscreen_mode_change: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_display_handler_t,
@@ -10137,13 +10195,13 @@ const _: () = {
 };
 #[doc = "\n Implement this structure to handle events related to focus. The functions of\n this structure will be called on the UI thread.\n"]
 pub type cef_focus_handler_t = _cef_focus_handler_t;
-#[doc = "\n Implement this structure to handle events related to cef_frame_t life span.\n The order of callbacks is:\n\n (1) During initial cef_browser_host_t creation and navigation of the main\n frame:\n - cef_frame_handler_t::OnFrameCreated => The initial main frame object has\n   been created. Any commands will be queued until the frame is attached.\n - cef_frame_handler_t::OnMainFrameChanged => The initial main frame object\n   has been assigned to the browser.\n - cef_life_span_handler_t::OnAfterCreated => The browser is now valid and\n   can be used.\n - cef_frame_handler_t::OnFrameAttached => The initial main frame object is\n   now connected to its peer in the renderer process. Commands can be routed.\n\n (2) During further cef_browser_host_t navigation/loading of the main frame\n     and/or sub-frames:\n - cef_frame_handler_t::OnFrameCreated => A new main frame or sub-frame\n   object has been created. Any commands will be queued until the frame is\n   attached.\n - cef_frame_handler_t::OnFrameAttached => A new main frame or sub-frame\n   object is now connected to its peer in the renderer process. Commands can\n   be routed.\n - cef_frame_handler_t::OnFrameDetached => An existing main frame or sub-\n   frame object has lost its connection to the renderer process. If multiple\n   objects are detached at the same time then notifications will be sent for\n   any sub-frame objects before the main frame object. Commands can no longer\n   be routed and will be discarded.\n - CefFremeHadler::OnFrameDestroyed => An existing main frame or sub-frame\n   object has been destroyed.\n - cef_frame_handler_t::OnMainFrameChanged => A new main frame object has\n   been assigned to the browser. This will only occur with cross-origin\n   navigation or re-navigation after renderer process termination (due to\n   crashes, etc).\n\n (3) During final cef_browser_host_t destruction of the main frame:\n - cef_frame_handler_t::OnFrameDetached => Any sub-frame objects have lost\n   their connection to the renderer process. Commands can no longer be routed\n   and will be discarded.\n - CefFreameHandler::OnFrameDestroyed => Any sub-frame objects have been\n   destroyed.\n - cef_life_span_handler_t::OnBeforeClose => The browser has been destroyed.\n - cef_frame_handler_t::OnFrameDetached => The main frame object have lost\n   its connection to the renderer process. Notifications will be sent for any\n   sub-frame objects before the main frame object. Commands can no longer be\n   routed and will be discarded.\n - CefFreameHandler::OnFrameDestroyed => The main frame object has been\n   destroyed.\n - cef_frame_handler_t::OnMainFrameChanged => The final main frame object has\n   been removed from the browser.\n\n Special handling applies for cross-origin loading on creation/navigation of\n sub-frames, and cross-origin loading on creation of new popup browsers. A\n temporary frame will first be created in the parent frame's renderer\n process. This temporary frame will never attach and will be discarded after\n the real cross-origin frame is created in the new/target renderer process.\n The client will receive creation callbacks for the temporary frame, followed\n by cross-origin navigation callbacks (2) for the transition from the\n temporary frame to the real frame. The temporary frame will not receive or\n execute commands during this transitional period (any sent commands will be\n discarded).\n\n When the main frame navigates to a different origin the OnMainFrameChanged\n callback (2) will be executed with the old and new main frame objects.\n\n Callbacks will not be executed for placeholders that may be created during\n pre-commit navigation for sub-frames that do not yet exist in the renderer\n process. Placeholders will have cef_frame_t::get_identifier() == -4.\n\n The functions of this structure will be called on the UI thread unless\n otherwise indicated.\n"]
+#[doc = "\n Implement this structure to handle events related to cef_frame_t life span.\n The order of callbacks is:\n\n (1) During initial cef_browser_host_t creation and navigation of the main\n frame:\n - cef_frame_handler_t::OnFrameCreated => The initial main frame object has\n   been created. Any commands will be queued until the frame is attached.\n - cef_frame_handler_t::OnMainFrameChanged => The initial main frame object\n   has been assigned to the browser.\n - cef_life_span_handler_t::OnAfterCreated => The browser is now valid and\n   can be used.\n - cef_frame_handler_t::OnFrameAttached => The initial main frame object is\n   now connected to its peer in the renderer process. Commands can be routed.\n\n (2) During further cef_browser_host_t navigation/loading of the main frame\n     and/or sub-frames:\n - cef_frame_handler_t::OnFrameCreated => A new main frame or sub-frame\n   object has been created. Any commands will be queued until the frame is\n   attached.\n - cef_frame_handler_t::OnFrameAttached => A new main frame or sub-frame\n   object is now connected to its peer in the renderer process. Commands can\n   be routed.\n - cef_frame_handler_t::OnFrameDetached => An existing main frame or sub-\n   frame object has lost its connection to the renderer process. If multiple\n   objects are detached at the same time then notifications will be sent for\n   any sub-frame objects before the main frame object. Commands can no longer\n   be routed and will be discarded.\n - cef_frame_handler_t::OnMainFrameChanged => A new main frame object has\n   been assigned to the browser. This will only occur with cross-origin\n   navigation or re-navigation after renderer process termination (due to\n   crashes, etc).\n\n (3) During final cef_browser_host_t destruction of the main frame:\n - cef_frame_handler_t::OnFrameDetached => Any sub-frame objects have lost\n   their connection to the renderer process. Commands can no longer be routed\n   and will be discarded.\n - cef_life_span_handler_t::OnBeforeClose => The browser has been destroyed.\n - cef_frame_handler_t::OnFrameDetached => The main frame object have lost\n   its connection to the renderer process. Notifications will be sent for any\n   sub-frame objects before the main frame object. Commands can no longer be\n   routed and will be discarded.\n - cef_frame_handler_t::OnMainFrameChanged => The final main frame object has\n   been removed from the browser.\n\n Cross-origin navigation and/or loading receives special handling.\n\n When the main frame navigates to a different origin the OnMainFrameChanged\n callback (2) will be executed with the old and new main frame objects.\n\n When a new sub-frame is loaded in, or an existing sub-frame is navigated to,\n a different origin from the parent frame, a temporary sub-frame object will\n first be created in the parent's renderer process. That temporary sub-frame\n will then be discarded after the real cross-origin sub-frame is created in\n the new/target renderer process. The client will receive cross-origin\n navigation callbacks (2) for the transition from the temporary sub-frame to\n the real sub-frame. The temporary sub-frame will not receive or execute\n commands during this transitional period (any sent commands will be\n discarded).\n\n When a new popup browser is created in a different origin from the parent\n browser, a temporary main frame object for the popup will first be created\n in the parent's renderer process. That temporary main frame will then be\n discarded after the real cross-origin main frame is created in the\n new/target renderer process. The client will receive creation and initial\n navigation callbacks (1) for the temporary main frame, followed by cross-\n origin navigation callbacks (2) for the transition from the temporary main\n frame to the real main frame. The temporary main frame may receive and\n execute commands during this transitional period (any sent commands may be\n executed, but the behavior is potentially undesirable since they execute in\n the parent browser's renderer process and not the new/target renderer\n process).\n\n Callbacks will not be executed for placeholders that may be created during\n pre-commit navigation for sub-frames that do not yet exist in the renderer\n process. Placeholders will have cef_frame_t::get_identifier() == -4.\n\n The functions of this structure will be called on the UI thread unless\n otherwise indicated.\n"]
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct _cef_frame_handler_t {
     #[doc = "\n Base structure.\n"]
     pub base: cef_base_ref_counted_t,
-    #[doc = "\n Called when a new frame is created. This will be the first notification\n that references |frame|. Any commands that require transport to the\n associated renderer process (LoadRequest, SendProcessMessage, GetSource,\n etc.) will be queued. The queued commands will be sent before\n OnFrameAttached or discarded before OnFrameDestroyed if the frame never\n attaches.\n"]
+    #[doc = "\n Called when a new frame is created. This will be the first notification\n that references |frame|. Any commands that require transport to the\n associated renderer process (LoadRequest, SendProcessMessage, GetSource,\n etc.) will be queued until OnFrameAttached is called for |frame|.\n"]
     pub on_frame_created: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_frame_handler_t,
@@ -10151,15 +10209,7 @@ pub struct _cef_frame_handler_t {
             frame: *mut _cef_frame_t,
         ),
     >,
-    #[doc = "\n Called when an existing frame is destroyed. This will be the last\n notification that references |frame| and cef_frame_t::is_valid() will\n return false (0) for |frame|. If called during browser destruction and\n after cef_life_span_handler_t::on_before_close() then\n cef_browser_t::is_valid() will return false (0) for |browser|. Any queued\n commands that have not been sent will be discarded before this callback.\n"]
-    pub on_frame_destroyed: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_frame_handler_t,
-            browser: *mut _cef_browser_t,
-            frame: *mut _cef_frame_t,
-        ),
-    >,
-    #[doc = "\n Called when a frame can begin routing commands to/from the associated\n renderer process. |reattached| will be true (1) if the frame was re-\n attached after exiting the BackForwardCache or after encountering a\n recoverable connection error. Any queued commands will now have been\n dispatched. This function will not be called for temporary frames created\n during cross-origin navigation.\n"]
+    #[doc = "\n Called when a frame can begin routing commands to/from the associated\n renderer process. |reattached| will be true (1) if the frame was re-\n attached after exiting the BackForwardCache. Any commands that were queued\n have now been dispatched.\n"]
     pub on_frame_attached: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_frame_handler_t,
@@ -10168,7 +10218,7 @@ pub struct _cef_frame_handler_t {
             reattached: ::std::os::raw::c_int,
         ),
     >,
-    #[doc = "\n Called when a frame loses its connection to the renderer process. This may\n occur when a frame is destroyed, enters the BackForwardCache, or\n encounters a rare connection error. In the case of frame destruction this\n call will be followed by a (potentially async) call to OnFrameDestroyed.\n If frame destruction is occuring synchronously then\n cef_frame_t::is_valid() will return false (0) for |frame|. If called\n during browser destruction and after\n cef_life_span_handler_t::on_before_close() then cef_browser_t::is_valid()\n will return false (0) for |browser|. If, in the non-destruction case, the\n same frame later exits the BackForwardCache or recovers from a connection\n error then there will be a follow-up call to OnFrameAttached. This\n function will not be called for temporary frames created during cross-\n origin navigation.\n"]
+    #[doc = "\n Called when a frame loses its connection to the renderer process and will\n be destroyed. Any pending or future commands will be discarded and\n cef_frame_t::is_valid() will now return false (0) for |frame|. If called\n after cef_life_span_handler_t::on_before_close() during browser\n destruction then cef_browser_t::is_valid() will return false (0) for\n |browser|.\n"]
     pub on_frame_detached: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_frame_handler_t,
@@ -10176,7 +10226,7 @@ pub struct _cef_frame_handler_t {
             frame: *mut _cef_frame_t,
         ),
     >,
-    #[doc = "\n Called when the main frame changes due to (a) initial browser creation,\n (b) final browser destruction, (c) cross-origin navigation or (d) re-\n navigation after renderer process termination (due to crashes, etc).\n |old_frame| will be NULL and |new_frame| will be non-NULL when a main\n frame is assigned to |browser| for the first time. |old_frame| will be\n non-NULL and |new_frame| will be NULL when a main frame is removed from\n |browser| for the last time. Both |old_frame| and |new_frame| will be non-\n NULL for cross-origin navigations or re-navigation after renderer process\n termination. This function will be called after on_frame_created() for\n |new_frame| and/or after on_frame_destroyed() for |old_frame|. If called\n during browser destruction and after\n cef_life_span_handler_t::on_before_close() then cef_browser_t::is_valid()\n will return false (0) for |browser|.\n"]
+    #[doc = "\n Called when the main frame changes due to (a) initial browser creation,\n (b) final browser destruction, (c) cross-origin navigation or (d) re-\n navigation after renderer process termination (due to crashes, etc).\n |old_frame| will be NULL and |new_frame| will be non-NULL when a main\n frame is assigned to |browser| for the first time. |old_frame| will be\n non-NULL and |new_frame| will be NULL and  when a main frame is removed\n from |browser| for the last time. Both |old_frame| and |new_frame| will be\n non-NULL for cross-origin navigations or re-navigation after renderer\n process termination. This function will be called after on_frame_created()\n for |new_frame| and/or after on_frame_detached() for |old_frame|. If\n called after cef_life_span_handler_t::on_before_close() during browser\n destruction then cef_browser_t::is_valid() will return false (0) for\n |browser|.\n"]
     pub on_main_frame_changed: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_frame_handler_t,
@@ -10188,22 +10238,20 @@ pub struct _cef_frame_handler_t {
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_frame_handler_t"][::std::mem::size_of::<_cef_frame_handler_t>() - 40usize];
+    ["Size of _cef_frame_handler_t"][::std::mem::size_of::<_cef_frame_handler_t>() - 36usize];
     ["Alignment of _cef_frame_handler_t"][::std::mem::align_of::<_cef_frame_handler_t>() - 4usize];
     ["Offset of field: _cef_frame_handler_t::base"]
         [::std::mem::offset_of!(_cef_frame_handler_t, base) - 0usize];
     ["Offset of field: _cef_frame_handler_t::on_frame_created"]
         [::std::mem::offset_of!(_cef_frame_handler_t, on_frame_created) - 20usize];
-    ["Offset of field: _cef_frame_handler_t::on_frame_destroyed"]
-        [::std::mem::offset_of!(_cef_frame_handler_t, on_frame_destroyed) - 24usize];
     ["Offset of field: _cef_frame_handler_t::on_frame_attached"]
-        [::std::mem::offset_of!(_cef_frame_handler_t, on_frame_attached) - 28usize];
+        [::std::mem::offset_of!(_cef_frame_handler_t, on_frame_attached) - 24usize];
     ["Offset of field: _cef_frame_handler_t::on_frame_detached"]
-        [::std::mem::offset_of!(_cef_frame_handler_t, on_frame_detached) - 32usize];
+        [::std::mem::offset_of!(_cef_frame_handler_t, on_frame_detached) - 28usize];
     ["Offset of field: _cef_frame_handler_t::on_main_frame_changed"]
-        [::std::mem::offset_of!(_cef_frame_handler_t, on_main_frame_changed) - 36usize];
+        [::std::mem::offset_of!(_cef_frame_handler_t, on_main_frame_changed) - 32usize];
 };
-#[doc = "\n Implement this structure to handle events related to cef_frame_t life span.\n The order of callbacks is:\n\n (1) During initial cef_browser_host_t creation and navigation of the main\n frame:\n - cef_frame_handler_t::OnFrameCreated => The initial main frame object has\n   been created. Any commands will be queued until the frame is attached.\n - cef_frame_handler_t::OnMainFrameChanged => The initial main frame object\n   has been assigned to the browser.\n - cef_life_span_handler_t::OnAfterCreated => The browser is now valid and\n   can be used.\n - cef_frame_handler_t::OnFrameAttached => The initial main frame object is\n   now connected to its peer in the renderer process. Commands can be routed.\n\n (2) During further cef_browser_host_t navigation/loading of the main frame\n     and/or sub-frames:\n - cef_frame_handler_t::OnFrameCreated => A new main frame or sub-frame\n   object has been created. Any commands will be queued until the frame is\n   attached.\n - cef_frame_handler_t::OnFrameAttached => A new main frame or sub-frame\n   object is now connected to its peer in the renderer process. Commands can\n   be routed.\n - cef_frame_handler_t::OnFrameDetached => An existing main frame or sub-\n   frame object has lost its connection to the renderer process. If multiple\n   objects are detached at the same time then notifications will be sent for\n   any sub-frame objects before the main frame object. Commands can no longer\n   be routed and will be discarded.\n - CefFremeHadler::OnFrameDestroyed => An existing main frame or sub-frame\n   object has been destroyed.\n - cef_frame_handler_t::OnMainFrameChanged => A new main frame object has\n   been assigned to the browser. This will only occur with cross-origin\n   navigation or re-navigation after renderer process termination (due to\n   crashes, etc).\n\n (3) During final cef_browser_host_t destruction of the main frame:\n - cef_frame_handler_t::OnFrameDetached => Any sub-frame objects have lost\n   their connection to the renderer process. Commands can no longer be routed\n   and will be discarded.\n - CefFreameHandler::OnFrameDestroyed => Any sub-frame objects have been\n   destroyed.\n - cef_life_span_handler_t::OnBeforeClose => The browser has been destroyed.\n - cef_frame_handler_t::OnFrameDetached => The main frame object have lost\n   its connection to the renderer process. Notifications will be sent for any\n   sub-frame objects before the main frame object. Commands can no longer be\n   routed and will be discarded.\n - CefFreameHandler::OnFrameDestroyed => The main frame object has been\n   destroyed.\n - cef_frame_handler_t::OnMainFrameChanged => The final main frame object has\n   been removed from the browser.\n\n Special handling applies for cross-origin loading on creation/navigation of\n sub-frames, and cross-origin loading on creation of new popup browsers. A\n temporary frame will first be created in the parent frame's renderer\n process. This temporary frame will never attach and will be discarded after\n the real cross-origin frame is created in the new/target renderer process.\n The client will receive creation callbacks for the temporary frame, followed\n by cross-origin navigation callbacks (2) for the transition from the\n temporary frame to the real frame. The temporary frame will not receive or\n execute commands during this transitional period (any sent commands will be\n discarded).\n\n When the main frame navigates to a different origin the OnMainFrameChanged\n callback (2) will be executed with the old and new main frame objects.\n\n Callbacks will not be executed for placeholders that may be created during\n pre-commit navigation for sub-frames that do not yet exist in the renderer\n process. Placeholders will have cef_frame_t::get_identifier() == -4.\n\n The functions of this structure will be called on the UI thread unless\n otherwise indicated.\n"]
+#[doc = "\n Implement this structure to handle events related to cef_frame_t life span.\n The order of callbacks is:\n\n (1) During initial cef_browser_host_t creation and navigation of the main\n frame:\n - cef_frame_handler_t::OnFrameCreated => The initial main frame object has\n   been created. Any commands will be queued until the frame is attached.\n - cef_frame_handler_t::OnMainFrameChanged => The initial main frame object\n   has been assigned to the browser.\n - cef_life_span_handler_t::OnAfterCreated => The browser is now valid and\n   can be used.\n - cef_frame_handler_t::OnFrameAttached => The initial main frame object is\n   now connected to its peer in the renderer process. Commands can be routed.\n\n (2) During further cef_browser_host_t navigation/loading of the main frame\n     and/or sub-frames:\n - cef_frame_handler_t::OnFrameCreated => A new main frame or sub-frame\n   object has been created. Any commands will be queued until the frame is\n   attached.\n - cef_frame_handler_t::OnFrameAttached => A new main frame or sub-frame\n   object is now connected to its peer in the renderer process. Commands can\n   be routed.\n - cef_frame_handler_t::OnFrameDetached => An existing main frame or sub-\n   frame object has lost its connection to the renderer process. If multiple\n   objects are detached at the same time then notifications will be sent for\n   any sub-frame objects before the main frame object. Commands can no longer\n   be routed and will be discarded.\n - cef_frame_handler_t::OnMainFrameChanged => A new main frame object has\n   been assigned to the browser. This will only occur with cross-origin\n   navigation or re-navigation after renderer process termination (due to\n   crashes, etc).\n\n (3) During final cef_browser_host_t destruction of the main frame:\n - cef_frame_handler_t::OnFrameDetached => Any sub-frame objects have lost\n   their connection to the renderer process. Commands can no longer be routed\n   and will be discarded.\n - cef_life_span_handler_t::OnBeforeClose => The browser has been destroyed.\n - cef_frame_handler_t::OnFrameDetached => The main frame object have lost\n   its connection to the renderer process. Notifications will be sent for any\n   sub-frame objects before the main frame object. Commands can no longer be\n   routed and will be discarded.\n - cef_frame_handler_t::OnMainFrameChanged => The final main frame object has\n   been removed from the browser.\n\n Cross-origin navigation and/or loading receives special handling.\n\n When the main frame navigates to a different origin the OnMainFrameChanged\n callback (2) will be executed with the old and new main frame objects.\n\n When a new sub-frame is loaded in, or an existing sub-frame is navigated to,\n a different origin from the parent frame, a temporary sub-frame object will\n first be created in the parent's renderer process. That temporary sub-frame\n will then be discarded after the real cross-origin sub-frame is created in\n the new/target renderer process. The client will receive cross-origin\n navigation callbacks (2) for the transition from the temporary sub-frame to\n the real sub-frame. The temporary sub-frame will not receive or execute\n commands during this transitional period (any sent commands will be\n discarded).\n\n When a new popup browser is created in a different origin from the parent\n browser, a temporary main frame object for the popup will first be created\n in the parent's renderer process. That temporary main frame will then be\n discarded after the real cross-origin main frame is created in the\n new/target renderer process. The client will receive creation and initial\n navigation callbacks (1) for the temporary main frame, followed by cross-\n origin navigation callbacks (2) for the transition from the temporary main\n frame to the real main frame. The temporary main frame may receive and\n execute commands during this transitional period (any sent commands may be\n executed, but the behavior is potentially undesirable since they execute in\n the parent browser's renderer process and not the new/target renderer\n process).\n\n Callbacks will not be executed for placeholders that may be created during\n pre-commit navigation for sub-frames that do not yet exist in the renderer\n process. Placeholders will have cef_frame_t::get_identifier() == -4.\n\n The functions of this structure will be called on the UI thread unless\n otherwise indicated.\n"]
 pub type cef_frame_handler_t = _cef_frame_handler_t;
 #[doc = "\n Callback structure used for asynchronous continuation of JavaScript dialog\n requests.\n"]
 #[repr(C)]
@@ -10341,13 +10389,12 @@ pub type cef_keyboard_handler_t = _cef_keyboard_handler_t;
 pub struct _cef_life_span_handler_t {
     #[doc = "\n Base structure.\n"]
     pub base: cef_base_ref_counted_t,
-    #[doc = "\n Called on the UI thread before a new popup browser is created. The\n |browser| and |frame| values represent the source of the popup request\n (opener browser and frame). The |popup_id| value uniquely identifies the\n popup in the context of the opener browser. The |target_url| and\n |target_frame_name| values indicate where the popup browser should\n navigate and may be NULL if not specified with the request. The\n |target_disposition| value indicates where the user intended to open the\n popup (e.g. current tab, new tab, etc). The |user_gesture| value will be\n true (1) if the popup was opened via explicit user gesture (e.g. clicking\n a link) or false (0) if the popup opened automatically (e.g. via the\n DomContentLoaded event). The |popupFeatures| structure contains additional\n information about the requested popup window. To allow creation of the\n popup browser optionally modify |windowInfo|, |client|, |settings| and\n |no_javascript_access| and return false (0). To cancel creation of the\n popup browser return true (1). The |client| and |settings| values will\n default to the source browser's values. If the |no_javascript_access|\n value is set to false (0) the new browser will not be scriptable and may\n not be hosted in the same renderer process as the source browser. Any\n modifications to |windowInfo| will be ignored if the parent browser is\n wrapped in a cef_browser_view_t. The |extra_info| parameter provides an\n opportunity to specify extra information specific to the created popup\n browser that will be passed to\n cef_render_process_handler_t::on_browser_created() in the render process.\n\n If popup browser creation succeeds then OnAfterCreated will be called for\n the new popup browser. If popup browser creation fails, and if the opener\n browser has not yet been destroyed, then OnBeforePopupAborted will be\n called for the opener browser. See OnBeforePopupAborted documentation for\n additional details.\n"]
+    #[doc = "\n Called on the UI thread before a new popup browser is created. The\n |browser| and |frame| values represent the source of the popup request.\n The |target_url| and |target_frame_name| values indicate where the popup\n browser should navigate and may be NULL if not specified with the request.\n The |target_disposition| value indicates where the user intended to open\n the popup (e.g. current tab, new tab, etc). The |user_gesture| value will\n be true (1) if the popup was opened via explicit user gesture (e.g.\n clicking a link) or false (0) if the popup opened automatically (e.g. via\n the DomContentLoaded event). The |popupFeatures| structure contains\n additional information about the requested popup window. To allow creation\n of the popup browser optionally modify |windowInfo|, |client|, |settings|\n and |no_javascript_access| and return false (0). To cancel creation of the\n popup browser return true (1). The |client| and |settings| values will\n default to the source browser's values. If the |no_javascript_access|\n value is set to false (0) the new browser will not be scriptable and may\n not be hosted in the same renderer process as the source browser. Any\n modifications to |windowInfo| will be ignored if the parent browser is\n wrapped in a cef_browser_view_t. Popup browser creation will be canceled\n if the parent browser is destroyed before the popup browser creation\n completes (indicated by a call to OnAfterCreated for the popup browser).\n The |extra_info| parameter provides an opportunity to specify extra\n information specific to the created popup browser that will be passed to\n cef_render_process_handler_t::on_browser_created() in the render process.\n"]
     pub on_before_popup: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_life_span_handler_t,
             browser: *mut _cef_browser_t,
             frame: *mut _cef_frame_t,
-            popup_id: ::std::os::raw::c_int,
             target_url: *const cef_string_t,
             target_frame_name: *const cef_string_t,
             target_disposition: cef_window_open_disposition_t,
@@ -10360,15 +10407,7 @@ pub struct _cef_life_span_handler_t {
             no_javascript_access: *mut ::std::os::raw::c_int,
         ) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Called on the UI thread if a new popup browser is aborted. This only\n occurs if the popup is allowed in OnBeforePopup and creation fails before\n OnAfterCreated is called for the new popup browser. The |browser| value is\n the source of the popup request (opener browser). The |popup_id| value\n uniquely identifies the popup in the context of the opener browser, and is\n the same value that was passed to OnBeforePopup.\n\n Any client state associated with pending popups should be cleared in\n OnBeforePopupAborted, OnAfterCreated of the popup browser, or\n OnBeforeClose of the opener browser. OnBeforeClose of the opener browser\n may be called before this function in cases where the opener is closing\n during popup creation, in which case cef_browser_host_t::IsValid will\n return false (0) in this function.\n"]
-    pub on_before_popup_aborted: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_life_span_handler_t,
-            browser: *mut _cef_browser_t,
-            popup_id: ::std::os::raw::c_int,
-        ),
-    >,
-    #[doc = "\n Called on the UI thread before a new DevTools popup browser is created.\n The |browser| value represents the source of the popup request. Optionally\n modify |windowInfo|, |client|, |settings| and |extra_info| values. The\n |client|, |settings| and |extra_info| values will default to the source\n browser's values. Any modifications to |windowInfo| will be ignored if the\n parent browser is Views-hosted (wrapped in a cef_browser_view_t).\n\n The |extra_info| parameter provides an opportunity to specify extra\n information specific to the created popup browser that will be passed to\n cef_render_process_handler_t::on_browser_created() in the render process.\n The existing |extra_info| object, if any, will be read-only but may be\n replaced with a new object.\n\n Views-hosted source browsers will create Views-hosted DevTools popups\n unless |use_default_window| is set to to true (1). DevTools popups can be\n blocked by returning true (1) from cef_command_handler_t::OnChromeCommand\n for IDC_DEV_TOOLS. Only used with Chrome style.\n"]
+    #[doc = "\n Called on the UI thread before a new DevTools popup browser is created.\n The |browser| value represents the source of the popup request. Optionally\n modify |windowInfo|, |client|, |settings| and |extra_info| values. The\n |client|, |settings| and |extra_info| values will default to the source\n browser's values. Any modifications to |windowInfo| will be ignored if the\n parent browser is Views-hosted (wrapped in a cef_browser_view_t).\n\n The |extra_info| parameter provides an opportunity to specify extra\n information specific to the created popup browser that will be passed to\n cef_render_process_handler_t::on_browser_created() in the render process.\n The existing |extra_info| object, if any, will be read-only but may be\n replaced with a new object.\n\n Views-hosted source browsers will create Views-hosted DevTools popups\n unless |use_default_window| is set to to true (1). DevTools popups can be\n blocked by returning true (1) from cef_command_handler_t::OnChromeCommand\n for IDC_DEV_TOOLS. Only used with the Chrome runtime.\n"]
     pub on_before_dev_tools_popup: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_life_span_handler_t,
@@ -10387,14 +10426,14 @@ pub struct _cef_life_span_handler_t {
             browser: *mut _cef_browser_t,
         ),
     >,
-    #[doc = "\n Called when an Alloy style browser is ready to be closed, meaning that the\n close has already been initiated and that JavaScript unload handlers have\n already executed or should be ignored. This may result directly from a\n call to cef_browser_host_t::[Try]close_browser() or indirectly if the\n browser's top-level parent window was created by CEF and the user attempts\n to close that window (by clicking the 'X', for example). do_close() will\n not be called if the browser's host window/view has already been destroyed\n (via parent window/view hierarchy tear-down, for example), as it is no\n longer possible to customize the close behavior at that point.\n\n An application should handle top-level parent window close notifications\n by calling cef_browser_host_t::try_close_browser() or\n cef_browser_host_t::CloseBrowser(false (0)) instead of allowing the window\n to close immediately (see the examples below). This gives CEF an\n opportunity to process JavaScript unload handlers and optionally cancel\n the close before do_close() is called.\n\n When windowed rendering is enabled CEF will create an internal child\n window/view to host the browser. In that case returning false (0) from\n do_close() will send the standard close notification to the browser's top-\n level parent window (e.g. WM_CLOSE on Windows, performClose: on OS X,\n \"delete_event\" on Linux or cef_window_delegate_t::can_close() callback\n from Views).\n\n When windowed rendering is disabled there is no internal window/view and\n returning false (0) from do_close() will cause the browser object to be\n destroyed immediately.\n\n If the browser's top-level parent window requires a non-standard close\n notification then send that notification from do_close() and return true\n (1). You are still required to complete the browser close as soon as\n possible (either by calling [Try]close_browser() or by proceeding with\n window/view hierarchy tear-down), otherwise the browser will be left in a\n partially closed state that interferes with proper functioning. Top-level\n windows created on the browser process UI thread can alternately call\n cef_browser_host_t::is_ready_to_be_closed() in the close handler to check\n close status instead of relying on custom do_close() handling. See\n documentation on that function for additional details.\n\n The cef_life_span_handler_t::on_before_close() function will be called\n after do_close() (if do_close() is called) and immediately before the\n browser object is destroyed. The application should only exit after\n on_before_close() has been called for all existing browsers.\n\n The below examples describe what should happen during window close when\n the browser is parented to an application-provided top-level window.\n\n Example 1: Using cef_browser_host_t::try_close_browser(). This is\n recommended for clients using standard close handling and windows created\n on the browser process UI thread. 1.  User clicks the window close button\n which sends a close notification\n     to the application's top-level window.\n 2.  Application's top-level window receives the close notification and\n     calls TryCloseBrowser() (similar to calling CloseBrowser(false)).\n     TryCloseBrowser() returns false so the client cancels the window\n     close.\n 3.  JavaScript 'onbeforeunload' handler executes and shows the close\n     confirmation dialog (which can be overridden via\n     CefJSDialogHandler::OnBeforeUnloadDialog()).\n 4.  User approves the close. 5.  JavaScript 'onunload' handler executes.\n 6.  Application's do_close() handler is called and returns false (0) by\n     default.\n 7.  CEF sends a close notification to the application's top-level window\n     (because DoClose() returned false).\n 8.  Application's top-level window receives the close notification and\n     calls TryCloseBrowser(). TryCloseBrowser() returns true so the client\n     allows the window close.\n 9.  Application's top-level window is destroyed, triggering destruction\n     of the child browser window.\n 10. Application's on_before_close() handler is called and the browser\n object\n     is destroyed.\n 11. Application exits by calling cef_quit_message_loop() if no other\n browsers\n     exist.\n\n Example 2: Using cef_browser_host_t::CloseBrowser(false (0)) and\n implementing the do_close() callback. This is recommended for clients\n using non-standard close handling or windows that were not created on the\n browser process UI thread. 1.  User clicks the window close button which\n sends a close notification\n     to the application's top-level window.\n 2.  Application's top-level window receives the close notification and:\n     A. Calls CefBrowserHost::CloseBrowser(false).\n     B. Cancels the window close.\n 3.  JavaScript 'onbeforeunload' handler executes and shows the close\n     confirmation dialog (which can be overridden via\n     CefJSDialogHandler::OnBeforeUnloadDialog()).\n 4.  User approves the close. 5.  JavaScript 'onunload' handler executes.\n 6.  Application's do_close() handler is called. Application will:\n     A. Set a flag to indicate that the next top-level window close attempt\n        will be allowed.\n     B. Return false.\n 7.  CEF sends a close notification to the application's top-level window\n     (because DoClose() returned false).\n 8.  Application's top-level window receives the close notification and\n     allows the window to close based on the flag from #6A.\n 9.  Application's top-level window is destroyed, triggering destruction\n     of the child browser window.\n 10. Application's on_before_close() handler is called and the browser\n object\n     is destroyed.\n 11. Application exits by calling cef_quit_message_loop() if no other\n browsers\n     exist.\n"]
+    #[doc = "\n Called when a browser has received a request to close. This may result\n directly from a call to cef_browser_host_t::*close_browser() or indirectly\n if the browser is parented to a top-level window created by CEF and the\n user attempts to close that window (by clicking the 'X', for example). The\n do_close() function will be called after the JavaScript 'onunload' event\n has been fired.\n\n An application should handle top-level owner window close notifications by\n calling cef_browser_host_t::try_close_browser() or\n cef_browser_host_t::CloseBrowser(false (0)) instead of allowing the window\n to close immediately (see the examples below). This gives CEF an\n opportunity to process the 'onbeforeunload' event and optionally cancel\n the close before do_close() is called.\n\n When windowed rendering is enabled CEF will internally create a window or\n view to host the browser. In that case returning false (0) from do_close()\n will send the standard close notification to the browser's top-level owner\n window (e.g. WM_CLOSE on Windows, performClose: on OS X, \"delete_event\" on\n Linux or cef_window_delegate_t::can_close() callback from Views). If the\n browser's host window/view has already been destroyed (via view hierarchy\n tear-down, for example) then do_close() will not be called for that\n browser since is no longer possible to cancel the close.\n\n When windowed rendering is disabled returning false (0) from do_close()\n will cause the browser object to be destroyed immediately.\n\n If the browser's top-level owner window requires a non-standard close\n notification then send that notification from do_close() and return true\n (1).\n\n The cef_life_span_handler_t::on_before_close() function will be called\n after do_close() (if do_close() is called) and immediately before the\n browser object is destroyed. The application should only exit after\n on_before_close() has been called for all existing browsers.\n\n The below examples describe what should happen during window close when\n the browser is parented to an application-provided top-level window.\n\n Example 1: Using cef_browser_host_t::try_close_browser(). This is\n recommended for clients using standard close handling and windows created\n on the browser process UI thread. 1.  User clicks the window close button\n which sends a close notification\n     to the application's top-level window.\n 2.  Application's top-level window receives the close notification and\n     calls TryCloseBrowser() (which internally calls CloseBrowser(false)).\n     TryCloseBrowser() returns false so the client cancels the window\n     close.\n 3.  JavaScript 'onbeforeunload' handler executes and shows the close\n     confirmation dialog (which can be overridden via\n     CefJSDialogHandler::OnBeforeUnloadDialog()).\n 4.  User approves the close. 5.  JavaScript 'onunload' handler executes.\n 6.  CEF sends a close notification to the application's top-level window\n     (because DoClose() returned false by default).\n 7.  Application's top-level window receives the close notification and\n     calls TryCloseBrowser(). TryCloseBrowser() returns true so the client\n     allows the window close.\n 8.  Application's top-level window is destroyed. 9.  Application's\n on_before_close() handler is called and the browser object\n     is destroyed.\n 10. Application exits by calling cef_quit_message_loop() if no other\n browsers\n     exist.\n\n Example 2: Using cef_browser_host_t::CloseBrowser(false (0)) and\n implementing the do_close() callback. This is recommended for clients\n using non-standard close handling or windows that were not created on the\n browser process UI thread. 1.  User clicks the window close button which\n sends a close notification\n     to the application's top-level window.\n 2.  Application's top-level window receives the close notification and:\n     A. Calls CefBrowserHost::CloseBrowser(false).\n     B. Cancels the window close.\n 3.  JavaScript 'onbeforeunload' handler executes and shows the close\n     confirmation dialog (which can be overridden via\n     CefJSDialogHandler::OnBeforeUnloadDialog()).\n 4.  User approves the close. 5.  JavaScript 'onunload' handler executes.\n 6.  Application's do_close() handler is called. Application will:\n     A. Set a flag to indicate that the next close attempt will be allowed.\n     B. Return false.\n 7.  CEF sends an close notification to the application's top-level window.\n 8.  Application's top-level window receives the close notification and\n     allows the window to close based on the flag from #6B.\n 9.  Application's top-level window is destroyed. 10. Application's\n on_before_close() handler is called and the browser object\n     is destroyed.\n 11. Application exits by calling cef_quit_message_loop() if no other\n browsers\n     exist.\n"]
     pub do_close: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_life_span_handler_t,
             browser: *mut _cef_browser_t,
         ) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Called just before a browser is destroyed. Release all references to the\n browser object and do not attempt to execute any functions on the browser\n object (other than IsValid, GetIdentifier or IsSame) after this callback\n returns. cef_frame_handler_t callbacks related to final main frame\n destruction, and OnBeforePopupAborted callbacks for any pending popups,\n will arrive after this callback and cef_browser_t::IsValid will return\n false (0) at that time. Any in-progress network requests associated with\n |browser| will be aborted when the browser is destroyed, and\n cef_resource_request_handler_t callbacks related to those requests may\n still arrive on the IO thread after this callback. See cef_frame_handler_t\n and do_close() documentation for additional usage information.\n"]
+    #[doc = "\n Called just before a browser is destroyed. Release all references to the\n browser object and do not attempt to execute any functions on the browser\n object (other than IsValid, GetIdentifier or IsSame) after this callback\n returns. cef_frame_handler_t callbacks related to final main frame\n destruction will arrive after this callback and cef_browser_t::IsValid\n will return false (0) at that time. Any in-progress network requests\n associated with |browser| will be aborted when the browser is destroyed,\n and cef_resource_request_handler_t callbacks related to those requests may\n still arrive on the IO thread after this callback. See cef_frame_handler_t\n and do_close() documentation for additional usage information.\n"]
     pub on_before_close: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_life_span_handler_t,
@@ -10405,23 +10444,21 @@ pub struct _cef_life_span_handler_t {
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
     ["Size of _cef_life_span_handler_t"]
-        [::std::mem::size_of::<_cef_life_span_handler_t>() - 44usize];
+        [::std::mem::size_of::<_cef_life_span_handler_t>() - 40usize];
     ["Alignment of _cef_life_span_handler_t"]
         [::std::mem::align_of::<_cef_life_span_handler_t>() - 4usize];
     ["Offset of field: _cef_life_span_handler_t::base"]
         [::std::mem::offset_of!(_cef_life_span_handler_t, base) - 0usize];
     ["Offset of field: _cef_life_span_handler_t::on_before_popup"]
         [::std::mem::offset_of!(_cef_life_span_handler_t, on_before_popup) - 20usize];
-    ["Offset of field: _cef_life_span_handler_t::on_before_popup_aborted"]
-        [::std::mem::offset_of!(_cef_life_span_handler_t, on_before_popup_aborted) - 24usize];
     ["Offset of field: _cef_life_span_handler_t::on_before_dev_tools_popup"]
-        [::std::mem::offset_of!(_cef_life_span_handler_t, on_before_dev_tools_popup) - 28usize];
+        [::std::mem::offset_of!(_cef_life_span_handler_t, on_before_dev_tools_popup) - 24usize];
     ["Offset of field: _cef_life_span_handler_t::on_after_created"]
-        [::std::mem::offset_of!(_cef_life_span_handler_t, on_after_created) - 32usize];
+        [::std::mem::offset_of!(_cef_life_span_handler_t, on_after_created) - 28usize];
     ["Offset of field: _cef_life_span_handler_t::do_close"]
-        [::std::mem::offset_of!(_cef_life_span_handler_t, do_close) - 36usize];
+        [::std::mem::offset_of!(_cef_life_span_handler_t, do_close) - 32usize];
     ["Offset of field: _cef_life_span_handler_t::on_before_close"]
-        [::std::mem::offset_of!(_cef_life_span_handler_t, on_before_close) - 40usize];
+        [::std::mem::offset_of!(_cef_life_span_handler_t, on_before_close) - 36usize];
 };
 #[doc = "\n Implement this structure to handle events related to browser life span. The\n functions of this structure will be called on the UI thread unless otherwise\n indicated.\n"]
 pub type cef_life_span_handler_t = _cef_life_span_handler_t;
@@ -10553,7 +10590,7 @@ pub type cef_permission_prompt_callback_t = _cef_permission_prompt_callback_t;
 pub struct _cef_permission_handler_t {
     #[doc = "\n Base structure.\n"]
     pub base: cef_base_ref_counted_t,
-    #[doc = "\n Called when a page requests permission to access media.\n |requesting_origin| is the URL origin requesting permission.\n |requested_permissions| is a combination of values from\n cef_media_access_permission_types_t that represent the requested\n permissions. Return true (1) and call cef_media_access_callback_t\n functions either in this function or at a later time to continue or cancel\n the request. Return false (0) to proceed with default handling. With\n Chrome style, default handling will display the permission request UI.\n With Alloy style, default handling will deny the request. This function\n will not be called if the \"--enable-media-stream\" command-line switch is\n used to grant all permissions.\n"]
+    #[doc = "\n Called when a page requests permission to access media.\n |requesting_origin| is the URL origin requesting permission.\n |requested_permissions| is a combination of values from\n cef_media_access_permission_types_t that represent the requested\n permissions. Return true (1) and call cef_media_access_callback_t\n functions either in this function or at a later time to continue or cancel\n the request. Return false (0) to proceed with default handling. With the\n Chrome runtime, default handling will display the permission request UI.\n With the Alloy runtime, default handling will deny the request. This\n function will not be called if the \"--enable-media-stream\" command-line\n switch is used to grant all permissions.\n"]
     pub on_request_media_access_permission: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_permission_handler_t,
@@ -10564,7 +10601,7 @@ pub struct _cef_permission_handler_t {
             callback: *mut _cef_media_access_callback_t,
         ) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Called when a page should show a permission prompt. |prompt_id| uniquely\n identifies the prompt. |requesting_origin| is the URL origin requesting\n permission. |requested_permissions| is a combination of values from\n cef_permission_request_types_t that represent the requested permissions.\n Return true (1) and call cef_permission_prompt_callback_t::Continue either\n in this function or at a later time to continue or cancel the request.\n Return false (0) to proceed with default handling. With Chrome style,\n default handling will display the permission prompt UI. With Alloy style,\n default handling is CEF_PERMISSION_RESULT_IGNORE.\n"]
+    #[doc = "\n Called when a page should show a permission prompt. |prompt_id| uniquely\n identifies the prompt. |requesting_origin| is the URL origin requesting\n permission. |requested_permissions| is a combination of values from\n cef_permission_request_types_t that represent the requested permissions.\n Return true (1) and call cef_permission_prompt_callback_t::Continue either\n in this function or at a later time to continue or cancel the request.\n Return false (0) to proceed with default handling. With the Chrome\n runtime, default handling will display the permission prompt UI. With the\n Alloy runtime, default handling is CEF_PERMISSION_RESULT_IGNORE.\n"]
     pub on_show_permission_prompt: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_permission_handler_t,
@@ -11812,7 +11849,7 @@ pub struct _cef_request_handler_t {
             callback: *mut _cef_callback_t,
         ) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Called on the UI thread when a client certificate is being requested for\n authentication. Return false (0) to use the default behavior.  If the\n |certificates| list is not NULL the default behavior will be to display a\n dialog for certificate selection. If the |certificates| list is NULL then\n the default behavior will be not to show a dialog and it will continue\n without using any certificate. Return true (1) and call\n cef_select_client_certificate_callback_t::Select either in this function\n or at a later time to select a certificate. Do not call Select or call it\n with NULL to continue without using any certificate. |isProxy| indicates\n whether the host is an HTTPS proxy or the origin server. |host| and |port|\n contains the hostname and port of the SSL server. |certificates| is the\n list of certificates to choose from; this list has already been pruned by\n Chromium so that it only contains certificates from issuers that the\n server trusts.\n"]
+    #[doc = "\n Called on the UI thread when a client certificate is being requested for\n authentication. Return false (0) to use the default behavior and\n automatically select the first certificate available. Return true (1) and\n call cef_select_client_certificate_callback_t::Select either in this\n function or at a later time to select a certificate. Do not call Select or\n call it with NULL to continue without using any certificate. |isProxy|\n indicates whether the host is an HTTPS proxy or the origin server. |host|\n and |port| contains the hostname and port of the SSL server.\n |certificates| is the list of certificates to choose from; this list has\n already been pruned by Chromium so that it only contains certificates from\n issuers that the server trusts.\n"]
     pub on_select_client_certificate: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_request_handler_t,
@@ -11832,7 +11869,7 @@ pub struct _cef_request_handler_t {
             browser: *mut _cef_browser_t,
         ),
     >,
-    #[doc = "\n Called on the browser process UI thread when the render process is\n unresponsive as indicated by a lack of input event processing for at least\n 15 seconds. Return false (0) for the default behavior which is an\n indefinite wait with Alloy style or display of the \"Page unresponsive\"\n dialog with Chrome style. Return true (1) and don't execute the callback\n for an indefinite wait without display of the Chrome style dialog. Return\n true (1) and call cef_unresponsive_process_callback_t::Wait either in this\n function or at a later time to reset the wait timer, potentially\n triggering another call to this function if the process remains\n unresponsive. Return true (1) and call\n cef_unresponsive_process_callback_t:: Terminate either in this function or\n at a later time to terminate the unresponsive process, resulting in a call\n to OnRenderProcessTerminated. OnRenderProcessResponsive will be called if\n the process becomes responsive after this function is called. This\n functionality depends on the hang monitor which can be disabled by passing\n the `--disable-hang-monitor` command-line flag.\n"]
+    #[doc = "\n Called on the browser process UI thread when the render process is\n unresponsive as indicated by a lack of input event processing for at least\n 15 seconds. Return false (0) for the default behavior which is an\n indefinite wait with the Alloy runtime or display of the \"Page\n unresponsive\" dialog with the Chrome runtime. Return true (1) and don't\n execute the callback for an indefinite wait without display of the Chrome\n runtime dialog. Return true (1) and call\n cef_unresponsive_process_callback_t::Wait either in this function or at a\n later time to reset the wait timer, potentially triggering another call to\n this function if the process remains unresponsive. Return true (1) and\n call cef_unresponsive_process_callback_t:: Terminate either in this\n function or at a later time to terminate the unresponsive process,\n resulting in a call to OnRenderProcessTerminated.\n OnRenderProcessResponsive will be called if the process becomes responsive\n after this function is called. This functionality depends on the hang\n monitor which can be disabled by passing the `--disable-hang-monitor`\n command-line flag.\n"]
     pub on_render_process_unresponsive: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_request_handler_t,
@@ -12246,7 +12283,7 @@ pub type cef_request_context_handler_t = _cef_request_context_handler_t;
 pub struct _cef_browser_process_handler_t {
     #[doc = "\n Base structure.\n"]
     pub base: cef_base_ref_counted_t,
-    #[doc = "\n Provides an opportunity to register custom preferences prior to global and\n request context initialization.\n\n If |type| is CEF_PREFERENCES_TYPE_GLOBAL the registered preferences can be\n accessed via cef_preference_manager_t::GetGlobalPreferences after\n OnContextInitialized is called. Global preferences are registered a single\n time at application startup. See related cef_settings_t.cache_path\n configuration.\n\n If |type| is CEF_PREFERENCES_TYPE_REQUEST_CONTEXT the preferences can be\n accessed via the cef_request_context_t after\n cef_request_context_handler_t::OnRequestContextInitialized is called.\n Request context preferences are registered each time a new\n cef_request_context_t is created. It is intended but not required that all\n request contexts have the same registered preferences. See related\n cef_request_context_settings_t.cache_path configuration.\n\n Do not keep a reference to the |registrar| object. This function is called\n on the browser process UI thread.\n"]
+    #[doc = "\n Provides an opportunity to register custom preferences prior to global and\n request context initialization.\n\n If |type| is CEF_PREFERENCES_TYPE_GLOBAL the registered preferences can be\n accessed via cef_preference_manager_t::GetGlobalPreferences after\n OnContextInitialized is called. Global preferences are registered a single\n time at application startup. See related cef_settings_t.cache_path and\n cef_settings_t.persist_user_preferences configuration.\n\n If |type| is CEF_PREFERENCES_TYPE_REQUEST_CONTEXT the preferences can be\n accessed via the cef_request_context_t after\n cef_request_context_handler_t::OnRequestContextInitialized is called.\n Request context preferences are registered each time a new\n cef_request_context_t is created. It is intended but not required that all\n request contexts have the same registered preferences. See related\n cef_request_context_settings_t.cache_path and\n cef_request_context_settings_t.persist_user_preferences configuration.\n\n Do not keep a reference to the |registrar| object. This function is called\n on the browser process UI thread.\n"]
     pub on_register_custom_preferences: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_browser_process_handler_t,
@@ -12277,13 +12314,13 @@ pub struct _cef_browser_process_handler_t {
     pub on_schedule_message_pump_work: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_process_handler_t, delay_ms: i64),
     >,
-    #[doc = "\n Return the default client for use with a newly created browser window\n (cef_browser_t object). If null is returned the cef_browser_t will be\n unmanaged (no callbacks will be executed for that cef_browser_t) and\n application shutdown will be blocked until the browser window is closed\n manually. This function is currently only used with Chrome style when\n creating new browser windows via Chrome UI.\n"]
+    #[doc = "\n Return the default client for use with a newly created browser window\n (cef_browser_t object). If null is returned the cef_browser_t will be\n unmanaged (no callbacks will be executed for that cef_browser_t) and\n application shutdown will be blocked until the browser window is closed\n manually. This function is currently only used with the Chrome runtime\n when creating new browser windows via Chrome UI.\n"]
     pub get_default_client: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_browser_process_handler_t,
         ) -> *mut _cef_client_t,
     >,
-    #[doc = "\n Return the default handler for use with a new user or incognito profile\n (cef_request_context_t object). If null is returned the\n cef_request_context_t will be unmanaged (no callbacks will be executed for\n that cef_request_context_t). This function is currently only used with\n Chrome style when creating new browser windows via Chrome UI.\n"]
+    #[doc = "\n Return the default handler for use with a new user or incognito profile\n (cef_request_context_t object). If null is returned the\n cef_request_context_t will be unmanaged (no callbacks will be executed for\n that cef_request_context_t). This function is currently only used with the\n Chrome runtime when creating new browser windows via Chrome UI.\n"]
     pub get_default_request_context_handler: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_browser_process_handler_t,
@@ -13182,18 +13219,11 @@ unsafe extern "C" {
     pub fn cef_v8value_create_array(length: ::std::os::raw::c_int) -> *mut cef_v8value_t;
 }
 unsafe extern "C" {
-    #[doc = "\n Create a new cef_v8value_t object of type ArrayBuffer which wraps the\n provided |buffer| of size |length| bytes. The ArrayBuffer is externalized,\n meaning that it does not own |buffer|. The caller is responsible for freeing\n |buffer| when requested via a call to\n cef_v8array_buffer_release_callback_t::ReleaseBuffer. This function should\n only be called from within the scope of a cef_render_process_handler_t,\n cef_v8handler_t or cef_v8accessor_t callback, or in combination with calling\n enter() and exit() on a stored cef_v8context_t reference.\n\n NOTE: Always returns nullptr when V8 sandbox is enabled.\n"]
+    #[doc = "\n Create a new cef_v8value_t object of type ArrayBuffer which wraps the\n provided |buffer| of size |length| bytes. The ArrayBuffer is externalized,\n meaning that it does not own |buffer|. The caller is responsible for freeing\n |buffer| when requested via a call to\n cef_v8array_buffer_release_callback_t::ReleaseBuffer. This function should\n only be called from within the scope of a cef_render_process_handler_t,\n cef_v8handler_t or cef_v8accessor_t callback, or in combination with calling\n enter() and exit() on a stored cef_v8context_t reference.\n"]
     pub fn cef_v8value_create_array_buffer(
         buffer: *mut ::std::os::raw::c_void,
         length: usize,
         release_callback: *mut cef_v8array_buffer_release_callback_t,
-    ) -> *mut cef_v8value_t;
-}
-unsafe extern "C" {
-    #[doc = "\n Create a new cef_v8value_t object of type ArrayBuffer which copies the\n provided |buffer| of size |length| bytes. This function should only be\n called from within the scope of a cef_render_process_handler_t,\n cef_v8handler_t or cef_v8accessor_t callback, or in combination with calling\n enter() and exit() on a stored cef_v8context_t reference.\n"]
-    pub fn cef_v8value_create_array_buffer_with_copy(
-        buffer: *mut ::std::os::raw::c_void,
-        length: usize,
     ) -> *mut cef_v8value_t;
 }
 unsafe extern "C" {
@@ -13573,7 +13603,7 @@ pub struct _cef_app_t {
     pub on_register_custom_schemes: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_app_t, registrar: *mut _cef_scheme_registrar_t),
     >,
-    #[doc = "\n Return the handler for resource bundle events. If no handler is returned\n resources will be loaded from pack files. This function is called by the\n browser and render processes on multiple threads.\n"]
+    #[doc = "\n Return the handler for resource bundle events. If\n cef_settings_t.pack_loading_disabled is true (1) a handler must be\n returned. If no handler is returned resources will be loaded from pack\n files. This function is called by the browser and render processes on\n multiple threads.\n"]
     pub get_resource_bundle_handler: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_app_t) -> *mut _cef_resource_bundle_handler_t,
     >,
@@ -14145,11 +14175,7 @@ pub struct _cef_view_t {
     pub is_accessibility_focusable: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_view_t) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Returns true (1) if this View has focus in the context of the containing\n Window. Check both this function and cef_window_t::IsActive to determine\n global keyboard focus.\n"]
-    pub has_focus: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_view_t) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Request focus for this View in the context of the containing Window. If\n this View is focusable it will become the focused View. Any focus changes\n while a Window is not active may be applied after that Window next becomes\n active.\n"]
+    #[doc = "\n Request keyboard focus. If this View is focusable it will become the\n focused View.\n"]
     pub request_focus: ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_view_t)>,
     #[doc = "\n Sets the background color for this View. The background color will be\n automatically reset when cef_view_delegate_t::OnThemeChanged is called.\n"]
     pub set_background_color: ::std::option::Option<
@@ -14212,7 +14238,7 @@ pub struct _cef_view_t {
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_view_t"][::std::mem::size_of::<_cef_view_t>() - 228usize];
+    ["Size of _cef_view_t"][::std::mem::size_of::<_cef_view_t>() - 224usize];
     ["Alignment of _cef_view_t"][::std::mem::align_of::<_cef_view_t>() - 4usize];
     ["Offset of field: _cef_view_t::base"][::std::mem::offset_of!(_cef_view_t, base) - 0usize];
     ["Offset of field: _cef_view_t::as_browser_view"]
@@ -14295,28 +14321,26 @@ const _: () = {
         [::std::mem::offset_of!(_cef_view_t, is_focusable) - 176usize];
     ["Offset of field: _cef_view_t::is_accessibility_focusable"]
         [::std::mem::offset_of!(_cef_view_t, is_accessibility_focusable) - 180usize];
-    ["Offset of field: _cef_view_t::has_focus"]
-        [::std::mem::offset_of!(_cef_view_t, has_focus) - 184usize];
     ["Offset of field: _cef_view_t::request_focus"]
-        [::std::mem::offset_of!(_cef_view_t, request_focus) - 188usize];
+        [::std::mem::offset_of!(_cef_view_t, request_focus) - 184usize];
     ["Offset of field: _cef_view_t::set_background_color"]
-        [::std::mem::offset_of!(_cef_view_t, set_background_color) - 192usize];
+        [::std::mem::offset_of!(_cef_view_t, set_background_color) - 188usize];
     ["Offset of field: _cef_view_t::get_background_color"]
-        [::std::mem::offset_of!(_cef_view_t, get_background_color) - 196usize];
+        [::std::mem::offset_of!(_cef_view_t, get_background_color) - 192usize];
     ["Offset of field: _cef_view_t::get_theme_color"]
-        [::std::mem::offset_of!(_cef_view_t, get_theme_color) - 200usize];
+        [::std::mem::offset_of!(_cef_view_t, get_theme_color) - 196usize];
     ["Offset of field: _cef_view_t::convert_point_to_screen"]
-        [::std::mem::offset_of!(_cef_view_t, convert_point_to_screen) - 204usize];
+        [::std::mem::offset_of!(_cef_view_t, convert_point_to_screen) - 200usize];
     ["Offset of field: _cef_view_t::convert_point_from_screen"]
-        [::std::mem::offset_of!(_cef_view_t, convert_point_from_screen) - 208usize];
+        [::std::mem::offset_of!(_cef_view_t, convert_point_from_screen) - 204usize];
     ["Offset of field: _cef_view_t::convert_point_to_window"]
-        [::std::mem::offset_of!(_cef_view_t, convert_point_to_window) - 212usize];
+        [::std::mem::offset_of!(_cef_view_t, convert_point_to_window) - 208usize];
     ["Offset of field: _cef_view_t::convert_point_from_window"]
-        [::std::mem::offset_of!(_cef_view_t, convert_point_from_window) - 216usize];
+        [::std::mem::offset_of!(_cef_view_t, convert_point_from_window) - 212usize];
     ["Offset of field: _cef_view_t::convert_point_to_view"]
-        [::std::mem::offset_of!(_cef_view_t, convert_point_to_view) - 220usize];
+        [::std::mem::offset_of!(_cef_view_t, convert_point_to_view) - 216usize];
     ["Offset of field: _cef_view_t::convert_point_from_view"]
-        [::std::mem::offset_of!(_cef_view_t, convert_point_from_view) - 224usize];
+        [::std::mem::offset_of!(_cef_view_t, convert_point_from_view) - 220usize];
 };
 #[doc = "\n A View is a rectangle within the views View hierarchy. It is the base\n structure for all Views. All size and position values are in density\n independent pixels (DIP) unless otherwise indicated. Methods must be called\n on the browser process UI thread unless otherwise indicated.\n"]
 pub type cef_view_t = _cef_view_t;
@@ -14353,21 +14377,21 @@ pub struct _cef_button_t {
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_button_t"][::std::mem::size_of::<_cef_button_t>() - 252usize];
+    ["Size of _cef_button_t"][::std::mem::size_of::<_cef_button_t>() - 248usize];
     ["Alignment of _cef_button_t"][::std::mem::align_of::<_cef_button_t>() - 4usize];
     ["Offset of field: _cef_button_t::base"][::std::mem::offset_of!(_cef_button_t, base) - 0usize];
     ["Offset of field: _cef_button_t::as_label_button"]
-        [::std::mem::offset_of!(_cef_button_t, as_label_button) - 228usize];
+        [::std::mem::offset_of!(_cef_button_t, as_label_button) - 224usize];
     ["Offset of field: _cef_button_t::set_state"]
-        [::std::mem::offset_of!(_cef_button_t, set_state) - 232usize];
+        [::std::mem::offset_of!(_cef_button_t, set_state) - 228usize];
     ["Offset of field: _cef_button_t::get_state"]
-        [::std::mem::offset_of!(_cef_button_t, get_state) - 236usize];
+        [::std::mem::offset_of!(_cef_button_t, get_state) - 232usize];
     ["Offset of field: _cef_button_t::set_ink_drop_enabled"]
-        [::std::mem::offset_of!(_cef_button_t, set_ink_drop_enabled) - 240usize];
+        [::std::mem::offset_of!(_cef_button_t, set_ink_drop_enabled) - 236usize];
     ["Offset of field: _cef_button_t::set_tooltip_text"]
-        [::std::mem::offset_of!(_cef_button_t, set_tooltip_text) - 244usize];
+        [::std::mem::offset_of!(_cef_button_t, set_tooltip_text) - 240usize];
     ["Offset of field: _cef_button_t::set_accessible_name"]
-        [::std::mem::offset_of!(_cef_button_t, set_accessible_name) - 248usize];
+        [::std::mem::offset_of!(_cef_button_t, set_accessible_name) - 244usize];
 };
 #[doc = "\n A View representing a button. Depending on the specific type, the button\n could be implemented by a native control or custom rendered. Methods must be\n called on the browser process UI thread unless otherwise indicated.\n"]
 pub type cef_button_t = _cef_button_t;
@@ -14467,32 +14491,32 @@ pub struct _cef_label_button_t {
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_label_button_t"][::std::mem::size_of::<_cef_label_button_t>() - 296usize];
+    ["Size of _cef_label_button_t"][::std::mem::size_of::<_cef_label_button_t>() - 292usize];
     ["Alignment of _cef_label_button_t"][::std::mem::align_of::<_cef_label_button_t>() - 4usize];
     ["Offset of field: _cef_label_button_t::base"]
         [::std::mem::offset_of!(_cef_label_button_t, base) - 0usize];
     ["Offset of field: _cef_label_button_t::as_menu_button"]
-        [::std::mem::offset_of!(_cef_label_button_t, as_menu_button) - 252usize];
+        [::std::mem::offset_of!(_cef_label_button_t, as_menu_button) - 248usize];
     ["Offset of field: _cef_label_button_t::set_text"]
-        [::std::mem::offset_of!(_cef_label_button_t, set_text) - 256usize];
+        [::std::mem::offset_of!(_cef_label_button_t, set_text) - 252usize];
     ["Offset of field: _cef_label_button_t::get_text"]
-        [::std::mem::offset_of!(_cef_label_button_t, get_text) - 260usize];
+        [::std::mem::offset_of!(_cef_label_button_t, get_text) - 256usize];
     ["Offset of field: _cef_label_button_t::set_image"]
-        [::std::mem::offset_of!(_cef_label_button_t, set_image) - 264usize];
+        [::std::mem::offset_of!(_cef_label_button_t, set_image) - 260usize];
     ["Offset of field: _cef_label_button_t::get_image"]
-        [::std::mem::offset_of!(_cef_label_button_t, get_image) - 268usize];
+        [::std::mem::offset_of!(_cef_label_button_t, get_image) - 264usize];
     ["Offset of field: _cef_label_button_t::set_text_color"]
-        [::std::mem::offset_of!(_cef_label_button_t, set_text_color) - 272usize];
+        [::std::mem::offset_of!(_cef_label_button_t, set_text_color) - 268usize];
     ["Offset of field: _cef_label_button_t::set_enabled_text_colors"]
-        [::std::mem::offset_of!(_cef_label_button_t, set_enabled_text_colors) - 276usize];
+        [::std::mem::offset_of!(_cef_label_button_t, set_enabled_text_colors) - 272usize];
     ["Offset of field: _cef_label_button_t::set_font_list"]
-        [::std::mem::offset_of!(_cef_label_button_t, set_font_list) - 280usize];
+        [::std::mem::offset_of!(_cef_label_button_t, set_font_list) - 276usize];
     ["Offset of field: _cef_label_button_t::set_horizontal_alignment"]
-        [::std::mem::offset_of!(_cef_label_button_t, set_horizontal_alignment) - 284usize];
+        [::std::mem::offset_of!(_cef_label_button_t, set_horizontal_alignment) - 280usize];
     ["Offset of field: _cef_label_button_t::set_minimum_size"]
-        [::std::mem::offset_of!(_cef_label_button_t, set_minimum_size) - 288usize];
+        [::std::mem::offset_of!(_cef_label_button_t, set_minimum_size) - 284usize];
     ["Offset of field: _cef_label_button_t::set_maximum_size"]
-        [::std::mem::offset_of!(_cef_label_button_t, set_maximum_size) - 292usize];
+        [::std::mem::offset_of!(_cef_label_button_t, set_maximum_size) - 288usize];
 };
 #[doc = "\n LabelButton is a button with optional text and/or icon. Methods must be\n called on the browser process UI thread unless otherwise indicated.\n"]
 pub type cef_label_button_t = _cef_label_button_t;
@@ -14571,14 +14595,14 @@ pub struct _cef_menu_button_t {
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_menu_button_t"][::std::mem::size_of::<_cef_menu_button_t>() - 304usize];
+    ["Size of _cef_menu_button_t"][::std::mem::size_of::<_cef_menu_button_t>() - 300usize];
     ["Alignment of _cef_menu_button_t"][::std::mem::align_of::<_cef_menu_button_t>() - 4usize];
     ["Offset of field: _cef_menu_button_t::base"]
         [::std::mem::offset_of!(_cef_menu_button_t, base) - 0usize];
     ["Offset of field: _cef_menu_button_t::show_menu"]
-        [::std::mem::offset_of!(_cef_menu_button_t, show_menu) - 296usize];
+        [::std::mem::offset_of!(_cef_menu_button_t, show_menu) - 292usize];
     ["Offset of field: _cef_menu_button_t::trigger_menu"]
-        [::std::mem::offset_of!(_cef_menu_button_t, trigger_menu) - 300usize];
+        [::std::mem::offset_of!(_cef_menu_button_t, trigger_menu) - 296usize];
 };
 #[doc = "\n MenuButton is a button with optional text, icon and/or menu marker that\n shows a menu when clicked with the left mouse button. All size and position\n values are in density independent pixels (DIP) unless otherwise indicated.\n Methods must be called on the browser process UI thread unless otherwise\n indicated.\n"]
 pub type cef_menu_button_t = _cef_menu_button_t;
@@ -14774,72 +14798,72 @@ pub struct _cef_textfield_t {
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_textfield_t"][::std::mem::size_of::<_cef_textfield_t>() - 352usize];
+    ["Size of _cef_textfield_t"][::std::mem::size_of::<_cef_textfield_t>() - 348usize];
     ["Alignment of _cef_textfield_t"][::std::mem::align_of::<_cef_textfield_t>() - 4usize];
     ["Offset of field: _cef_textfield_t::base"]
         [::std::mem::offset_of!(_cef_textfield_t, base) - 0usize];
     ["Offset of field: _cef_textfield_t::set_password_input"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_password_input) - 228usize];
+        [::std::mem::offset_of!(_cef_textfield_t, set_password_input) - 224usize];
     ["Offset of field: _cef_textfield_t::is_password_input"]
-        [::std::mem::offset_of!(_cef_textfield_t, is_password_input) - 232usize];
+        [::std::mem::offset_of!(_cef_textfield_t, is_password_input) - 228usize];
     ["Offset of field: _cef_textfield_t::set_read_only"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_read_only) - 236usize];
+        [::std::mem::offset_of!(_cef_textfield_t, set_read_only) - 232usize];
     ["Offset of field: _cef_textfield_t::is_read_only"]
-        [::std::mem::offset_of!(_cef_textfield_t, is_read_only) - 240usize];
+        [::std::mem::offset_of!(_cef_textfield_t, is_read_only) - 236usize];
     ["Offset of field: _cef_textfield_t::get_text"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_text) - 244usize];
+        [::std::mem::offset_of!(_cef_textfield_t, get_text) - 240usize];
     ["Offset of field: _cef_textfield_t::set_text"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_text) - 248usize];
+        [::std::mem::offset_of!(_cef_textfield_t, set_text) - 244usize];
     ["Offset of field: _cef_textfield_t::append_text"]
-        [::std::mem::offset_of!(_cef_textfield_t, append_text) - 252usize];
+        [::std::mem::offset_of!(_cef_textfield_t, append_text) - 248usize];
     ["Offset of field: _cef_textfield_t::insert_or_replace_text"]
-        [::std::mem::offset_of!(_cef_textfield_t, insert_or_replace_text) - 256usize];
+        [::std::mem::offset_of!(_cef_textfield_t, insert_or_replace_text) - 252usize];
     ["Offset of field: _cef_textfield_t::has_selection"]
-        [::std::mem::offset_of!(_cef_textfield_t, has_selection) - 260usize];
+        [::std::mem::offset_of!(_cef_textfield_t, has_selection) - 256usize];
     ["Offset of field: _cef_textfield_t::get_selected_text"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_selected_text) - 264usize];
+        [::std::mem::offset_of!(_cef_textfield_t, get_selected_text) - 260usize];
     ["Offset of field: _cef_textfield_t::select_all"]
-        [::std::mem::offset_of!(_cef_textfield_t, select_all) - 268usize];
+        [::std::mem::offset_of!(_cef_textfield_t, select_all) - 264usize];
     ["Offset of field: _cef_textfield_t::clear_selection"]
-        [::std::mem::offset_of!(_cef_textfield_t, clear_selection) - 272usize];
+        [::std::mem::offset_of!(_cef_textfield_t, clear_selection) - 268usize];
     ["Offset of field: _cef_textfield_t::get_selected_range"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_selected_range) - 276usize];
+        [::std::mem::offset_of!(_cef_textfield_t, get_selected_range) - 272usize];
     ["Offset of field: _cef_textfield_t::select_range"]
-        [::std::mem::offset_of!(_cef_textfield_t, select_range) - 280usize];
+        [::std::mem::offset_of!(_cef_textfield_t, select_range) - 276usize];
     ["Offset of field: _cef_textfield_t::get_cursor_position"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_cursor_position) - 284usize];
+        [::std::mem::offset_of!(_cef_textfield_t, get_cursor_position) - 280usize];
     ["Offset of field: _cef_textfield_t::set_text_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_text_color) - 288usize];
+        [::std::mem::offset_of!(_cef_textfield_t, set_text_color) - 284usize];
     ["Offset of field: _cef_textfield_t::get_text_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_text_color) - 292usize];
+        [::std::mem::offset_of!(_cef_textfield_t, get_text_color) - 288usize];
     ["Offset of field: _cef_textfield_t::set_selection_text_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_selection_text_color) - 296usize];
+        [::std::mem::offset_of!(_cef_textfield_t, set_selection_text_color) - 292usize];
     ["Offset of field: _cef_textfield_t::get_selection_text_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_selection_text_color) - 300usize];
+        [::std::mem::offset_of!(_cef_textfield_t, get_selection_text_color) - 296usize];
     ["Offset of field: _cef_textfield_t::set_selection_background_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_selection_background_color) - 304usize];
+        [::std::mem::offset_of!(_cef_textfield_t, set_selection_background_color) - 300usize];
     ["Offset of field: _cef_textfield_t::get_selection_background_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_selection_background_color) - 308usize];
+        [::std::mem::offset_of!(_cef_textfield_t, get_selection_background_color) - 304usize];
     ["Offset of field: _cef_textfield_t::set_font_list"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_font_list) - 312usize];
+        [::std::mem::offset_of!(_cef_textfield_t, set_font_list) - 308usize];
     ["Offset of field: _cef_textfield_t::apply_text_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, apply_text_color) - 316usize];
+        [::std::mem::offset_of!(_cef_textfield_t, apply_text_color) - 312usize];
     ["Offset of field: _cef_textfield_t::apply_text_style"]
-        [::std::mem::offset_of!(_cef_textfield_t, apply_text_style) - 320usize];
+        [::std::mem::offset_of!(_cef_textfield_t, apply_text_style) - 316usize];
     ["Offset of field: _cef_textfield_t::is_command_enabled"]
-        [::std::mem::offset_of!(_cef_textfield_t, is_command_enabled) - 324usize];
+        [::std::mem::offset_of!(_cef_textfield_t, is_command_enabled) - 320usize];
     ["Offset of field: _cef_textfield_t::execute_command"]
-        [::std::mem::offset_of!(_cef_textfield_t, execute_command) - 328usize];
+        [::std::mem::offset_of!(_cef_textfield_t, execute_command) - 324usize];
     ["Offset of field: _cef_textfield_t::clear_edit_history"]
-        [::std::mem::offset_of!(_cef_textfield_t, clear_edit_history) - 332usize];
+        [::std::mem::offset_of!(_cef_textfield_t, clear_edit_history) - 328usize];
     ["Offset of field: _cef_textfield_t::set_placeholder_text"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_placeholder_text) - 336usize];
+        [::std::mem::offset_of!(_cef_textfield_t, set_placeholder_text) - 332usize];
     ["Offset of field: _cef_textfield_t::get_placeholder_text"]
-        [::std::mem::offset_of!(_cef_textfield_t, get_placeholder_text) - 340usize];
+        [::std::mem::offset_of!(_cef_textfield_t, get_placeholder_text) - 336usize];
     ["Offset of field: _cef_textfield_t::set_placeholder_text_color"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_placeholder_text_color) - 344usize];
+        [::std::mem::offset_of!(_cef_textfield_t, set_placeholder_text_color) - 340usize];
     ["Offset of field: _cef_textfield_t::set_accessible_name"]
-        [::std::mem::offset_of!(_cef_textfield_t, set_accessible_name) - 348usize];
+        [::std::mem::offset_of!(_cef_textfield_t, set_accessible_name) - 344usize];
 };
 #[doc = "\n A Textfield supports editing of text. This control is custom rendered with\n no platform-specific code. Methods must be called on the browser process UI\n thread unless otherwise indicated.\n"]
 pub type cef_textfield_t = _cef_textfield_t;
@@ -14902,7 +14926,7 @@ pub struct _cef_browser_view_delegate_t {
             browser_view: *mut _cef_browser_view_t,
         ) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Called when |browser_view| receives a gesture command. Return true (1) to\n handle (or disable) a |gesture_command| or false (0) to propagate the\n gesture to the browser for default handling. With Chrome style these\n commands can also be handled via cef_command_handler_t::OnChromeCommand.\n"]
+    #[doc = "\n Called when |browser_view| receives a gesture command. Return true (1) to\n handle (or disable) a |gesture_command| or false (0) to propagate the\n gesture to the browser for default handling. With the Chrome runtime these\n commands can also be handled via cef_command_handler_t::OnChromeCommand.\n"]
     pub on_gesture_command: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_browser_view_delegate_t,
@@ -14956,11 +14980,11 @@ pub struct _cef_browser_view_t {
     pub get_browser: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_view_t) -> *mut _cef_browser_t,
     >,
-    #[doc = "\n Returns the Chrome toolbar associated with this BrowserView. Only\n supported when using Chrome style. The cef_browser_view_delegate_t::\n get_chrome_toolbar_type() function must return a value other than\n CEF_CTT_NONE and the toolbar will not be available until after this\n BrowserView is added to a cef_window_t and\n cef_view_delegate_t::on_window_changed() has been called.\n"]
+    #[doc = "\n Returns the Chrome toolbar associated with this BrowserView. Only\n supported when using the Chrome runtime. The cef_browser_view_delegate_t::\n get_chrome_toolbar_type() function must return a value other than\n CEF_CTT_NONE and the toolbar will not be available until after this\n BrowserView is added to a cef_window_t and\n cef_view_delegate_t::on_window_changed() has been called.\n"]
     pub get_chrome_toolbar: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_browser_view_t) -> *mut _cef_view_t,
     >,
-    #[doc = "\n Sets whether normal priority accelerators are first forwarded to the web\n content (`keydown` event handler) or cef_keyboard_handler_t. Normal\n priority accelerators can be registered via cef_window_t::SetAccelerator\n (with |high_priority|=false (0)) or internally for standard accelerators\n supported by Chrome style. If |prefer_accelerators| is true (1) then the\n matching accelerator will be triggered immediately (calling\n cef_window_delegate_t::OnAccelerator or\n cef_command_handler_t::OnChromeCommand respectively) and the event will\n not be forwarded to the web content or cef_keyboard_handler_t first. If\n |prefer_accelerators| is false (0) then the matching accelerator will only\n be triggered if the event is not handled by web content (`keydown` event\n handler that calls `event.preventDefault()`) or by cef_keyboard_handler_t.\n The default value is false (0).\n"]
+    #[doc = "\n Sets whether normal priority accelerators are first forwarded to the web\n content (`keydown` event handler) or cef_keyboard_handler_t. Normal\n priority accelerators can be registered via cef_window_t::SetAccelerator\n (with |high_priority|=false (0)) or internally for standard accelerators\n supported by the Chrome runtime. If |prefer_accelerators| is true (1) then\n the matching accelerator will be triggered immediately (calling\n cef_window_delegate_t::OnAccelerator or\n cef_command_handler_t::OnChromeCommand respectively) and the event will\n not be forwarded to the web content or cef_keyboard_handler_t first. If\n |prefer_accelerators| is false (0) then the matching accelerator will only\n be triggered if the event is not handled by web content (`keydown` event\n handler that calls `event.preventDefault()`) or by cef_keyboard_handler_t.\n The default value is false (0).\n"]
     pub set_prefer_accelerators: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_browser_view_t,
@@ -14974,18 +14998,18 @@ pub struct _cef_browser_view_t {
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_browser_view_t"][::std::mem::size_of::<_cef_browser_view_t>() - 244usize];
+    ["Size of _cef_browser_view_t"][::std::mem::size_of::<_cef_browser_view_t>() - 240usize];
     ["Alignment of _cef_browser_view_t"][::std::mem::align_of::<_cef_browser_view_t>() - 4usize];
     ["Offset of field: _cef_browser_view_t::base"]
         [::std::mem::offset_of!(_cef_browser_view_t, base) - 0usize];
     ["Offset of field: _cef_browser_view_t::get_browser"]
-        [::std::mem::offset_of!(_cef_browser_view_t, get_browser) - 228usize];
+        [::std::mem::offset_of!(_cef_browser_view_t, get_browser) - 224usize];
     ["Offset of field: _cef_browser_view_t::get_chrome_toolbar"]
-        [::std::mem::offset_of!(_cef_browser_view_t, get_chrome_toolbar) - 232usize];
+        [::std::mem::offset_of!(_cef_browser_view_t, get_chrome_toolbar) - 228usize];
     ["Offset of field: _cef_browser_view_t::set_prefer_accelerators"]
-        [::std::mem::offset_of!(_cef_browser_view_t, set_prefer_accelerators) - 236usize];
+        [::std::mem::offset_of!(_cef_browser_view_t, set_prefer_accelerators) - 232usize];
     ["Offset of field: _cef_browser_view_t::get_runtime_style"]
-        [::std::mem::offset_of!(_cef_browser_view_t, get_runtime_style) - 240usize];
+        [::std::mem::offset_of!(_cef_browser_view_t, get_runtime_style) - 236usize];
 };
 #[doc = "\n A View hosting a cef_browser_t instance. Methods must be called on the\n browser process UI thread unless otherwise indicated.\n"]
 pub type cef_browser_view_t = _cef_browser_view_t;
@@ -15043,24 +15067,24 @@ pub struct _cef_scroll_view_t {
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_scroll_view_t"][::std::mem::size_of::<_cef_scroll_view_t>() - 256usize];
+    ["Size of _cef_scroll_view_t"][::std::mem::size_of::<_cef_scroll_view_t>() - 252usize];
     ["Alignment of _cef_scroll_view_t"][::std::mem::align_of::<_cef_scroll_view_t>() - 4usize];
     ["Offset of field: _cef_scroll_view_t::base"]
         [::std::mem::offset_of!(_cef_scroll_view_t, base) - 0usize];
     ["Offset of field: _cef_scroll_view_t::set_content_view"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, set_content_view) - 228usize];
+        [::std::mem::offset_of!(_cef_scroll_view_t, set_content_view) - 224usize];
     ["Offset of field: _cef_scroll_view_t::get_content_view"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, get_content_view) - 232usize];
+        [::std::mem::offset_of!(_cef_scroll_view_t, get_content_view) - 228usize];
     ["Offset of field: _cef_scroll_view_t::get_visible_content_rect"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, get_visible_content_rect) - 236usize];
+        [::std::mem::offset_of!(_cef_scroll_view_t, get_visible_content_rect) - 232usize];
     ["Offset of field: _cef_scroll_view_t::has_horizontal_scrollbar"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, has_horizontal_scrollbar) - 240usize];
+        [::std::mem::offset_of!(_cef_scroll_view_t, has_horizontal_scrollbar) - 236usize];
     ["Offset of field: _cef_scroll_view_t::get_horizontal_scrollbar_height"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, get_horizontal_scrollbar_height) - 244usize];
+        [::std::mem::offset_of!(_cef_scroll_view_t, get_horizontal_scrollbar_height) - 240usize];
     ["Offset of field: _cef_scroll_view_t::has_vertical_scrollbar"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, has_vertical_scrollbar) - 248usize];
+        [::std::mem::offset_of!(_cef_scroll_view_t, has_vertical_scrollbar) - 244usize];
     ["Offset of field: _cef_scroll_view_t::get_vertical_scrollbar_width"]
-        [::std::mem::offset_of!(_cef_scroll_view_t, get_vertical_scrollbar_width) - 252usize];
+        [::std::mem::offset_of!(_cef_scroll_view_t, get_vertical_scrollbar_width) - 248usize];
 };
 #[doc = "\n A ScrollView will show horizontal and/or vertical scrollbars when necessary\n based on the size of the attached content view. Methods must be called on\n the browser process UI thread unless otherwise indicated.\n"]
 pub type cef_scroll_view_t = _cef_scroll_view_t;
@@ -15393,33 +15417,33 @@ pub struct _cef_panel_t {
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_panel_t"][::std::mem::size_of::<_cef_panel_t>() - 276usize];
+    ["Size of _cef_panel_t"][::std::mem::size_of::<_cef_panel_t>() - 272usize];
     ["Alignment of _cef_panel_t"][::std::mem::align_of::<_cef_panel_t>() - 4usize];
     ["Offset of field: _cef_panel_t::base"][::std::mem::offset_of!(_cef_panel_t, base) - 0usize];
     ["Offset of field: _cef_panel_t::as_window"]
-        [::std::mem::offset_of!(_cef_panel_t, as_window) - 228usize];
+        [::std::mem::offset_of!(_cef_panel_t, as_window) - 224usize];
     ["Offset of field: _cef_panel_t::set_to_fill_layout"]
-        [::std::mem::offset_of!(_cef_panel_t, set_to_fill_layout) - 232usize];
+        [::std::mem::offset_of!(_cef_panel_t, set_to_fill_layout) - 228usize];
     ["Offset of field: _cef_panel_t::set_to_box_layout"]
-        [::std::mem::offset_of!(_cef_panel_t, set_to_box_layout) - 236usize];
+        [::std::mem::offset_of!(_cef_panel_t, set_to_box_layout) - 232usize];
     ["Offset of field: _cef_panel_t::get_layout"]
-        [::std::mem::offset_of!(_cef_panel_t, get_layout) - 240usize];
+        [::std::mem::offset_of!(_cef_panel_t, get_layout) - 236usize];
     ["Offset of field: _cef_panel_t::layout"]
-        [::std::mem::offset_of!(_cef_panel_t, layout) - 244usize];
+        [::std::mem::offset_of!(_cef_panel_t, layout) - 240usize];
     ["Offset of field: _cef_panel_t::add_child_view"]
-        [::std::mem::offset_of!(_cef_panel_t, add_child_view) - 248usize];
+        [::std::mem::offset_of!(_cef_panel_t, add_child_view) - 244usize];
     ["Offset of field: _cef_panel_t::add_child_view_at"]
-        [::std::mem::offset_of!(_cef_panel_t, add_child_view_at) - 252usize];
+        [::std::mem::offset_of!(_cef_panel_t, add_child_view_at) - 248usize];
     ["Offset of field: _cef_panel_t::reorder_child_view"]
-        [::std::mem::offset_of!(_cef_panel_t, reorder_child_view) - 256usize];
+        [::std::mem::offset_of!(_cef_panel_t, reorder_child_view) - 252usize];
     ["Offset of field: _cef_panel_t::remove_child_view"]
-        [::std::mem::offset_of!(_cef_panel_t, remove_child_view) - 260usize];
+        [::std::mem::offset_of!(_cef_panel_t, remove_child_view) - 256usize];
     ["Offset of field: _cef_panel_t::remove_all_child_views"]
-        [::std::mem::offset_of!(_cef_panel_t, remove_all_child_views) - 264usize];
+        [::std::mem::offset_of!(_cef_panel_t, remove_all_child_views) - 260usize];
     ["Offset of field: _cef_panel_t::get_child_view_count"]
-        [::std::mem::offset_of!(_cef_panel_t, get_child_view_count) - 268usize];
+        [::std::mem::offset_of!(_cef_panel_t, get_child_view_count) - 264usize];
     ["Offset of field: _cef_panel_t::get_child_view_at"]
-        [::std::mem::offset_of!(_cef_panel_t, get_child_view_at) - 272usize];
+        [::std::mem::offset_of!(_cef_panel_t, get_child_view_at) - 268usize];
 };
 #[doc = "\n A Panel is a container in the views hierarchy that can contain other Views\n as children. Methods must be called on the browser process UI thread unless\n otherwise indicated.\n"]
 pub type cef_panel_t = _cef_panel_t;
@@ -15461,7 +15485,7 @@ pub struct _cef_window_delegate_t {
             new_bounds: *const cef_rect_t,
         ),
     >,
-    #[doc = "\n Called when |window| is transitioning to or from fullscreen mode. On MacOS\n the transition occurs asynchronously with |is_competed| set to false (0)\n when the transition starts and true (1) after the transition completes. On\n other platforms the transition occurs synchronously with |is_completed|\n set to true (1) after the transition completes. With Alloy style you must\n also implement cef_display_handler_t::OnFullscreenModeChange to handle\n fullscreen transitions initiated by browser content.\n"]
+    #[doc = "\n Called when |window| is transitioning to or from fullscreen mode. On MacOS\n the transition occurs asynchronously with |is_competed| set to false (0)\n when the transition starts and true (1) after the transition completes. On\n other platforms the transition occurs synchronously with |is_completed|\n set to true (1) after the transition completes. With the Alloy runtime you\n must also implement cef_display_handler_t::OnFullscreenModeChange to\n handle fullscreen transitions initiated by browser content.\n"]
     pub on_window_fullscreen_transition: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_window_delegate_t,
@@ -15572,7 +15596,7 @@ pub struct _cef_window_delegate_t {
             event: *const cef_key_event_t,
         ) -> ::std::os::raw::c_int,
     >,
-    #[doc = "\n Called after the native/OS or Chrome theme for |window| has changed.\n |chrome_theme| will be true (1) if the notification is for a Chrome theme.\n\n Native/OS theme colors are configured globally and do not need to be\n customized for each Window individually. An example of a native/OS theme\n change that triggers this callback is when the user switches between dark\n and light mode during application lifespan. Native/OS theme changes can be\n disabled by passing the `--force-dark-mode` or `--force-light-mode`\n command-line flag.\n\n Chrome theme colors will be applied and this callback will be triggered\n if/when a BrowserView is added to the Window's component hierarchy. Chrome\n theme colors can be configured on a per-RequestContext basis using\n cef_request_context_t::SetChromeColorScheme or (Chrome style only) by\n visiting chrome://settings/manageProfile. Any theme changes using those\n mechanisms will also trigger this callback. Chrome theme colors will be\n persisted and restored from disk cache.\n\n This callback is not triggered on Window creation so clients that wish to\n customize the initial native/OS theme must call\n cef_window_t::SetThemeColor and cef_window_t::ThemeChanged before showing\n the first Window.\n\n Theme colors will be reset to standard values before this callback is\n called for the first affected Window. Call cef_window_t::SetThemeColor\n from inside this callback to override a standard color or add a custom\n color. cef_view_delegate_t::OnThemeChanged will be called after this\n callback for the complete |window| component hierarchy.\n"]
+    #[doc = "\n Called after the native/OS or Chrome theme for |window| has changed.\n |chrome_theme| will be true (1) if the notification is for a Chrome theme.\n\n Native/OS theme colors are configured globally and do not need to be\n customized for each Window individually. An example of a native/OS theme\n change that triggers this callback is when the user switches between dark\n and light mode during application lifespan. Native/OS theme changes can be\n disabled by passing the `--force-dark-mode` or `--force-light-mode`\n command-line flag.\n\n Chrome theme colors will be applied and this callback will be triggered\n if/when a BrowserView is added to the Window's component hierarchy. Chrome\n theme colors can be configured on a per-RequestContext basis using\n cef_request_context_t::SetChromeColorScheme or (Chrome runtime only) by\n visiting chrome://settings/manageProfile. Any theme changes using those\n mechanisms will also trigger this callback. Chrome theme colors will be\n persisted and restored from disk cache with the Chrome runtime, and with\n the Alloy runtime if persist_user_preferences is set to true (1) via\n CefSettings or cef_request_context_tSettings.\n\n This callback is not triggered on Window creation so clients that wish to\n customize the initial native/OS theme must call\n cef_window_t::SetThemeColor and cef_window_t::ThemeChanged before showing\n the first Window.\n\n Theme colors will be reset to standard values before this callback is\n called for the first affected Window. Call cef_window_t::SetThemeColor\n from inside this callback to override a standard color or add a custom\n color. cef_view_delegate_t::OnThemeChanged will be called after this\n callback for the complete |window| component hierarchy.\n"]
     pub on_theme_colors_changed: ::std::option::Option<
         unsafe extern "stdcall" fn(
             self_: *mut _cef_window_delegate_t,
@@ -15584,18 +15608,10 @@ pub struct _cef_window_delegate_t {
     pub get_window_runtime_style: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_window_delegate_t) -> cef_runtime_style_t,
     >,
-    #[doc = "\n Return Linux-specific window properties for correctly handling by window\n managers\n"]
-    pub get_linux_window_properties: ::std::option::Option<
-        unsafe extern "stdcall" fn(
-            self_: *mut _cef_window_delegate_t,
-            window: *mut _cef_window_t,
-            properties: *mut _cef_linux_window_properties_t,
-        ) -> ::std::os::raw::c_int,
-    >,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_window_delegate_t"][::std::mem::size_of::<_cef_window_delegate_t>() - 156usize];
+    ["Size of _cef_window_delegate_t"][::std::mem::size_of::<_cef_window_delegate_t>() - 152usize];
     ["Alignment of _cef_window_delegate_t"]
         [::std::mem::align_of::<_cef_window_delegate_t>() - 4usize];
     ["Offset of field: _cef_window_delegate_t::base"]
@@ -15644,8 +15660,6 @@ const _: () = {
         [::std::mem::offset_of!(_cef_window_delegate_t, on_theme_colors_changed) - 144usize];
     ["Offset of field: _cef_window_delegate_t::get_window_runtime_style"]
         [::std::mem::offset_of!(_cef_window_delegate_t, get_window_runtime_style) - 148usize];
-    ["Offset of field: _cef_window_delegate_t::get_linux_window_properties"]
-        [::std::mem::offset_of!(_cef_window_delegate_t, get_linux_window_properties) - 152usize];
 };
 #[doc = "\n Implement this structure to handle window events. The functions of this\n structure will be called on the browser process UI thread unless otherwise\n indicated.\n"]
 pub type cef_window_delegate_t = _cef_window_delegate_t;
@@ -15715,10 +15729,6 @@ pub struct _cef_window_t {
     #[doc = "\n Returns true (1) if the Window is fullscreen.\n"]
     pub is_fullscreen: ::std::option::Option<
         unsafe extern "stdcall" fn(self_: *mut _cef_window_t) -> ::std::os::raw::c_int,
-    >,
-    #[doc = "\n Returns the View that currently has focus in this Window, or nullptr if no\n View currently has focus. A Window may have a focused View even if it is\n not currently active. Any focus changes while a Window is not active may\n be applied after that Window next becomes active.\n"]
-    pub get_focused_view: ::std::option::Option<
-        unsafe extern "stdcall" fn(self_: *mut _cef_window_t) -> *mut _cef_view_t,
     >,
     #[doc = "\n Set the Window title.\n"]
     pub set_title: ::std::option::Option<
@@ -15843,93 +15853,91 @@ pub struct _cef_window_t {
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _cef_window_t"][::std::mem::size_of::<_cef_window_t>() - 444usize];
+    ["Size of _cef_window_t"][::std::mem::size_of::<_cef_window_t>() - 436usize];
     ["Alignment of _cef_window_t"][::std::mem::align_of::<_cef_window_t>() - 4usize];
     ["Offset of field: _cef_window_t::base"][::std::mem::offset_of!(_cef_window_t, base) - 0usize];
     ["Offset of field: _cef_window_t::show"]
-        [::std::mem::offset_of!(_cef_window_t, show) - 276usize];
+        [::std::mem::offset_of!(_cef_window_t, show) - 272usize];
     ["Offset of field: _cef_window_t::show_as_browser_modal_dialog"]
-        [::std::mem::offset_of!(_cef_window_t, show_as_browser_modal_dialog) - 280usize];
+        [::std::mem::offset_of!(_cef_window_t, show_as_browser_modal_dialog) - 276usize];
     ["Offset of field: _cef_window_t::hide"]
-        [::std::mem::offset_of!(_cef_window_t, hide) - 284usize];
+        [::std::mem::offset_of!(_cef_window_t, hide) - 280usize];
     ["Offset of field: _cef_window_t::center_window"]
-        [::std::mem::offset_of!(_cef_window_t, center_window) - 288usize];
+        [::std::mem::offset_of!(_cef_window_t, center_window) - 284usize];
     ["Offset of field: _cef_window_t::close"]
-        [::std::mem::offset_of!(_cef_window_t, close) - 292usize];
+        [::std::mem::offset_of!(_cef_window_t, close) - 288usize];
     ["Offset of field: _cef_window_t::is_closed"]
-        [::std::mem::offset_of!(_cef_window_t, is_closed) - 296usize];
+        [::std::mem::offset_of!(_cef_window_t, is_closed) - 292usize];
     ["Offset of field: _cef_window_t::activate"]
-        [::std::mem::offset_of!(_cef_window_t, activate) - 300usize];
+        [::std::mem::offset_of!(_cef_window_t, activate) - 296usize];
     ["Offset of field: _cef_window_t::deactivate"]
-        [::std::mem::offset_of!(_cef_window_t, deactivate) - 304usize];
+        [::std::mem::offset_of!(_cef_window_t, deactivate) - 300usize];
     ["Offset of field: _cef_window_t::is_active"]
-        [::std::mem::offset_of!(_cef_window_t, is_active) - 308usize];
+        [::std::mem::offset_of!(_cef_window_t, is_active) - 304usize];
     ["Offset of field: _cef_window_t::bring_to_top"]
-        [::std::mem::offset_of!(_cef_window_t, bring_to_top) - 312usize];
+        [::std::mem::offset_of!(_cef_window_t, bring_to_top) - 308usize];
     ["Offset of field: _cef_window_t::set_always_on_top"]
-        [::std::mem::offset_of!(_cef_window_t, set_always_on_top) - 316usize];
+        [::std::mem::offset_of!(_cef_window_t, set_always_on_top) - 312usize];
     ["Offset of field: _cef_window_t::is_always_on_top"]
-        [::std::mem::offset_of!(_cef_window_t, is_always_on_top) - 320usize];
+        [::std::mem::offset_of!(_cef_window_t, is_always_on_top) - 316usize];
     ["Offset of field: _cef_window_t::maximize"]
-        [::std::mem::offset_of!(_cef_window_t, maximize) - 324usize];
+        [::std::mem::offset_of!(_cef_window_t, maximize) - 320usize];
     ["Offset of field: _cef_window_t::minimize"]
-        [::std::mem::offset_of!(_cef_window_t, minimize) - 328usize];
+        [::std::mem::offset_of!(_cef_window_t, minimize) - 324usize];
     ["Offset of field: _cef_window_t::restore"]
-        [::std::mem::offset_of!(_cef_window_t, restore) - 332usize];
+        [::std::mem::offset_of!(_cef_window_t, restore) - 328usize];
     ["Offset of field: _cef_window_t::set_fullscreen"]
-        [::std::mem::offset_of!(_cef_window_t, set_fullscreen) - 336usize];
+        [::std::mem::offset_of!(_cef_window_t, set_fullscreen) - 332usize];
     ["Offset of field: _cef_window_t::is_maximized"]
-        [::std::mem::offset_of!(_cef_window_t, is_maximized) - 340usize];
+        [::std::mem::offset_of!(_cef_window_t, is_maximized) - 336usize];
     ["Offset of field: _cef_window_t::is_minimized"]
-        [::std::mem::offset_of!(_cef_window_t, is_minimized) - 344usize];
+        [::std::mem::offset_of!(_cef_window_t, is_minimized) - 340usize];
     ["Offset of field: _cef_window_t::is_fullscreen"]
-        [::std::mem::offset_of!(_cef_window_t, is_fullscreen) - 348usize];
-    ["Offset of field: _cef_window_t::get_focused_view"]
-        [::std::mem::offset_of!(_cef_window_t, get_focused_view) - 352usize];
+        [::std::mem::offset_of!(_cef_window_t, is_fullscreen) - 344usize];
     ["Offset of field: _cef_window_t::set_title"]
-        [::std::mem::offset_of!(_cef_window_t, set_title) - 356usize];
+        [::std::mem::offset_of!(_cef_window_t, set_title) - 348usize];
     ["Offset of field: _cef_window_t::get_title"]
-        [::std::mem::offset_of!(_cef_window_t, get_title) - 360usize];
+        [::std::mem::offset_of!(_cef_window_t, get_title) - 352usize];
     ["Offset of field: _cef_window_t::set_window_icon"]
-        [::std::mem::offset_of!(_cef_window_t, set_window_icon) - 364usize];
+        [::std::mem::offset_of!(_cef_window_t, set_window_icon) - 356usize];
     ["Offset of field: _cef_window_t::get_window_icon"]
-        [::std::mem::offset_of!(_cef_window_t, get_window_icon) - 368usize];
+        [::std::mem::offset_of!(_cef_window_t, get_window_icon) - 360usize];
     ["Offset of field: _cef_window_t::set_window_app_icon"]
-        [::std::mem::offset_of!(_cef_window_t, set_window_app_icon) - 372usize];
+        [::std::mem::offset_of!(_cef_window_t, set_window_app_icon) - 364usize];
     ["Offset of field: _cef_window_t::get_window_app_icon"]
-        [::std::mem::offset_of!(_cef_window_t, get_window_app_icon) - 376usize];
+        [::std::mem::offset_of!(_cef_window_t, get_window_app_icon) - 368usize];
     ["Offset of field: _cef_window_t::add_overlay_view"]
-        [::std::mem::offset_of!(_cef_window_t, add_overlay_view) - 380usize];
+        [::std::mem::offset_of!(_cef_window_t, add_overlay_view) - 372usize];
     ["Offset of field: _cef_window_t::show_menu"]
-        [::std::mem::offset_of!(_cef_window_t, show_menu) - 384usize];
+        [::std::mem::offset_of!(_cef_window_t, show_menu) - 376usize];
     ["Offset of field: _cef_window_t::cancel_menu"]
-        [::std::mem::offset_of!(_cef_window_t, cancel_menu) - 388usize];
+        [::std::mem::offset_of!(_cef_window_t, cancel_menu) - 380usize];
     ["Offset of field: _cef_window_t::get_display"]
-        [::std::mem::offset_of!(_cef_window_t, get_display) - 392usize];
+        [::std::mem::offset_of!(_cef_window_t, get_display) - 384usize];
     ["Offset of field: _cef_window_t::get_client_area_bounds_in_screen"]
-        [::std::mem::offset_of!(_cef_window_t, get_client_area_bounds_in_screen) - 396usize];
+        [::std::mem::offset_of!(_cef_window_t, get_client_area_bounds_in_screen) - 388usize];
     ["Offset of field: _cef_window_t::set_draggable_regions"]
-        [::std::mem::offset_of!(_cef_window_t, set_draggable_regions) - 400usize];
+        [::std::mem::offset_of!(_cef_window_t, set_draggable_regions) - 392usize];
     ["Offset of field: _cef_window_t::get_window_handle"]
-        [::std::mem::offset_of!(_cef_window_t, get_window_handle) - 404usize];
+        [::std::mem::offset_of!(_cef_window_t, get_window_handle) - 396usize];
     ["Offset of field: _cef_window_t::send_key_press"]
-        [::std::mem::offset_of!(_cef_window_t, send_key_press) - 408usize];
+        [::std::mem::offset_of!(_cef_window_t, send_key_press) - 400usize];
     ["Offset of field: _cef_window_t::send_mouse_move"]
-        [::std::mem::offset_of!(_cef_window_t, send_mouse_move) - 412usize];
+        [::std::mem::offset_of!(_cef_window_t, send_mouse_move) - 404usize];
     ["Offset of field: _cef_window_t::send_mouse_events"]
-        [::std::mem::offset_of!(_cef_window_t, send_mouse_events) - 416usize];
+        [::std::mem::offset_of!(_cef_window_t, send_mouse_events) - 408usize];
     ["Offset of field: _cef_window_t::set_accelerator"]
-        [::std::mem::offset_of!(_cef_window_t, set_accelerator) - 420usize];
+        [::std::mem::offset_of!(_cef_window_t, set_accelerator) - 412usize];
     ["Offset of field: _cef_window_t::remove_accelerator"]
-        [::std::mem::offset_of!(_cef_window_t, remove_accelerator) - 424usize];
+        [::std::mem::offset_of!(_cef_window_t, remove_accelerator) - 416usize];
     ["Offset of field: _cef_window_t::remove_all_accelerators"]
-        [::std::mem::offset_of!(_cef_window_t, remove_all_accelerators) - 428usize];
+        [::std::mem::offset_of!(_cef_window_t, remove_all_accelerators) - 420usize];
     ["Offset of field: _cef_window_t::set_theme_color"]
-        [::std::mem::offset_of!(_cef_window_t, set_theme_color) - 432usize];
+        [::std::mem::offset_of!(_cef_window_t, set_theme_color) - 424usize];
     ["Offset of field: _cef_window_t::theme_changed"]
-        [::std::mem::offset_of!(_cef_window_t, theme_changed) - 436usize];
+        [::std::mem::offset_of!(_cef_window_t, theme_changed) - 428usize];
     ["Offset of field: _cef_window_t::get_runtime_style"]
-        [::std::mem::offset_of!(_cef_window_t, get_runtime_style) - 440usize];
+        [::std::mem::offset_of!(_cef_window_t, get_runtime_style) - 432usize];
 };
 #[doc = "\n A Window is a top-level Window/widget in the Views hierarchy. By default it\n will have a non-client area with title bar, icon and buttons that supports\n moving and resizing. All size and position values are in density independent\n pixels (DIP) unless otherwise indicated. Methods must be called on the\n browser process UI thread unless otherwise indicated.\n"]
 pub type cef_window_t = _cef_window_t;

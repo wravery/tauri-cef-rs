@@ -254,64 +254,6 @@ impl Default for Insets {
     }
 }
 
-/// See [_cef_accelerated_paint_info_common_t] for more documentation.
-#[derive(Clone)]
-pub struct AcceleratedPaintInfoCommon {
-    pub timestamp: u64,
-    pub coded_size: Size,
-    pub visible_rect: Rect,
-    pub content_rect: Rect,
-    pub source_size: Size,
-    pub capture_update_rect: Rect,
-    pub region_capture_rect: Rect,
-    pub capture_counter: u64,
-    pub has_capture_update_rect: u8,
-    pub has_region_capture_rect: u8,
-    pub has_source_size: u8,
-    pub has_capture_counter: u8,
-}
-impl From<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
-    fn from(value: _cef_accelerated_paint_info_common_t) -> Self {
-        Self {
-            timestamp: value.timestamp.into(),
-            coded_size: value.coded_size.into(),
-            visible_rect: value.visible_rect.into(),
-            content_rect: value.content_rect.into(),
-            source_size: value.source_size.into(),
-            capture_update_rect: value.capture_update_rect.into(),
-            region_capture_rect: value.region_capture_rect.into(),
-            capture_counter: value.capture_counter.into(),
-            has_capture_update_rect: value.has_capture_update_rect.into(),
-            has_region_capture_rect: value.has_region_capture_rect.into(),
-            has_source_size: value.has_source_size.into(),
-            has_capture_counter: value.has_capture_counter.into(),
-        }
-    }
-}
-impl Into<_cef_accelerated_paint_info_common_t> for AcceleratedPaintInfoCommon {
-    fn into(self) -> _cef_accelerated_paint_info_common_t {
-        _cef_accelerated_paint_info_common_t {
-            timestamp: self.timestamp.into(),
-            coded_size: self.coded_size.into(),
-            visible_rect: self.visible_rect.into(),
-            content_rect: self.content_rect.into(),
-            source_size: self.source_size.into(),
-            capture_update_rect: self.capture_update_rect.into(),
-            region_capture_rect: self.region_capture_rect.into(),
-            capture_counter: self.capture_counter.into(),
-            has_capture_update_rect: self.has_capture_update_rect.into(),
-            has_region_capture_rect: self.has_region_capture_rect.into(),
-            has_source_size: self.has_source_size.into(),
-            has_capture_counter: self.has_capture_counter.into(),
-        }
-    }
-}
-impl Default for AcceleratedPaintInfoCommon {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
 /// See [_cef_main_args_t] for more documentation.
 #[derive(Clone)]
 pub struct MainArgs {
@@ -397,14 +339,12 @@ impl Default for WindowInfo {
 pub struct AcceleratedPaintInfo {
     pub shared_texture_handle: HANDLE,
     pub format: ColorType,
-    pub extra: AcceleratedPaintInfoCommon,
 }
 impl From<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
     fn from(value: _cef_accelerated_paint_info_t) -> Self {
         Self {
             shared_texture_handle: value.shared_texture_handle.into(),
             format: value.format.into(),
-            extra: value.extra.into(),
         }
     }
 }
@@ -413,7 +353,6 @@ impl Into<_cef_accelerated_paint_info_t> for AcceleratedPaintInfo {
         _cef_accelerated_paint_info_t {
             shared_texture_handle: self.shared_texture_handle.into(),
             format: self.format.into(),
-            extra: self.extra.into(),
         }
     }
 }
@@ -431,6 +370,7 @@ pub struct Settings {
     pub browser_subprocess_path: CefStringUtf16,
     pub framework_dir_path: CefStringUtf16,
     pub main_bundle_path: CefStringUtf16,
+    pub chrome_runtime: ::std::os::raw::c_int,
     pub multi_threaded_message_loop: ::std::os::raw::c_int,
     pub external_message_pump: ::std::os::raw::c_int,
     pub windowless_rendering_enabled: ::std::os::raw::c_int,
@@ -438,6 +378,7 @@ pub struct Settings {
     pub cache_path: CefStringUtf16,
     pub root_cache_path: CefStringUtf16,
     pub persist_session_cookies: ::std::os::raw::c_int,
+    pub persist_user_preferences: ::std::os::raw::c_int,
     pub user_agent: CefStringUtf16,
     pub user_agent_product: CefStringUtf16,
     pub locale: CefStringUtf16,
@@ -447,6 +388,7 @@ pub struct Settings {
     pub javascript_flags: CefStringUtf16,
     pub resources_dir_path: CefStringUtf16,
     pub locales_dir_path: CefStringUtf16,
+    pub pack_loading_disabled: ::std::os::raw::c_int,
     pub remote_debugging_port: ::std::os::raw::c_int,
     pub uncaught_exception_stack_size: ::std::os::raw::c_int,
     pub background_color: u32,
@@ -464,6 +406,7 @@ impl From<_cef_settings_t> for Settings {
             browser_subprocess_path: value.browser_subprocess_path.into(),
             framework_dir_path: value.framework_dir_path.into(),
             main_bundle_path: value.main_bundle_path.into(),
+            chrome_runtime: value.chrome_runtime.into(),
             multi_threaded_message_loop: value.multi_threaded_message_loop.into(),
             external_message_pump: value.external_message_pump.into(),
             windowless_rendering_enabled: value.windowless_rendering_enabled.into(),
@@ -471,6 +414,7 @@ impl From<_cef_settings_t> for Settings {
             cache_path: value.cache_path.into(),
             root_cache_path: value.root_cache_path.into(),
             persist_session_cookies: value.persist_session_cookies.into(),
+            persist_user_preferences: value.persist_user_preferences.into(),
             user_agent: value.user_agent.into(),
             user_agent_product: value.user_agent_product.into(),
             locale: value.locale.into(),
@@ -480,6 +424,7 @@ impl From<_cef_settings_t> for Settings {
             javascript_flags: value.javascript_flags.into(),
             resources_dir_path: value.resources_dir_path.into(),
             locales_dir_path: value.locales_dir_path.into(),
+            pack_loading_disabled: value.pack_loading_disabled.into(),
             remote_debugging_port: value.remote_debugging_port.into(),
             uncaught_exception_stack_size: value.uncaught_exception_stack_size.into(),
             background_color: value.background_color.into(),
@@ -499,6 +444,7 @@ impl Into<_cef_settings_t> for Settings {
             browser_subprocess_path: self.browser_subprocess_path.into(),
             framework_dir_path: self.framework_dir_path.into(),
             main_bundle_path: self.main_bundle_path.into(),
+            chrome_runtime: self.chrome_runtime.into(),
             multi_threaded_message_loop: self.multi_threaded_message_loop.into(),
             external_message_pump: self.external_message_pump.into(),
             windowless_rendering_enabled: self.windowless_rendering_enabled.into(),
@@ -506,6 +452,7 @@ impl Into<_cef_settings_t> for Settings {
             cache_path: self.cache_path.into(),
             root_cache_path: self.root_cache_path.into(),
             persist_session_cookies: self.persist_session_cookies.into(),
+            persist_user_preferences: self.persist_user_preferences.into(),
             user_agent: self.user_agent.into(),
             user_agent_product: self.user_agent_product.into(),
             locale: self.locale.into(),
@@ -515,6 +462,7 @@ impl Into<_cef_settings_t> for Settings {
             javascript_flags: self.javascript_flags.into(),
             resources_dir_path: self.resources_dir_path.into(),
             locales_dir_path: self.locales_dir_path.into(),
+            pack_loading_disabled: self.pack_loading_disabled.into(),
             remote_debugging_port: self.remote_debugging_port.into(),
             uncaught_exception_stack_size: self.uncaught_exception_stack_size.into(),
             background_color: self.background_color.into(),
@@ -541,6 +489,7 @@ pub struct RequestContextSettings {
     pub size: usize,
     pub cache_path: CefStringUtf16,
     pub persist_session_cookies: ::std::os::raw::c_int,
+    pub persist_user_preferences: ::std::os::raw::c_int,
     pub accept_language_list: CefStringUtf16,
     pub cookieable_schemes_list: CefStringUtf16,
     pub cookieable_schemes_exclude_defaults: ::std::os::raw::c_int,
@@ -551,6 +500,7 @@ impl From<_cef_request_context_settings_t> for RequestContextSettings {
             size: value.size.into(),
             cache_path: value.cache_path.into(),
             persist_session_cookies: value.persist_session_cookies.into(),
+            persist_user_preferences: value.persist_user_preferences.into(),
             accept_language_list: value.accept_language_list.into(),
             cookieable_schemes_list: value.cookieable_schemes_list.into(),
             cookieable_schemes_exclude_defaults: value.cookieable_schemes_exclude_defaults.into(),
@@ -563,6 +513,7 @@ impl Into<_cef_request_context_settings_t> for RequestContextSettings {
             size: self.size.into(),
             cache_path: self.cache_path.into(),
             persist_session_cookies: self.persist_session_cookies.into(),
+            persist_user_preferences: self.persist_user_preferences.into(),
             accept_language_list: self.accept_language_list.into(),
             cookieable_schemes_list: self.cookieable_schemes_list.into(),
             cookieable_schemes_exclude_defaults: self.cookieable_schemes_exclude_defaults.into(),
@@ -860,40 +811,6 @@ impl Into<_cef_screen_info_t> for ScreenInfo {
     }
 }
 impl Default for ScreenInfo {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
-/// See [_cef_linux_window_properties_t] for more documentation.
-#[derive(Clone)]
-pub struct LinuxWindowProperties {
-    pub wayland_app_id: CefStringUtf16,
-    pub wm_class_class: CefStringUtf16,
-    pub wm_class_name: CefStringUtf16,
-    pub wm_role_name: CefStringUtf16,
-}
-impl From<_cef_linux_window_properties_t> for LinuxWindowProperties {
-    fn from(value: _cef_linux_window_properties_t) -> Self {
-        Self {
-            wayland_app_id: value.wayland_app_id.into(),
-            wm_class_class: value.wm_class_class.into(),
-            wm_class_name: value.wm_class_name.into(),
-            wm_role_name: value.wm_role_name.into(),
-        }
-    }
-}
-impl Into<_cef_linux_window_properties_t> for LinuxWindowProperties {
-    fn into(self) -> _cef_linux_window_properties_t {
-        _cef_linux_window_properties_t {
-            wayland_app_id: self.wayland_app_id.into(),
-            wm_class_class: self.wm_class_class.into(),
-            wm_class_name: self.wm_class_name.into(),
-            wm_role_name: self.wm_role_name.into(),
-        }
-    }
-}
-impl Default for LinuxWindowProperties {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -1401,55 +1318,6 @@ impl Into<_cef_touch_handle_state_t> for TouchHandleState {
     }
 }
 impl Default for TouchHandleState {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
-
-/// See [_cef_task_info_t] for more documentation.
-#[derive(Clone)]
-pub struct TaskInfo {
-    pub id: i64,
-    pub type_: TaskType,
-    pub is_killable: ::std::os::raw::c_int,
-    pub title: CefStringUtf16,
-    pub cpu_usage: f64,
-    pub number_of_processors: ::std::os::raw::c_int,
-    pub memory: i64,
-    pub gpu_memory: i64,
-    pub is_gpu_memory_inflated: ::std::os::raw::c_int,
-}
-impl From<_cef_task_info_t> for TaskInfo {
-    fn from(value: _cef_task_info_t) -> Self {
-        Self {
-            id: value.id.into(),
-            type_: value.type_.into(),
-            is_killable: value.is_killable.into(),
-            title: value.title.into(),
-            cpu_usage: value.cpu_usage.into(),
-            number_of_processors: value.number_of_processors.into(),
-            memory: value.memory.into(),
-            gpu_memory: value.gpu_memory.into(),
-            is_gpu_memory_inflated: value.is_gpu_memory_inflated.into(),
-        }
-    }
-}
-impl Into<_cef_task_info_t> for TaskInfo {
-    fn into(self) -> _cef_task_info_t {
-        _cef_task_info_t {
-            id: self.id.into(),
-            type_: self.type_.into(),
-            is_killable: self.is_killable.into(),
-            title: self.title.into(),
-            cpu_usage: self.cpu_usage.into(),
-            number_of_processors: self.number_of_processors.into(),
-            memory: self.memory.into(),
-            gpu_memory: self.gpu_memory.into(),
-            is_gpu_memory_inflated: self.is_gpu_memory_inflated.into(),
-        }
-    }
-}
-impl Default for TaskInfo {
     fn default() -> Self {
         unsafe { std::mem::zeroed() }
     }
@@ -10915,7 +10783,6 @@ pub trait ImplFrame: Clone + Sized + Rc {
     fn cut(&self) {}
     fn copy(&self) {}
     fn paste(&self) {}
-    fn paste_and_match_style(&self) {}
     fn del(&self) {}
     fn select_all(&self) {}
     fn view_source(&self) {}
@@ -10982,7 +10849,6 @@ mod impl_cef_frame_t {
         object.cut = Some(cut::<I>);
         object.copy = Some(copy::<I>);
         object.paste = Some(paste::<I>);
-        object.paste_and_match_style = Some(paste_and_match_style::<I>);
         object.del = Some(del::<I>);
         object.select_all = Some(select_all::<I>);
         object.view_source = Some(view_source::<I>);
@@ -11033,11 +10899,6 @@ mod impl_cef_frame_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let result = ImplFrame::paste(&arg_self_.interface);
-    }
-    extern "C" fn paste_and_match_style<I: ImplFrame>(self_: *mut _cef_frame_t) {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplFrame::paste_and_match_style(&arg_self_.interface);
     }
     extern "C" fn del<I: ImplFrame>(self_: *mut _cef_frame_t) {
         let arg_self_ = self_;
@@ -11301,18 +11162,6 @@ impl ImplFrame for Frame {
         unsafe {
             self.0
                 .paste
-                .map(|f| {
-                    let arg_self_ = self.as_raw();
-                    let result = f(arg_self_);
-                    result.as_wrapper()
-                })
-                .unwrap_or_else(|| std::mem::zeroed())
-        }
-    }
-    fn paste_and_match_style(&self) {
-        unsafe {
-            self.0
-                .paste_and_match_style
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
@@ -13985,6 +13834,1138 @@ impl Default for DeleteCookiesCallback {
     }
 }
 
+/// See [_cef_extension_t] for more documentation.
+#[derive(Clone)]
+pub struct Extension(RefGuard<_cef_extension_t>);
+impl Extension {
+    pub fn new<T>(interface: T) -> Self
+    where
+        T: WrapExtension,
+    {
+        unsafe {
+            let mut cef_object = std::mem::zeroed();
+            <T as ImplExtension>::init_methods(&mut cef_object);
+            let object = RcImpl::new(cef_object, interface);
+            <T as WrapExtension>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_extension_t).as_wrapper()
+        }
+    }
+}
+pub trait WrapExtension: ImplExtension {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_extension_t, Self>);
+}
+pub trait ImplExtension: Clone + Sized + Rc {
+    fn get_identifier(&self) -> Option<CefStringUtf16> {
+        Default::default()
+    }
+    fn get_path(&self) -> Option<CefStringUtf16> {
+        Default::default()
+    }
+    fn get_manifest(&self) -> Option<DictionaryValue> {
+        Default::default()
+    }
+    fn is_same(&self, that: Option<&mut impl ImplExtension>) -> ::std::os::raw::c_int {
+        Default::default()
+    }
+    fn get_handler(&self) -> Option<ExtensionHandler> {
+        Default::default()
+    }
+    fn get_loader_context(&self) -> Option<RequestContext> {
+        Default::default()
+    }
+    fn is_loaded(&self) -> ::std::os::raw::c_int {
+        Default::default()
+    }
+    fn unload(&self) {}
+    fn init_methods(object: &mut _cef_extension_t) {
+        impl_cef_extension_t::init_methods::<Self>(object);
+    }
+    fn get_raw(&self) -> *mut _cef_extension_t;
+}
+mod impl_cef_extension_t {
+    use super::*;
+    pub fn init_methods<I: ImplExtension>(object: &mut _cef_extension_t) {
+        object.get_identifier = Some(get_identifier::<I>);
+        object.get_path = Some(get_path::<I>);
+        object.get_manifest = Some(get_manifest::<I>);
+        object.is_same = Some(is_same::<I>);
+        object.get_handler = Some(get_handler::<I>);
+        object.get_loader_context = Some(get_loader_context::<I>);
+        object.is_loaded = Some(is_loaded::<I>);
+        object.unload = Some(unload::<I>);
+    }
+    extern "C" fn get_identifier<I: ImplExtension>(
+        self_: *mut _cef_extension_t,
+    ) -> *mut _cef_string_utf16_t {
+        let arg_self_ = self_;
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let result = ImplExtension::get_identifier(&arg_self_.interface);
+        result
+            .map(|result| result.into())
+            .unwrap_or(std::ptr::null_mut())
+    }
+    extern "C" fn get_path<I: ImplExtension>(
+        self_: *mut _cef_extension_t,
+    ) -> *mut _cef_string_utf16_t {
+        let arg_self_ = self_;
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let result = ImplExtension::get_path(&arg_self_.interface);
+        result
+            .map(|result| result.into())
+            .unwrap_or(std::ptr::null_mut())
+    }
+    extern "C" fn get_manifest<I: ImplExtension>(
+        self_: *mut _cef_extension_t,
+    ) -> *mut _cef_dictionary_value_t {
+        let arg_self_ = self_;
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let result = ImplExtension::get_manifest(&arg_self_.interface);
+        result
+            .map(|result| result.into())
+            .unwrap_or(std::ptr::null_mut())
+    }
+    extern "C" fn is_same<I: ImplExtension>(
+        self_: *mut _cef_extension_t,
+        that: *mut _cef_extension_t,
+    ) -> ::std::os::raw::c_int {
+        let (arg_self_, arg_that) = (self_, that);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let mut arg_that =
+            unsafe { arg_that.as_mut() }.map(|arg| Extension(unsafe { RefGuard::from_raw(arg) }));
+        let arg_that = arg_that.as_mut();
+        let result = ImplExtension::is_same(&arg_self_.interface, arg_that);
+        result.into()
+    }
+    extern "C" fn get_handler<I: ImplExtension>(
+        self_: *mut _cef_extension_t,
+    ) -> *mut _cef_extension_handler_t {
+        let arg_self_ = self_;
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let result = ImplExtension::get_handler(&arg_self_.interface);
+        result
+            .map(|result| result.into())
+            .unwrap_or(std::ptr::null_mut())
+    }
+    extern "C" fn get_loader_context<I: ImplExtension>(
+        self_: *mut _cef_extension_t,
+    ) -> *mut _cef_request_context_t {
+        let arg_self_ = self_;
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let result = ImplExtension::get_loader_context(&arg_self_.interface);
+        result
+            .map(|result| result.into())
+            .unwrap_or(std::ptr::null_mut())
+    }
+    extern "C" fn is_loaded<I: ImplExtension>(
+        self_: *mut _cef_extension_t,
+    ) -> ::std::os::raw::c_int {
+        let arg_self_ = self_;
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let result = ImplExtension::is_loaded(&arg_self_.interface);
+        result.into()
+    }
+    extern "C" fn unload<I: ImplExtension>(self_: *mut _cef_extension_t) {
+        let arg_self_ = self_;
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let result = ImplExtension::unload(&arg_self_.interface);
+    }
+}
+impl ImplExtension for Extension {
+    fn get_identifier(&self) -> Option<CefStringUtf16> {
+        unsafe {
+            self.0
+                .get_identifier
+                .map(|f| {
+                    let arg_self_ = self.as_raw();
+                    let result = f(arg_self_);
+                    if result.is_null() {
+                        None
+                    } else {
+                        Some(result.as_wrapper())
+                    }
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn get_path(&self) -> Option<CefStringUtf16> {
+        unsafe {
+            self.0
+                .get_path
+                .map(|f| {
+                    let arg_self_ = self.as_raw();
+                    let result = f(arg_self_);
+                    if result.is_null() {
+                        None
+                    } else {
+                        Some(result.as_wrapper())
+                    }
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn get_manifest(&self) -> Option<DictionaryValue> {
+        unsafe {
+            self.0
+                .get_manifest
+                .map(|f| {
+                    let arg_self_ = self.as_raw();
+                    let result = f(arg_self_);
+                    if result.is_null() {
+                        None
+                    } else {
+                        Some(result.as_wrapper())
+                    }
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn is_same(&self, that: Option<&mut impl ImplExtension>) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .is_same
+                .map(|f| {
+                    let arg_that = that;
+                    let arg_self_ = self.as_raw();
+                    let arg_that = arg_that
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplExtension::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(arg_self_, arg_that);
+                    result.as_wrapper()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn get_handler(&self) -> Option<ExtensionHandler> {
+        unsafe {
+            self.0
+                .get_handler
+                .map(|f| {
+                    let arg_self_ = self.as_raw();
+                    let result = f(arg_self_);
+                    if result.is_null() {
+                        None
+                    } else {
+                        Some(result.as_wrapper())
+                    }
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn get_loader_context(&self) -> Option<RequestContext> {
+        unsafe {
+            self.0
+                .get_loader_context
+                .map(|f| {
+                    let arg_self_ = self.as_raw();
+                    let result = f(arg_self_);
+                    if result.is_null() {
+                        None
+                    } else {
+                        Some(result.as_wrapper())
+                    }
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn is_loaded(&self) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .is_loaded
+                .map(|f| {
+                    let arg_self_ = self.as_raw();
+                    let result = f(arg_self_);
+                    result.as_wrapper()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn unload(&self) {
+        unsafe {
+            self.0
+                .unload
+                .map(|f| {
+                    let arg_self_ = self.as_raw();
+                    let result = f(arg_self_);
+                    result.as_wrapper()
+                })
+                .unwrap_or_else(|| std::mem::zeroed())
+        }
+    }
+    fn get_raw(&self) -> *mut _cef_extension_t {
+        unsafe { RefGuard::as_raw(&self.0) }
+    }
+}
+impl Rc for _cef_extension_t {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.base.as_base()
+    }
+}
+impl Rc for Extension {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.0.as_base()
+    }
+}
+impl ConvertParam<*mut _cef_extension_t> for &Extension {
+    fn as_raw(self) -> *mut _cef_extension_t {
+        ImplExtension::get_raw(self)
+    }
+}
+impl ConvertParam<*mut _cef_extension_t> for &mut Extension {
+    fn as_raw(self) -> *mut _cef_extension_t {
+        ImplExtension::get_raw(self)
+    }
+}
+impl ConvertReturnValue<Extension> for *mut _cef_extension_t {
+    fn as_wrapper(self) -> Extension {
+        Extension(unsafe { RefGuard::from_raw(self) })
+    }
+}
+impl Into<*mut _cef_extension_t> for Extension {
+    fn into(self) -> *mut _cef_extension_t {
+        let object = ImplExtension::get_raw(&self);
+        std::mem::forget(self);
+        object
+    }
+}
+impl Default for Extension {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [_cef_get_extension_resource_callback_t] for more documentation.
+#[derive(Clone)]
+pub struct GetExtensionResourceCallback(RefGuard<_cef_get_extension_resource_callback_t>);
+impl GetExtensionResourceCallback {
+    pub fn new<T>(interface: T) -> Self
+    where
+        T: WrapGetExtensionResourceCallback,
+    {
+        unsafe {
+            let mut cef_object = std::mem::zeroed();
+            <T as ImplGetExtensionResourceCallback>::init_methods(&mut cef_object);
+            let object = RcImpl::new(cef_object, interface);
+            <T as WrapGetExtensionResourceCallback>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_get_extension_resource_callback_t).as_wrapper()
+        }
+    }
+}
+pub trait WrapGetExtensionResourceCallback: ImplGetExtensionResourceCallback {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_get_extension_resource_callback_t, Self>);
+}
+pub trait ImplGetExtensionResourceCallback: Clone + Sized + Rc {
+    fn cont(&self, stream: Option<&mut impl ImplStreamReader>) {}
+    fn cancel(&self) {}
+    fn init_methods(object: &mut _cef_get_extension_resource_callback_t) {
+        impl_cef_get_extension_resource_callback_t::init_methods::<Self>(object);
+    }
+    fn get_raw(&self) -> *mut _cef_get_extension_resource_callback_t;
+}
+mod impl_cef_get_extension_resource_callback_t {
+    use super::*;
+    pub fn init_methods<I: ImplGetExtensionResourceCallback>(
+        object: &mut _cef_get_extension_resource_callback_t,
+    ) {
+        object.cont = Some(cont::<I>);
+        object.cancel = Some(cancel::<I>);
+    }
+    extern "C" fn cont<I: ImplGetExtensionResourceCallback>(
+        self_: *mut _cef_get_extension_resource_callback_t,
+        stream: *mut _cef_stream_reader_t,
+    ) {
+        let (arg_self_, arg_stream) = (self_, stream);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let mut arg_stream = unsafe { arg_stream.as_mut() }
+            .map(|arg| StreamReader(unsafe { RefGuard::from_raw(arg) }));
+        let arg_stream = arg_stream.as_mut();
+        let result = ImplGetExtensionResourceCallback::cont(&arg_self_.interface, arg_stream);
+    }
+    extern "C" fn cancel<I: ImplGetExtensionResourceCallback>(
+        self_: *mut _cef_get_extension_resource_callback_t,
+    ) {
+        let arg_self_ = self_;
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let result = ImplGetExtensionResourceCallback::cancel(&arg_self_.interface);
+    }
+}
+impl ImplGetExtensionResourceCallback for GetExtensionResourceCallback {
+    fn cont(&self, stream: Option<&mut impl ImplStreamReader>) {
+        unsafe {
+            self.0
+                .cont
+                .map(|f| {
+                    let arg_stream = stream;
+                    let arg_self_ = self.as_raw();
+                    let arg_stream = arg_stream
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplStreamReader::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(arg_self_, arg_stream);
+                    result.as_wrapper()
+                })
+                .unwrap_or_else(|| std::mem::zeroed())
+        }
+    }
+    fn cancel(&self) {
+        unsafe {
+            self.0
+                .cancel
+                .map(|f| {
+                    let arg_self_ = self.as_raw();
+                    let result = f(arg_self_);
+                    result.as_wrapper()
+                })
+                .unwrap_or_else(|| std::mem::zeroed())
+        }
+    }
+    fn get_raw(&self) -> *mut _cef_get_extension_resource_callback_t {
+        unsafe { RefGuard::as_raw(&self.0) }
+    }
+}
+impl Rc for _cef_get_extension_resource_callback_t {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.base.as_base()
+    }
+}
+impl Rc for GetExtensionResourceCallback {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.0.as_base()
+    }
+}
+impl ConvertParam<*mut _cef_get_extension_resource_callback_t> for &GetExtensionResourceCallback {
+    fn as_raw(self) -> *mut _cef_get_extension_resource_callback_t {
+        ImplGetExtensionResourceCallback::get_raw(self)
+    }
+}
+impl ConvertParam<*mut _cef_get_extension_resource_callback_t>
+    for &mut GetExtensionResourceCallback
+{
+    fn as_raw(self) -> *mut _cef_get_extension_resource_callback_t {
+        ImplGetExtensionResourceCallback::get_raw(self)
+    }
+}
+impl ConvertReturnValue<GetExtensionResourceCallback>
+    for *mut _cef_get_extension_resource_callback_t
+{
+    fn as_wrapper(self) -> GetExtensionResourceCallback {
+        GetExtensionResourceCallback(unsafe { RefGuard::from_raw(self) })
+    }
+}
+impl Into<*mut _cef_get_extension_resource_callback_t> for GetExtensionResourceCallback {
+    fn into(self) -> *mut _cef_get_extension_resource_callback_t {
+        let object = ImplGetExtensionResourceCallback::get_raw(&self);
+        std::mem::forget(self);
+        object
+    }
+}
+impl Default for GetExtensionResourceCallback {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
+/// See [_cef_extension_handler_t] for more documentation.
+#[derive(Clone)]
+pub struct ExtensionHandler(RefGuard<_cef_extension_handler_t>);
+impl ExtensionHandler {
+    pub fn new<T>(interface: T) -> Self
+    where
+        T: WrapExtensionHandler,
+    {
+        unsafe {
+            let mut cef_object = std::mem::zeroed();
+            <T as ImplExtensionHandler>::init_methods(&mut cef_object);
+            let object = RcImpl::new(cef_object, interface);
+            <T as WrapExtensionHandler>::wrap_rc(&mut (*object).interface, object);
+            (object as *mut _cef_extension_handler_t).as_wrapper()
+        }
+    }
+}
+pub trait WrapExtensionHandler: ImplExtensionHandler {
+    fn wrap_rc(&mut self, object: *mut RcImpl<_cef_extension_handler_t, Self>);
+}
+pub trait ImplExtensionHandler: Clone + Sized + Rc {
+    fn on_extension_load_failed(&self, result: Errorcode) {}
+    fn on_extension_loaded(&self, extension: Option<&mut impl ImplExtension>) {}
+    fn on_extension_unloaded(&self, extension: Option<&mut impl ImplExtension>) {}
+    fn on_before_background_browser(
+        &self,
+        extension: Option<&mut impl ImplExtension>,
+        url: Option<&CefStringUtf16>,
+        client: Option<&mut impl ImplClient>,
+        settings: Option<&mut BrowserSettings>,
+    ) -> ::std::os::raw::c_int {
+        Default::default()
+    }
+    fn on_before_browser(
+        &self,
+        extension: Option<&mut impl ImplExtension>,
+        browser: Option<&mut impl ImplBrowser>,
+        active_browser: Option<&mut impl ImplBrowser>,
+        index: ::std::os::raw::c_int,
+        url: Option<&CefStringUtf16>,
+        active: ::std::os::raw::c_int,
+        window_info: Option<&mut WindowInfo>,
+        client: Option<&mut impl ImplClient>,
+        settings: Option<&mut BrowserSettings>,
+    ) -> ::std::os::raw::c_int {
+        Default::default()
+    }
+    fn get_active_browser(
+        &self,
+        extension: Option<&mut impl ImplExtension>,
+        browser: Option<&mut impl ImplBrowser>,
+        include_incognito: ::std::os::raw::c_int,
+    ) -> Option<Browser> {
+        Default::default()
+    }
+    fn can_access_browser(
+        &self,
+        extension: Option<&mut impl ImplExtension>,
+        browser: Option<&mut impl ImplBrowser>,
+        include_incognito: ::std::os::raw::c_int,
+        target_browser: Option<&mut impl ImplBrowser>,
+    ) -> ::std::os::raw::c_int {
+        Default::default()
+    }
+    fn get_extension_resource(
+        &self,
+        extension: Option<&mut impl ImplExtension>,
+        browser: Option<&mut impl ImplBrowser>,
+        file: Option<&CefStringUtf16>,
+        callback: Option<&mut impl ImplGetExtensionResourceCallback>,
+    ) -> ::std::os::raw::c_int {
+        Default::default()
+    }
+    fn init_methods(object: &mut _cef_extension_handler_t) {
+        impl_cef_extension_handler_t::init_methods::<Self>(object);
+    }
+    fn get_raw(&self) -> *mut _cef_extension_handler_t;
+}
+mod impl_cef_extension_handler_t {
+    use super::*;
+    pub fn init_methods<I: ImplExtensionHandler>(object: &mut _cef_extension_handler_t) {
+        object.on_extension_load_failed = Some(on_extension_load_failed::<I>);
+        object.on_extension_loaded = Some(on_extension_loaded::<I>);
+        object.on_extension_unloaded = Some(on_extension_unloaded::<I>);
+        object.on_before_background_browser = Some(on_before_background_browser::<I>);
+        object.on_before_browser = Some(on_before_browser::<I>);
+        object.get_active_browser = Some(get_active_browser::<I>);
+        object.can_access_browser = Some(can_access_browser::<I>);
+        object.get_extension_resource = Some(get_extension_resource::<I>);
+    }
+    extern "C" fn on_extension_load_failed<I: ImplExtensionHandler>(
+        self_: *mut _cef_extension_handler_t,
+        result: cef_errorcode_t,
+    ) {
+        let (arg_self_, arg_result) = (self_, result);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let arg_result = arg_result.as_raw();
+        let result =
+            ImplExtensionHandler::on_extension_load_failed(&arg_self_.interface, arg_result);
+    }
+    extern "C" fn on_extension_loaded<I: ImplExtensionHandler>(
+        self_: *mut _cef_extension_handler_t,
+        extension: *mut _cef_extension_t,
+    ) {
+        let (arg_self_, arg_extension) = (self_, extension);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let mut arg_extension = unsafe { arg_extension.as_mut() }
+            .map(|arg| Extension(unsafe { RefGuard::from_raw(arg) }));
+        let arg_extension = arg_extension.as_mut();
+        let result = ImplExtensionHandler::on_extension_loaded(&arg_self_.interface, arg_extension);
+    }
+    extern "C" fn on_extension_unloaded<I: ImplExtensionHandler>(
+        self_: *mut _cef_extension_handler_t,
+        extension: *mut _cef_extension_t,
+    ) {
+        let (arg_self_, arg_extension) = (self_, extension);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let mut arg_extension = unsafe { arg_extension.as_mut() }
+            .map(|arg| Extension(unsafe { RefGuard::from_raw(arg) }));
+        let arg_extension = arg_extension.as_mut();
+        let result =
+            ImplExtensionHandler::on_extension_unloaded(&arg_self_.interface, arg_extension);
+    }
+    extern "C" fn on_before_background_browser<I: ImplExtensionHandler>(
+        self_: *mut _cef_extension_handler_t,
+        extension: *mut _cef_extension_t,
+        url: *const _cef_string_utf16_t,
+        client: *mut *mut _cef_client_t,
+        settings: *mut _cef_browser_settings_t,
+    ) -> ::std::os::raw::c_int {
+        let (arg_self_, arg_extension, arg_url, arg_client, arg_settings) =
+            (self_, extension, url, client, settings);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let mut arg_extension = unsafe { arg_extension.as_mut() }
+            .map(|arg| Extension(unsafe { RefGuard::from_raw(arg) }));
+        let arg_extension = arg_extension.as_mut();
+        let arg_url = if arg_url.is_null() {
+            None
+        } else {
+            Some(arg_url.into())
+        };
+        let arg_url = arg_url.as_ref();
+        let mut arg_client = unsafe { arg_client.as_mut() }.and_then(|ptr| {
+            if ptr.is_null() {
+                None
+            } else {
+                Some(Client(unsafe { RefGuard::from_raw(*ptr) }))
+            }
+        });
+        let arg_client = arg_client.as_mut();
+        let mut arg_settings = if arg_settings.is_null() {
+            None
+        } else {
+            Some(WrapParamRef::<BrowserSettings>::from(arg_settings))
+        };
+        let arg_settings = arg_settings.as_mut().map(|arg| arg.as_mut());
+        let result = ImplExtensionHandler::on_before_background_browser(
+            &arg_self_.interface,
+            arg_extension,
+            arg_url,
+            arg_client,
+            arg_settings,
+        );
+        result.into()
+    }
+    extern "C" fn on_before_browser<I: ImplExtensionHandler>(
+        self_: *mut _cef_extension_handler_t,
+        extension: *mut _cef_extension_t,
+        browser: *mut _cef_browser_t,
+        active_browser: *mut _cef_browser_t,
+        index: ::std::os::raw::c_int,
+        url: *const _cef_string_utf16_t,
+        active: ::std::os::raw::c_int,
+        window_info: *mut _cef_window_info_t,
+        client: *mut *mut _cef_client_t,
+        settings: *mut _cef_browser_settings_t,
+    ) -> ::std::os::raw::c_int {
+        let (
+            arg_self_,
+            arg_extension,
+            arg_browser,
+            arg_active_browser,
+            arg_index,
+            arg_url,
+            arg_active,
+            arg_window_info,
+            arg_client,
+            arg_settings,
+        ) = (
+            self_,
+            extension,
+            browser,
+            active_browser,
+            index,
+            url,
+            active,
+            window_info,
+            client,
+            settings,
+        );
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let mut arg_extension = unsafe { arg_extension.as_mut() }
+            .map(|arg| Extension(unsafe { RefGuard::from_raw(arg) }));
+        let arg_extension = arg_extension.as_mut();
+        let mut arg_browser =
+            unsafe { arg_browser.as_mut() }.map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
+        let arg_browser = arg_browser.as_mut();
+        let mut arg_active_browser = unsafe { arg_active_browser.as_mut() }
+            .map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
+        let arg_active_browser = arg_active_browser.as_mut();
+        let arg_index = arg_index.as_raw();
+        let arg_url = if arg_url.is_null() {
+            None
+        } else {
+            Some(arg_url.into())
+        };
+        let arg_url = arg_url.as_ref();
+        let arg_active = arg_active.as_raw();
+        let mut arg_window_info = if arg_window_info.is_null() {
+            None
+        } else {
+            Some(WrapParamRef::<WindowInfo>::from(arg_window_info))
+        };
+        let arg_window_info = arg_window_info.as_mut().map(|arg| arg.as_mut());
+        let mut arg_client = unsafe { arg_client.as_mut() }.and_then(|ptr| {
+            if ptr.is_null() {
+                None
+            } else {
+                Some(Client(unsafe { RefGuard::from_raw(*ptr) }))
+            }
+        });
+        let arg_client = arg_client.as_mut();
+        let mut arg_settings = if arg_settings.is_null() {
+            None
+        } else {
+            Some(WrapParamRef::<BrowserSettings>::from(arg_settings))
+        };
+        let arg_settings = arg_settings.as_mut().map(|arg| arg.as_mut());
+        let result = ImplExtensionHandler::on_before_browser(
+            &arg_self_.interface,
+            arg_extension,
+            arg_browser,
+            arg_active_browser,
+            arg_index,
+            arg_url,
+            arg_active,
+            arg_window_info,
+            arg_client,
+            arg_settings,
+        );
+        result.into()
+    }
+    extern "C" fn get_active_browser<I: ImplExtensionHandler>(
+        self_: *mut _cef_extension_handler_t,
+        extension: *mut _cef_extension_t,
+        browser: *mut _cef_browser_t,
+        include_incognito: ::std::os::raw::c_int,
+    ) -> *mut _cef_browser_t {
+        let (arg_self_, arg_extension, arg_browser, arg_include_incognito) =
+            (self_, extension, browser, include_incognito);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let mut arg_extension = unsafe { arg_extension.as_mut() }
+            .map(|arg| Extension(unsafe { RefGuard::from_raw(arg) }));
+        let arg_extension = arg_extension.as_mut();
+        let mut arg_browser =
+            unsafe { arg_browser.as_mut() }.map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
+        let arg_browser = arg_browser.as_mut();
+        let arg_include_incognito = arg_include_incognito.as_raw();
+        let result = ImplExtensionHandler::get_active_browser(
+            &arg_self_.interface,
+            arg_extension,
+            arg_browser,
+            arg_include_incognito,
+        );
+        result
+            .map(|result| result.into())
+            .unwrap_or(std::ptr::null_mut())
+    }
+    extern "C" fn can_access_browser<I: ImplExtensionHandler>(
+        self_: *mut _cef_extension_handler_t,
+        extension: *mut _cef_extension_t,
+        browser: *mut _cef_browser_t,
+        include_incognito: ::std::os::raw::c_int,
+        target_browser: *mut _cef_browser_t,
+    ) -> ::std::os::raw::c_int {
+        let (arg_self_, arg_extension, arg_browser, arg_include_incognito, arg_target_browser) =
+            (self_, extension, browser, include_incognito, target_browser);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let mut arg_extension = unsafe { arg_extension.as_mut() }
+            .map(|arg| Extension(unsafe { RefGuard::from_raw(arg) }));
+        let arg_extension = arg_extension.as_mut();
+        let mut arg_browser =
+            unsafe { arg_browser.as_mut() }.map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
+        let arg_browser = arg_browser.as_mut();
+        let arg_include_incognito = arg_include_incognito.as_raw();
+        let mut arg_target_browser = unsafe { arg_target_browser.as_mut() }
+            .map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
+        let arg_target_browser = arg_target_browser.as_mut();
+        let result = ImplExtensionHandler::can_access_browser(
+            &arg_self_.interface,
+            arg_extension,
+            arg_browser,
+            arg_include_incognito,
+            arg_target_browser,
+        );
+        result.into()
+    }
+    extern "C" fn get_extension_resource<I: ImplExtensionHandler>(
+        self_: *mut _cef_extension_handler_t,
+        extension: *mut _cef_extension_t,
+        browser: *mut _cef_browser_t,
+        file: *const _cef_string_utf16_t,
+        callback: *mut _cef_get_extension_resource_callback_t,
+    ) -> ::std::os::raw::c_int {
+        let (arg_self_, arg_extension, arg_browser, arg_file, arg_callback) =
+            (self_, extension, browser, file, callback);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let mut arg_extension = unsafe { arg_extension.as_mut() }
+            .map(|arg| Extension(unsafe { RefGuard::from_raw(arg) }));
+        let arg_extension = arg_extension.as_mut();
+        let mut arg_browser =
+            unsafe { arg_browser.as_mut() }.map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
+        let arg_browser = arg_browser.as_mut();
+        let arg_file = if arg_file.is_null() {
+            None
+        } else {
+            Some(arg_file.into())
+        };
+        let arg_file = arg_file.as_ref();
+        let mut arg_callback = unsafe { arg_callback.as_mut() }
+            .map(|arg| GetExtensionResourceCallback(unsafe { RefGuard::from_raw(arg) }));
+        let arg_callback = arg_callback.as_mut();
+        let result = ImplExtensionHandler::get_extension_resource(
+            &arg_self_.interface,
+            arg_extension,
+            arg_browser,
+            arg_file,
+            arg_callback,
+        );
+        result.into()
+    }
+}
+impl ImplExtensionHandler for ExtensionHandler {
+    fn on_extension_load_failed(&self, result: Errorcode) {
+        unsafe {
+            self.0
+                .on_extension_load_failed
+                .map(|f| {
+                    let arg_result = result;
+                    let arg_self_ = self.as_raw();
+                    let arg_result = arg_result.as_raw();
+                    let result = f(arg_self_, arg_result);
+                    result.as_wrapper()
+                })
+                .unwrap_or_else(|| std::mem::zeroed())
+        }
+    }
+    fn on_extension_loaded(&self, extension: Option<&mut impl ImplExtension>) {
+        unsafe {
+            self.0
+                .on_extension_loaded
+                .map(|f| {
+                    let arg_extension = extension;
+                    let arg_self_ = self.as_raw();
+                    let arg_extension = arg_extension
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplExtension::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(arg_self_, arg_extension);
+                    result.as_wrapper()
+                })
+                .unwrap_or_else(|| std::mem::zeroed())
+        }
+    }
+    fn on_extension_unloaded(&self, extension: Option<&mut impl ImplExtension>) {
+        unsafe {
+            self.0
+                .on_extension_unloaded
+                .map(|f| {
+                    let arg_extension = extension;
+                    let arg_self_ = self.as_raw();
+                    let arg_extension = arg_extension
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplExtension::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(arg_self_, arg_extension);
+                    result.as_wrapper()
+                })
+                .unwrap_or_else(|| std::mem::zeroed())
+        }
+    }
+    fn on_before_background_browser(
+        &self,
+        extension: Option<&mut impl ImplExtension>,
+        url: Option<&CefStringUtf16>,
+        client: Option<&mut impl ImplClient>,
+        settings: Option<&mut BrowserSettings>,
+    ) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .on_before_background_browser
+                .map(|f| {
+                    let (arg_extension, arg_url, arg_client, arg_settings) =
+                        (extension, url, client, settings);
+                    let arg_self_ = self.as_raw();
+                    let arg_extension = arg_extension
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplExtension::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_url = arg_url.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+                    let mut arg_client = arg_client.map(|arg| {
+                        arg.add_ref();
+                        arg.get_raw()
+                    });
+                    let arg_client = arg_client
+                        .as_mut()
+                        .map(|arg| arg as *mut _)
+                        .unwrap_or(std::ptr::null_mut());
+                    let mut arg_settings = arg_settings.cloned().map(|arg| arg.into());
+                    let arg_settings = arg_settings
+                        .as_mut()
+                        .map(std::ptr::from_mut)
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(arg_self_, arg_extension, arg_url, arg_client, arg_settings);
+                    result.as_wrapper()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn on_before_browser(
+        &self,
+        extension: Option<&mut impl ImplExtension>,
+        browser: Option<&mut impl ImplBrowser>,
+        active_browser: Option<&mut impl ImplBrowser>,
+        index: ::std::os::raw::c_int,
+        url: Option<&CefStringUtf16>,
+        active: ::std::os::raw::c_int,
+        window_info: Option<&mut WindowInfo>,
+        client: Option<&mut impl ImplClient>,
+        settings: Option<&mut BrowserSettings>,
+    ) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .on_before_browser
+                .map(|f| {
+                    let (
+                        arg_extension,
+                        arg_browser,
+                        arg_active_browser,
+                        arg_index,
+                        arg_url,
+                        arg_active,
+                        arg_window_info,
+                        arg_client,
+                        arg_settings,
+                    ) = (
+                        extension,
+                        browser,
+                        active_browser,
+                        index,
+                        url,
+                        active,
+                        window_info,
+                        client,
+                        settings,
+                    );
+                    let arg_self_ = self.as_raw();
+                    let arg_extension = arg_extension
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplExtension::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_browser = arg_browser
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplBrowser::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_active_browser = arg_active_browser
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplBrowser::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_index = arg_index;
+                    let arg_url = arg_url.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+                    let arg_active = arg_active;
+                    let mut arg_window_info = arg_window_info.cloned().map(|arg| arg.into());
+                    let arg_window_info = arg_window_info
+                        .as_mut()
+                        .map(std::ptr::from_mut)
+                        .unwrap_or(std::ptr::null_mut());
+                    let mut arg_client = arg_client.map(|arg| {
+                        arg.add_ref();
+                        arg.get_raw()
+                    });
+                    let arg_client = arg_client
+                        .as_mut()
+                        .map(|arg| arg as *mut _)
+                        .unwrap_or(std::ptr::null_mut());
+                    let mut arg_settings = arg_settings.cloned().map(|arg| arg.into());
+                    let arg_settings = arg_settings
+                        .as_mut()
+                        .map(std::ptr::from_mut)
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(
+                        arg_self_,
+                        arg_extension,
+                        arg_browser,
+                        arg_active_browser,
+                        arg_index,
+                        arg_url,
+                        arg_active,
+                        arg_window_info,
+                        arg_client,
+                        arg_settings,
+                    );
+                    result.as_wrapper()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn get_active_browser(
+        &self,
+        extension: Option<&mut impl ImplExtension>,
+        browser: Option<&mut impl ImplBrowser>,
+        include_incognito: ::std::os::raw::c_int,
+    ) -> Option<Browser> {
+        unsafe {
+            self.0
+                .get_active_browser
+                .map(|f| {
+                    let (arg_extension, arg_browser, arg_include_incognito) =
+                        (extension, browser, include_incognito);
+                    let arg_self_ = self.as_raw();
+                    let arg_extension = arg_extension
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplExtension::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_browser = arg_browser
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplBrowser::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_include_incognito = arg_include_incognito;
+                    let result = f(arg_self_, arg_extension, arg_browser, arg_include_incognito);
+                    if result.is_null() {
+                        None
+                    } else {
+                        Some(result.as_wrapper())
+                    }
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn can_access_browser(
+        &self,
+        extension: Option<&mut impl ImplExtension>,
+        browser: Option<&mut impl ImplBrowser>,
+        include_incognito: ::std::os::raw::c_int,
+        target_browser: Option<&mut impl ImplBrowser>,
+    ) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .can_access_browser
+                .map(|f| {
+                    let (arg_extension, arg_browser, arg_include_incognito, arg_target_browser) =
+                        (extension, browser, include_incognito, target_browser);
+                    let arg_self_ = self.as_raw();
+                    let arg_extension = arg_extension
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplExtension::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_browser = arg_browser
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplBrowser::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_include_incognito = arg_include_incognito;
+                    let arg_target_browser = arg_target_browser
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplBrowser::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(
+                        arg_self_,
+                        arg_extension,
+                        arg_browser,
+                        arg_include_incognito,
+                        arg_target_browser,
+                    );
+                    result.as_wrapper()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn get_extension_resource(
+        &self,
+        extension: Option<&mut impl ImplExtension>,
+        browser: Option<&mut impl ImplBrowser>,
+        file: Option<&CefStringUtf16>,
+        callback: Option<&mut impl ImplGetExtensionResourceCallback>,
+    ) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .get_extension_resource
+                .map(|f| {
+                    let (arg_extension, arg_browser, arg_file, arg_callback) =
+                        (extension, browser, file, callback);
+                    let arg_self_ = self.as_raw();
+                    let arg_extension = arg_extension
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplExtension::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_browser = arg_browser
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplBrowser::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_file = arg_file.map(|arg| arg.as_raw()).unwrap_or(std::ptr::null());
+                    let arg_callback = arg_callback
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplGetExtensionResourceCallback::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(
+                        arg_self_,
+                        arg_extension,
+                        arg_browser,
+                        arg_file,
+                        arg_callback,
+                    );
+                    result.as_wrapper()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn get_raw(&self) -> *mut _cef_extension_handler_t {
+        unsafe { RefGuard::as_raw(&self.0) }
+    }
+}
+impl Rc for _cef_extension_handler_t {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.base.as_base()
+    }
+}
+impl Rc for ExtensionHandler {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.0.as_base()
+    }
+}
+impl ConvertParam<*mut _cef_extension_handler_t> for &ExtensionHandler {
+    fn as_raw(self) -> *mut _cef_extension_handler_t {
+        ImplExtensionHandler::get_raw(self)
+    }
+}
+impl ConvertParam<*mut _cef_extension_handler_t> for &mut ExtensionHandler {
+    fn as_raw(self) -> *mut _cef_extension_handler_t {
+        ImplExtensionHandler::get_raw(self)
+    }
+}
+impl ConvertReturnValue<ExtensionHandler> for *mut _cef_extension_handler_t {
+    fn as_wrapper(self) -> ExtensionHandler {
+        ExtensionHandler(unsafe { RefGuard::from_raw(self) })
+    }
+}
+impl Into<*mut _cef_extension_handler_t> for ExtensionHandler {
+    fn into(self) -> *mut _cef_extension_handler_t {
+        let object = ImplExtensionHandler::get_raw(&self);
+        std::mem::forget(self);
+        object
+    }
+}
+impl Default for ExtensionHandler {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
 /// See [_cef_media_router_t] for more documentation.
 #[derive(Clone)]
 pub struct MediaRouter(RefGuard<_cef_media_router_t>);
@@ -16017,6 +16998,25 @@ pub trait ImplRequestContext: ImplPreferenceManager {
         callback: Option<&mut impl ImplResolveCallback>,
     ) {
     }
+    fn load_extension(
+        &self,
+        root_directory: Option<&CefStringUtf16>,
+        manifest: Option<&mut impl ImplDictionaryValue>,
+        handler: Option<&mut impl ImplExtensionHandler>,
+    ) {
+    }
+    fn did_load_extension(&self, extension_id: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+        Default::default()
+    }
+    fn has_extension(&self, extension_id: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+        Default::default()
+    }
+    fn get_extensions(&self, extension_ids: Option<&mut CefStringList>) -> ::std::os::raw::c_int {
+        Default::default()
+    }
+    fn get_extension(&self, extension_id: Option<&CefStringUtf16>) -> Option<Extension> {
+        Default::default()
+    }
     fn get_media_router(
         &self,
         callback: Option<&mut impl ImplCompletionCallback>,
@@ -16088,6 +17088,11 @@ mod impl_cef_request_context_t {
         object.clear_http_auth_credentials = Some(clear_http_auth_credentials::<I>);
         object.close_all_connections = Some(close_all_connections::<I>);
         object.resolve_host = Some(resolve_host::<I>);
+        object.load_extension = Some(load_extension::<I>);
+        object.did_load_extension = Some(did_load_extension::<I>);
+        object.has_extension = Some(has_extension::<I>);
+        object.get_extensions = Some(get_extensions::<I>);
+        object.get_extension = Some(get_extension::<I>);
         object.get_media_router = Some(get_media_router::<I>);
         object.get_website_setting = Some(get_website_setting::<I>);
         object.set_website_setting = Some(set_website_setting::<I>);
@@ -16257,6 +17262,96 @@ mod impl_cef_request_context_t {
         let arg_callback = arg_callback.as_mut();
         let result =
             ImplRequestContext::resolve_host(&arg_self_.interface, arg_origin, arg_callback);
+    }
+    extern "C" fn load_extension<I: ImplRequestContext>(
+        self_: *mut _cef_request_context_t,
+        root_directory: *const _cef_string_utf16_t,
+        manifest: *mut _cef_dictionary_value_t,
+        handler: *mut _cef_extension_handler_t,
+    ) {
+        let (arg_self_, arg_root_directory, arg_manifest, arg_handler) =
+            (self_, root_directory, manifest, handler);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let arg_root_directory = if arg_root_directory.is_null() {
+            None
+        } else {
+            Some(arg_root_directory.into())
+        };
+        let arg_root_directory = arg_root_directory.as_ref();
+        let mut arg_manifest = unsafe { arg_manifest.as_mut() }
+            .map(|arg| DictionaryValue(unsafe { RefGuard::from_raw(arg) }));
+        let arg_manifest = arg_manifest.as_mut();
+        let mut arg_handler = unsafe { arg_handler.as_mut() }
+            .map(|arg| ExtensionHandler(unsafe { RefGuard::from_raw(arg) }));
+        let arg_handler = arg_handler.as_mut();
+        let result = ImplRequestContext::load_extension(
+            &arg_self_.interface,
+            arg_root_directory,
+            arg_manifest,
+            arg_handler,
+        );
+    }
+    extern "C" fn did_load_extension<I: ImplRequestContext>(
+        self_: *mut _cef_request_context_t,
+        extension_id: *const _cef_string_utf16_t,
+    ) -> ::std::os::raw::c_int {
+        let (arg_self_, arg_extension_id) = (self_, extension_id);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let arg_extension_id = if arg_extension_id.is_null() {
+            None
+        } else {
+            Some(arg_extension_id.into())
+        };
+        let arg_extension_id = arg_extension_id.as_ref();
+        let result = ImplRequestContext::did_load_extension(&arg_self_.interface, arg_extension_id);
+        result.into()
+    }
+    extern "C" fn has_extension<I: ImplRequestContext>(
+        self_: *mut _cef_request_context_t,
+        extension_id: *const _cef_string_utf16_t,
+    ) -> ::std::os::raw::c_int {
+        let (arg_self_, arg_extension_id) = (self_, extension_id);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let arg_extension_id = if arg_extension_id.is_null() {
+            None
+        } else {
+            Some(arg_extension_id.into())
+        };
+        let arg_extension_id = arg_extension_id.as_ref();
+        let result = ImplRequestContext::has_extension(&arg_self_.interface, arg_extension_id);
+        result.into()
+    }
+    extern "C" fn get_extensions<I: ImplRequestContext>(
+        self_: *mut _cef_request_context_t,
+        extension_ids: *mut _cef_string_list_t,
+    ) -> ::std::os::raw::c_int {
+        let (arg_self_, arg_extension_ids) = (self_, extension_ids);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let mut arg_extension_ids = if arg_extension_ids.is_null() {
+            None
+        } else {
+            Some(arg_extension_ids.into())
+        };
+        let arg_extension_ids = arg_extension_ids.as_mut();
+        let result = ImplRequestContext::get_extensions(&arg_self_.interface, arg_extension_ids);
+        result.into()
+    }
+    extern "C" fn get_extension<I: ImplRequestContext>(
+        self_: *mut _cef_request_context_t,
+        extension_id: *const _cef_string_utf16_t,
+    ) -> *mut _cef_extension_t {
+        let (arg_self_, arg_extension_id) = (self_, extension_id);
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let arg_extension_id = if arg_extension_id.is_null() {
+            None
+        } else {
+            Some(arg_extension_id.into())
+        };
+        let arg_extension_id = arg_extension_id.as_ref();
+        let result = ImplRequestContext::get_extension(&arg_self_.interface, arg_extension_id);
+        result
+            .map(|result| result.into())
+            .unwrap_or(std::ptr::null_mut())
     }
     extern "C" fn get_media_router<I: ImplRequestContext>(
         self_: *mut _cef_request_context_t,
@@ -16719,6 +17814,108 @@ impl ImplRequestContext for RequestContext {
                     result.as_wrapper()
                 })
                 .unwrap_or_else(|| std::mem::zeroed())
+        }
+    }
+    fn load_extension(
+        &self,
+        root_directory: Option<&CefStringUtf16>,
+        manifest: Option<&mut impl ImplDictionaryValue>,
+        handler: Option<&mut impl ImplExtensionHandler>,
+    ) {
+        unsafe {
+            self.0
+                .load_extension
+                .map(|f| {
+                    let (arg_root_directory, arg_manifest, arg_handler) =
+                        (root_directory, manifest, handler);
+                    let arg_self_ = self.as_raw();
+                    let arg_root_directory = arg_root_directory
+                        .map(|arg| arg.as_raw())
+                        .unwrap_or(std::ptr::null());
+                    let arg_manifest = arg_manifest
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplDictionaryValue::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let arg_handler = arg_handler
+                        .map(|arg| {
+                            arg.add_ref();
+                            ImplExtensionHandler::get_raw(arg)
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(arg_self_, arg_root_directory, arg_manifest, arg_handler);
+                    result.as_wrapper()
+                })
+                .unwrap_or_else(|| std::mem::zeroed())
+        }
+    }
+    fn did_load_extension(&self, extension_id: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .did_load_extension
+                .map(|f| {
+                    let arg_extension_id = extension_id;
+                    let arg_self_ = self.as_raw();
+                    let arg_extension_id = arg_extension_id
+                        .map(|arg| arg.as_raw())
+                        .unwrap_or(std::ptr::null());
+                    let result = f(arg_self_, arg_extension_id);
+                    result.as_wrapper()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn has_extension(&self, extension_id: Option<&CefStringUtf16>) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .has_extension
+                .map(|f| {
+                    let arg_extension_id = extension_id;
+                    let arg_self_ = self.as_raw();
+                    let arg_extension_id = arg_extension_id
+                        .map(|arg| arg.as_raw())
+                        .unwrap_or(std::ptr::null());
+                    let result = f(arg_self_, arg_extension_id);
+                    result.as_wrapper()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn get_extensions(&self, extension_ids: Option<&mut CefStringList>) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .get_extensions
+                .map(|f| {
+                    let arg_extension_ids = extension_ids;
+                    let arg_self_ = self.as_raw();
+                    let arg_extension_ids = arg_extension_ids
+                        .map(|arg| arg.as_raw())
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(arg_self_, arg_extension_ids);
+                    result.as_wrapper()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn get_extension(&self, extension_id: Option<&CefStringUtf16>) -> Option<Extension> {
+        unsafe {
+            self.0
+                .get_extension
+                .map(|f| {
+                    let arg_extension_id = extension_id;
+                    let arg_self_ = self.as_raw();
+                    let arg_extension_id = arg_extension_id
+                        .map(|arg| arg.as_raw())
+                        .unwrap_or(std::ptr::null());
+                    let result = f(arg_self_, arg_extension_id);
+                    if result.is_null() {
+                        None
+                    } else {
+                        Some(result.as_wrapper())
+                    }
+                })
+                .unwrap_or_default()
         }
     }
     fn get_media_router(
@@ -18119,17 +19316,11 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
     fn try_close_browser(&self) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn is_ready_to_be_closed(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
     fn set_focus(&self, focus: ::std::os::raw::c_int) {}
     fn get_window_handle(&self) -> HWND {
         Default::default()
     }
     fn get_opener_window_handle(&self) -> HWND {
-        Default::default()
-    }
-    fn get_opener_identifier(&self) -> ::std::os::raw::c_int {
         Default::default()
     }
     fn has_view(&self) -> ::std::os::raw::c_int {
@@ -18309,6 +19500,12 @@ pub trait ImplBrowserHost: Clone + Sized + Rc {
         max_size: Option<&Size>,
     ) {
     }
+    fn get_extension(&self) -> Option<Extension> {
+        Default::default()
+    }
+    fn is_background_host(&self) -> ::std::os::raw::c_int {
+        Default::default()
+    }
     fn set_audio_muted(&self, mute: ::std::os::raw::c_int) {}
     fn is_audio_muted(&self) -> ::std::os::raw::c_int {
         Default::default()
@@ -18346,11 +19543,9 @@ mod impl_cef_browser_host_t {
         object.get_browser = Some(get_browser::<I>);
         object.close_browser = Some(close_browser::<I>);
         object.try_close_browser = Some(try_close_browser::<I>);
-        object.is_ready_to_be_closed = Some(is_ready_to_be_closed::<I>);
         object.set_focus = Some(set_focus::<I>);
         object.get_window_handle = Some(get_window_handle::<I>);
         object.get_opener_window_handle = Some(get_opener_window_handle::<I>);
-        object.get_opener_identifier = Some(get_opener_identifier::<I>);
         object.has_view = Some(has_view::<I>);
         object.get_client = Some(get_client::<I>);
         object.get_request_context = Some(get_request_context::<I>);
@@ -18403,6 +19598,8 @@ mod impl_cef_browser_host_t {
         object.get_visible_navigation_entry = Some(get_visible_navigation_entry::<I>);
         object.set_accessibility_state = Some(set_accessibility_state::<I>);
         object.set_auto_resize_enabled = Some(set_auto_resize_enabled::<I>);
+        object.get_extension = Some(get_extension::<I>);
+        object.is_background_host = Some(is_background_host::<I>);
         object.set_audio_muted = Some(set_audio_muted::<I>);
         object.is_audio_muted = Some(is_audio_muted::<I>);
         object.is_fullscreen = Some(is_fullscreen::<I>);
@@ -18439,14 +19636,6 @@ mod impl_cef_browser_host_t {
         let result = ImplBrowserHost::try_close_browser(&arg_self_.interface);
         result.into()
     }
-    extern "C" fn is_ready_to_be_closed<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::is_ready_to_be_closed(&arg_self_.interface);
-        result.into()
-    }
     extern "C" fn set_focus<I: ImplBrowserHost>(
         self_: *mut _cef_browser_host_t,
         focus: ::std::os::raw::c_int,
@@ -18468,14 +19657,6 @@ mod impl_cef_browser_host_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let result = ImplBrowserHost::get_opener_window_handle(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_opener_identifier<I: ImplBrowserHost>(
-        self_: *mut _cef_browser_host_t,
-    ) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplBrowserHost::get_opener_identifier(&arg_self_.interface);
         result.into()
     }
     extern "C" fn has_view<I: ImplBrowserHost>(
@@ -19291,6 +20472,24 @@ mod impl_cef_browser_host_t {
             arg_max_size,
         );
     }
+    extern "C" fn get_extension<I: ImplBrowserHost>(
+        self_: *mut _cef_browser_host_t,
+    ) -> *mut _cef_extension_t {
+        let arg_self_ = self_;
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let result = ImplBrowserHost::get_extension(&arg_self_.interface);
+        result
+            .map(|result| result.into())
+            .unwrap_or(std::ptr::null_mut())
+    }
+    extern "C" fn is_background_host<I: ImplBrowserHost>(
+        self_: *mut _cef_browser_host_t,
+    ) -> ::std::os::raw::c_int {
+        let arg_self_ = self_;
+        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
+        let result = ImplBrowserHost::is_background_host(&arg_self_.interface);
+        result.into()
+    }
     extern "C" fn set_audio_muted<I: ImplBrowserHost>(
         self_: *mut _cef_browser_host_t,
         mute: ::std::os::raw::c_int,
@@ -19411,18 +20610,6 @@ impl ImplBrowserHost for BrowserHost {
                 .unwrap_or_default()
         }
     }
-    fn is_ready_to_be_closed(&self) -> ::std::os::raw::c_int {
-        unsafe {
-            self.0
-                .is_ready_to_be_closed
-                .map(|f| {
-                    let arg_self_ = self.as_raw();
-                    let result = f(arg_self_);
-                    result.as_wrapper()
-                })
-                .unwrap_or_default()
-        }
-    }
     fn set_focus(&self, focus: ::std::os::raw::c_int) {
         unsafe {
             self.0
@@ -19453,18 +20640,6 @@ impl ImplBrowserHost for BrowserHost {
         unsafe {
             self.0
                 .get_opener_window_handle
-                .map(|f| {
-                    let arg_self_ = self.as_raw();
-                    let result = f(arg_self_);
-                    result.as_wrapper()
-                })
-                .unwrap_or_default()
-        }
-    }
-    fn get_opener_identifier(&self) -> ::std::os::raw::c_int {
-        unsafe {
-            self.0
-                .get_opener_identifier
                 .map(|f| {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
@@ -20518,6 +21693,34 @@ impl ImplBrowserHost for BrowserHost {
                     result.as_wrapper()
                 })
                 .unwrap_or_else(|| std::mem::zeroed())
+        }
+    }
+    fn get_extension(&self) -> Option<Extension> {
+        unsafe {
+            self.0
+                .get_extension
+                .map(|f| {
+                    let arg_self_ = self.as_raw();
+                    let result = f(arg_self_);
+                    if result.is_null() {
+                        None
+                    } else {
+                        Some(result.as_wrapper())
+                    }
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn is_background_host(&self) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .is_background_host
+                .map(|f| {
+                    let arg_self_ = self.as_raw();
+                    let result = f(arg_self_);
+                    result.as_wrapper()
+                })
+                .unwrap_or_default()
         }
     }
     fn set_audio_muted(&self, mute: ::std::os::raw::c_int) {
@@ -28554,12 +29757,6 @@ pub trait ImplFrameHandler: Clone + Sized + Rc {
         frame: Option<&mut impl ImplFrame>,
     ) {
     }
-    fn on_frame_destroyed(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-    ) {
-    }
     fn on_frame_attached(
         &self,
         browser: Option<&mut impl ImplBrowser>,
@@ -28589,7 +29786,6 @@ mod impl_cef_frame_handler_t {
     use super::*;
     pub fn init_methods<I: ImplFrameHandler>(object: &mut _cef_frame_handler_t) {
         object.on_frame_created = Some(on_frame_created::<I>);
-        object.on_frame_destroyed = Some(on_frame_destroyed::<I>);
         object.on_frame_attached = Some(on_frame_attached::<I>);
         object.on_frame_detached = Some(on_frame_detached::<I>);
         object.on_main_frame_changed = Some(on_main_frame_changed::<I>);
@@ -28609,22 +29805,6 @@ mod impl_cef_frame_handler_t {
         let arg_frame = arg_frame.as_mut();
         let result =
             ImplFrameHandler::on_frame_created(&arg_self_.interface, arg_browser, arg_frame);
-    }
-    extern "C" fn on_frame_destroyed<I: ImplFrameHandler>(
-        self_: *mut _cef_frame_handler_t,
-        browser: *mut _cef_browser_t,
-        frame: *mut _cef_frame_t,
-    ) {
-        let (arg_self_, arg_browser, arg_frame) = (self_, browser, frame);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_browser =
-            unsafe { arg_browser.as_mut() }.map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
-        let arg_browser = arg_browser.as_mut();
-        let mut arg_frame =
-            unsafe { arg_frame.as_mut() }.map(|arg| Frame(unsafe { RefGuard::from_raw(arg) }));
-        let arg_frame = arg_frame.as_mut();
-        let result =
-            ImplFrameHandler::on_frame_destroyed(&arg_self_.interface, arg_browser, arg_frame);
     }
     extern "C" fn on_frame_attached<I: ImplFrameHandler>(
         self_: *mut _cef_frame_handler_t,
@@ -28700,35 +29880,6 @@ impl ImplFrameHandler for FrameHandler {
         unsafe {
             self.0
                 .on_frame_created
-                .map(|f| {
-                    let (arg_browser, arg_frame) = (browser, frame);
-                    let arg_self_ = self.as_raw();
-                    let arg_browser = arg_browser
-                        .map(|arg| {
-                            arg.add_ref();
-                            ImplBrowser::get_raw(arg)
-                        })
-                        .unwrap_or(std::ptr::null_mut());
-                    let arg_frame = arg_frame
-                        .map(|arg| {
-                            arg.add_ref();
-                            ImplFrame::get_raw(arg)
-                        })
-                        .unwrap_or(std::ptr::null_mut());
-                    let result = f(arg_self_, arg_browser, arg_frame);
-                    result.as_wrapper()
-                })
-                .unwrap_or_else(|| std::mem::zeroed())
-        }
-    }
-    fn on_frame_destroyed(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        frame: Option<&mut impl ImplFrame>,
-    ) {
-        unsafe {
-            self.0
-                .on_frame_destroyed
                 .map(|f| {
                     let (arg_browser, arg_frame) = (browser, frame);
                     let arg_self_ = self.as_raw();
@@ -29646,7 +30797,6 @@ pub trait ImplLifeSpanHandler: Clone + Sized + Rc {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        popup_id: ::std::os::raw::c_int,
         target_url: Option<&CefStringUtf16>,
         target_frame_name: Option<&CefStringUtf16>,
         target_disposition: WindowOpenDisposition,
@@ -29659,12 +30809,6 @@ pub trait ImplLifeSpanHandler: Clone + Sized + Rc {
         no_javascript_access: Option<&mut ::std::os::raw::c_int>,
     ) -> ::std::os::raw::c_int {
         Default::default()
-    }
-    fn on_before_popup_aborted(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        popup_id: ::std::os::raw::c_int,
-    ) {
     }
     fn on_before_dev_tools_popup(
         &self,
@@ -29690,7 +30834,6 @@ mod impl_cef_life_span_handler_t {
     use super::*;
     pub fn init_methods<I: ImplLifeSpanHandler>(object: &mut _cef_life_span_handler_t) {
         object.on_before_popup = Some(on_before_popup::<I>);
-        object.on_before_popup_aborted = Some(on_before_popup_aborted::<I>);
         object.on_before_dev_tools_popup = Some(on_before_dev_tools_popup::<I>);
         object.on_after_created = Some(on_after_created::<I>);
         object.do_close = Some(do_close::<I>);
@@ -29700,7 +30843,6 @@ mod impl_cef_life_span_handler_t {
         self_: *mut _cef_life_span_handler_t,
         browser: *mut _cef_browser_t,
         frame: *mut _cef_frame_t,
-        popup_id: ::std::os::raw::c_int,
         target_url: *const _cef_string_utf16_t,
         target_frame_name: *const _cef_string_utf16_t,
         target_disposition: cef_window_open_disposition_t,
@@ -29716,7 +30858,6 @@ mod impl_cef_life_span_handler_t {
             arg_self_,
             arg_browser,
             arg_frame,
-            arg_popup_id,
             arg_target_url,
             arg_target_frame_name,
             arg_target_disposition,
@@ -29731,7 +30872,6 @@ mod impl_cef_life_span_handler_t {
             self_,
             browser,
             frame,
-            popup_id,
             target_url,
             target_frame_name,
             target_disposition,
@@ -29750,7 +30890,6 @@ mod impl_cef_life_span_handler_t {
         let mut arg_frame =
             unsafe { arg_frame.as_mut() }.map(|arg| Frame(unsafe { RefGuard::from_raw(arg) }));
         let arg_frame = arg_frame.as_mut();
-        let arg_popup_id = arg_popup_id.as_raw();
         let arg_target_url = if arg_target_url.is_null() {
             None
         } else {
@@ -29811,7 +30950,6 @@ mod impl_cef_life_span_handler_t {
             &arg_self_.interface,
             arg_browser,
             arg_frame,
-            arg_popup_id,
             arg_target_url,
             arg_target_frame_name,
             arg_target_disposition,
@@ -29824,23 +30962,6 @@ mod impl_cef_life_span_handler_t {
             arg_no_javascript_access,
         );
         result.into()
-    }
-    extern "C" fn on_before_popup_aborted<I: ImplLifeSpanHandler>(
-        self_: *mut _cef_life_span_handler_t,
-        browser: *mut _cef_browser_t,
-        popup_id: ::std::os::raw::c_int,
-    ) {
-        let (arg_self_, arg_browser, arg_popup_id) = (self_, browser, popup_id);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_browser =
-            unsafe { arg_browser.as_mut() }.map(|arg| Browser(unsafe { RefGuard::from_raw(arg) }));
-        let arg_browser = arg_browser.as_mut();
-        let arg_popup_id = arg_popup_id.as_raw();
-        let result = ImplLifeSpanHandler::on_before_popup_aborted(
-            &arg_self_.interface,
-            arg_browser,
-            arg_popup_id,
-        );
     }
     extern "C" fn on_before_dev_tools_popup<I: ImplLifeSpanHandler>(
         self_: *mut _cef_life_span_handler_t,
@@ -29958,7 +31079,6 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
         &self,
         browser: Option<&mut impl ImplBrowser>,
         frame: Option<&mut impl ImplFrame>,
-        popup_id: ::std::os::raw::c_int,
         target_url: Option<&CefStringUtf16>,
         target_frame_name: Option<&CefStringUtf16>,
         target_disposition: WindowOpenDisposition,
@@ -29977,7 +31097,6 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
                     let (
                         arg_browser,
                         arg_frame,
-                        arg_popup_id,
                         arg_target_url,
                         arg_target_frame_name,
                         arg_target_disposition,
@@ -29991,7 +31110,6 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
                     ) = (
                         browser,
                         frame,
-                        popup_id,
                         target_url,
                         target_frame_name,
                         target_disposition,
@@ -30016,7 +31134,6 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
                             ImplFrame::get_raw(arg)
                         })
                         .unwrap_or(std::ptr::null_mut());
-                    let arg_popup_id = arg_popup_id;
                     let arg_target_url = arg_target_url
                         .map(|arg| arg.as_raw())
                         .unwrap_or(std::ptr::null());
@@ -30063,7 +31180,6 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
                         arg_self_,
                         arg_browser,
                         arg_frame,
-                        arg_popup_id,
                         arg_target_url,
                         arg_target_frame_name,
                         arg_target_disposition,
@@ -30078,30 +31194,6 @@ impl ImplLifeSpanHandler for LifeSpanHandler {
                     result.as_wrapper()
                 })
                 .unwrap_or_default()
-        }
-    }
-    fn on_before_popup_aborted(
-        &self,
-        browser: Option<&mut impl ImplBrowser>,
-        popup_id: ::std::os::raw::c_int,
-    ) {
-        unsafe {
-            self.0
-                .on_before_popup_aborted
-                .map(|f| {
-                    let (arg_browser, arg_popup_id) = (browser, popup_id);
-                    let arg_self_ = self.as_raw();
-                    let arg_browser = arg_browser
-                        .map(|arg| {
-                            arg.add_ref();
-                            ImplBrowser::get_raw(arg)
-                        })
-                        .unwrap_or(std::ptr::null_mut());
-                    let arg_popup_id = arg_popup_id;
-                    let result = f(arg_self_, arg_browser, arg_popup_id);
-                    result.as_wrapper()
-                })
-                .unwrap_or_else(|| std::mem::zeroed())
         }
     }
     fn on_before_dev_tools_popup(
@@ -47330,9 +48422,6 @@ pub trait ImplView: Clone + Sized + Rc {
     fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
         Default::default()
     }
-    fn has_focus(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
     fn request_focus(&self) {}
     fn set_background_color(&self, color: u32) {}
     fn get_background_color(&self) -> cef_color_t {
@@ -47416,7 +48505,6 @@ mod impl_cef_view_t {
         object.set_focusable = Some(set_focusable::<I>);
         object.is_focusable = Some(is_focusable::<I>);
         object.is_accessibility_focusable = Some(is_accessibility_focusable::<I>);
-        object.has_focus = Some(has_focus::<I>);
         object.request_focus = Some(request_focus::<I>);
         object.set_background_color = Some(set_background_color::<I>);
         object.get_background_color = Some(get_background_color::<I>);
@@ -47751,12 +48839,6 @@ mod impl_cef_view_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let result = ImplView::is_accessibility_focusable(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn has_focus<I: ImplView>(self_: *mut _cef_view_t) -> ::std::os::raw::c_int {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplView::has_focus(&arg_self_.interface);
         result.into()
     }
     extern "C" fn request_focus<I: ImplView>(self_: *mut _cef_view_t) {
@@ -48469,18 +49551,6 @@ impl ImplView for View {
                 .unwrap_or_default()
         }
     }
-    fn has_focus(&self) -> ::std::os::raw::c_int {
-        unsafe {
-            self.0
-                .has_focus
-                .map(|f| {
-                    let arg_self_ = self.as_raw();
-                    let result = f(arg_self_);
-                    result.as_wrapper()
-                })
-                .unwrap_or_default()
-        }
-    }
     fn request_focus(&self) {
         unsafe {
             self.0
@@ -48969,9 +50039,6 @@ impl ImplView for Button {
     fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .is_accessibility_focusable()
-    }
-    fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) }).has_focus()
     }
     fn request_focus(&self) {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
@@ -49709,9 +50776,6 @@ impl ImplView for LabelButton {
     fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .is_accessibility_focusable()
-    }
-    fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) }).has_focus()
     }
     fn request_focus(&self) {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
@@ -50557,9 +51621,6 @@ impl ImplView for MenuButton {
     fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .is_accessibility_focusable()
-    }
-    fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) }).has_focus()
     }
     fn request_focus(&self) {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
@@ -51604,9 +52665,6 @@ impl ImplView for Textfield {
     fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .is_accessibility_focusable()
-    }
-    fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) }).has_focus()
     }
     fn request_focus(&self) {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
@@ -52965,9 +54023,6 @@ impl ImplView for BrowserView {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .is_accessibility_focusable()
     }
-    fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) }).has_focus()
-    }
     fn request_focus(&self) {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .request_focus()
@@ -53399,9 +54454,6 @@ impl ImplView for ScrollView {
     fn is_accessibility_focusable(&self) -> ::std::os::raw::c_int {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .is_accessibility_focusable()
-    }
-    fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) }).has_focus()
     }
     fn request_focus(&self) {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
@@ -54916,9 +55968,6 @@ impl ImplView for Panel {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .is_accessibility_focusable()
     }
-    fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) }).has_focus()
-    }
     fn request_focus(&self) {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .request_focus()
@@ -55332,13 +56381,6 @@ pub trait ImplWindowDelegate: ImplPanelDelegate {
     fn get_window_runtime_style(&self) -> RuntimeStyle {
         Default::default()
     }
-    fn get_linux_window_properties(
-        &self,
-        window: Option<&mut impl ImplWindow>,
-        properties: Option<&mut LinuxWindowProperties>,
-    ) -> ::std::os::raw::c_int {
-        Default::default()
-    }
     fn init_methods(object: &mut _cef_window_delegate_t) {
         impl_cef_view_delegate_t::init_methods::<Self>(&mut object.base.base);
         impl_cef_panel_delegate_t::init_methods::<Self>(&mut object.base);
@@ -55373,7 +56415,6 @@ mod impl_cef_window_delegate_t {
         object.on_key_event = Some(on_key_event::<I>);
         object.on_theme_colors_changed = Some(on_theme_colors_changed::<I>);
         object.get_window_runtime_style = Some(get_window_runtime_style::<I>);
-        object.get_linux_window_properties = Some(get_linux_window_properties::<I>);
     }
     extern "C" fn on_window_created<I: ImplWindowDelegate>(
         self_: *mut _cef_window_delegate_t,
@@ -55701,29 +56742,6 @@ mod impl_cef_window_delegate_t {
         let arg_self_ = self_;
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let result = ImplWindowDelegate::get_window_runtime_style(&arg_self_.interface);
-        result.into()
-    }
-    extern "C" fn get_linux_window_properties<I: ImplWindowDelegate>(
-        self_: *mut _cef_window_delegate_t,
-        window: *mut _cef_window_t,
-        properties: *mut _cef_linux_window_properties_t,
-    ) -> ::std::os::raw::c_int {
-        let (arg_self_, arg_window, arg_properties) = (self_, window, properties);
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let mut arg_window =
-            unsafe { arg_window.as_mut() }.map(|arg| Window(unsafe { RefGuard::from_raw(arg) }));
-        let arg_window = arg_window.as_mut();
-        let mut arg_properties = if arg_properties.is_null() {
-            None
-        } else {
-            Some(WrapParamRef::<LinuxWindowProperties>::from(arg_properties))
-        };
-        let arg_properties = arg_properties.as_mut().map(|arg| arg.as_mut());
-        let result = ImplWindowDelegate::get_linux_window_properties(
-            &arg_self_.interface,
-            arg_window,
-            arg_properties,
-        );
         result.into()
     }
 }
@@ -56274,34 +57292,6 @@ impl ImplWindowDelegate for WindowDelegate {
                 .unwrap_or_default()
         }
     }
-    fn get_linux_window_properties(
-        &self,
-        window: Option<&mut impl ImplWindow>,
-        properties: Option<&mut LinuxWindowProperties>,
-    ) -> ::std::os::raw::c_int {
-        unsafe {
-            self.0
-                .get_linux_window_properties
-                .map(|f| {
-                    let (arg_window, arg_properties) = (window, properties);
-                    let arg_self_ = self.as_raw();
-                    let arg_window = arg_window
-                        .map(|arg| {
-                            arg.add_ref();
-                            ImplWindow::get_raw(arg)
-                        })
-                        .unwrap_or(std::ptr::null_mut());
-                    let mut arg_properties = arg_properties.cloned().map(|arg| arg.into());
-                    let arg_properties = arg_properties
-                        .as_mut()
-                        .map(std::ptr::from_mut)
-                        .unwrap_or(std::ptr::null_mut());
-                    let result = f(arg_self_, arg_window, arg_properties);
-                    result.as_wrapper()
-                })
-                .unwrap_or_default()
-        }
-    }
     fn get_raw(&self) -> *mut _cef_window_delegate_t {
         unsafe { RefGuard::as_raw(&self.0) }
     }
@@ -56394,9 +57384,6 @@ pub trait ImplWindow: ImplPanel {
         Default::default()
     }
     fn is_fullscreen(&self) -> ::std::os::raw::c_int {
-        Default::default()
-    }
-    fn get_focused_view(&self) -> Option<View> {
         Default::default()
     }
     fn set_title(&self, title: Option<&CefStringUtf16>) {}
@@ -56494,7 +57481,6 @@ mod impl_cef_window_t {
         object.is_maximized = Some(is_maximized::<I>);
         object.is_minimized = Some(is_minimized::<I>);
         object.is_fullscreen = Some(is_fullscreen::<I>);
-        object.get_focused_view = Some(get_focused_view::<I>);
         object.set_title = Some(set_title::<I>);
         object.get_title = Some(get_title::<I>);
         object.set_window_icon = Some(set_window_icon::<I>);
@@ -56644,14 +57630,6 @@ mod impl_cef_window_t {
         let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
         let result = ImplWindow::is_fullscreen(&arg_self_.interface);
         result.into()
-    }
-    extern "C" fn get_focused_view<I: ImplWindow>(self_: *mut _cef_window_t) -> *mut _cef_view_t {
-        let arg_self_ = self_;
-        let arg_self_: &RcImpl<_, I> = RcImpl::get(arg_self_);
-        let result = ImplWindow::get_focused_view(&arg_self_.interface);
-        result
-            .map(|result| result.into())
-            .unwrap_or(std::ptr::null_mut())
     }
     extern "C" fn set_title<I: ImplWindow>(
         self_: *mut _cef_window_t,
@@ -57091,9 +58069,6 @@ impl ImplView for Window {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .is_accessibility_focusable()
     }
-    fn has_focus(&self) -> ::std::os::raw::c_int {
-        View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) }).has_focus()
-    }
     fn request_focus(&self) {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .request_focus()
@@ -57440,22 +58415,6 @@ impl ImplWindow for Window {
                     let arg_self_ = self.as_raw();
                     let result = f(arg_self_);
                     result.as_wrapper()
-                })
-                .unwrap_or_default()
-        }
-    }
-    fn get_focused_view(&self) -> Option<View> {
-        unsafe {
-            self.0
-                .get_focused_view
-                .map(|f| {
-                    let arg_self_ = self.as_raw();
-                    let result = f(arg_self_);
-                    if result.is_null() {
-                        None
-                    } else {
-                        Some(result.as_wrapper())
-                    }
                 })
                 .unwrap_or_default()
         }
@@ -60691,35 +61650,6 @@ impl Default for ColorVariant {
     }
 }
 
-/// See [cef_task_type_t] for more documentation.
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-pub struct TaskType(cef_task_type_t);
-impl AsRef<cef_task_type_t> for TaskType {
-    fn as_ref(&self) -> &cef_task_type_t {
-        &self.0
-    }
-}
-impl AsMut<cef_task_type_t> for TaskType {
-    fn as_mut(&mut self) -> &mut cef_task_type_t {
-        &mut self.0
-    }
-}
-impl From<cef_task_type_t> for TaskType {
-    fn from(value: cef_task_type_t) -> Self {
-        Self(value)
-    }
-}
-impl Into<cef_task_type_t> for TaskType {
-    fn into(self) -> cef_task_type_t {
-        self.0
-    }
-}
-impl Default for TaskType {
-    fn default() -> Self {
-        Self(cef_task_type_t::CEF_TASK_TYPE_UNKNOWN)
-    }
-}
-
 /// See [cef_sandbox_info_create] for more documentation.
 pub fn sandbox_info_create() -> *mut ::std::os::raw::c_void {
     unsafe {
@@ -62228,22 +63158,6 @@ pub fn browser_host_create_browser_sync(
     }
 }
 
-/// See [cef_browser_host_get_browser_by_identifier] for more documentation.
-pub fn browser_host_get_browser_by_identifier(
-    browser_id: ::std::os::raw::c_int,
-) -> Option<Browser> {
-    unsafe {
-        let arg_browser_id = browser_id;
-        let arg_browser_id = arg_browser_id;
-        let result = cef_browser_host_get_browser_by_identifier(arg_browser_id);
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
-    }
-}
-
 /// See [cef_menu_model_create] for more documentation.
 pub fn menu_model_create(delegate: Option<&mut impl ImplMenuModelDelegate>) -> Option<MenuModel> {
     unsafe {
@@ -62594,21 +63508,6 @@ pub fn v8value_create_array_buffer(
             })
             .unwrap_or(std::ptr::null_mut());
         let result = cef_v8value_create_array_buffer(arg_buffer, arg_length, arg_release_callback);
-        if result.is_null() {
-            None
-        } else {
-            Some(result.as_wrapper())
-        }
-    }
-}
-
-/// See [cef_v8value_create_array_buffer_with_copy] for more documentation.
-pub fn v8value_create_array_buffer_with_copy(buffer: *mut u8, length: usize) -> Option<V8value> {
-    unsafe {
-        let (arg_buffer, arg_length) = (buffer, length);
-        let arg_buffer = arg_buffer as *mut _;
-        let arg_length = arg_length;
-        let result = cef_v8value_create_array_buffer_with_copy(arg_buffer, arg_length);
         if result.is_null() {
             None
         } else {
