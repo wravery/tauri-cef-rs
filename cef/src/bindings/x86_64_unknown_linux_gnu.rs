@@ -2068,7 +2068,7 @@ pub trait ImplValue: Clone + Sized + Rc {
     fn get_bool(&self) -> ::std::os::raw::c_int;
     fn get_int(&self) -> ::std::os::raw::c_int;
     fn get_double(&self) -> f64;
-    fn get_string(&self) -> CefStringUserfree;
+    fn get_string(&self) -> cef_string_userfree_t;
     fn get_binary(&self) -> Option<BinaryValue>;
     fn get_dictionary(&self) -> Option<DictionaryValue>;
     fn get_list(&self) -> Option<ListValue>;
@@ -2222,7 +2222,7 @@ impl ImplValue for Value {
                 .unwrap_or_default()
         }
     }
-    fn get_string(&self) -> CefStringUserfree {
+    fn get_string(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_string
@@ -2660,7 +2660,7 @@ pub trait ImplDictionaryValue: Clone + Sized + Rc {
     fn get_bool(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
     fn get_int(&self, key: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
     fn get_double(&self, key: Option<&CefStringUtf16>) -> f64;
-    fn get_string(&self, key: Option<&CefStringUtf16>) -> CefStringUserfree;
+    fn get_string(&self, key: Option<&CefStringUtf16>) -> cef_string_userfree_t;
     fn get_binary(&self, key: Option<&CefStringUtf16>) -> Option<BinaryValue>;
     fn get_dictionary(&self, key: Option<&CefStringUtf16>) -> Option<DictionaryValue>;
     fn get_list(&self, key: Option<&CefStringUtf16>) -> Option<ListValue>;
@@ -2938,7 +2938,7 @@ impl ImplDictionaryValue for DictionaryValue {
                 .unwrap_or_default()
         }
     }
-    fn get_string(&self, key: Option<&CefStringUtf16>) -> CefStringUserfree {
+    fn get_string(&self, key: Option<&CefStringUtf16>) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_string
@@ -3251,7 +3251,7 @@ pub trait ImplListValue: Clone + Sized + Rc {
     fn get_bool(&self, index: usize) -> ::std::os::raw::c_int;
     fn get_int(&self, index: usize) -> ::std::os::raw::c_int;
     fn get_double(&self, index: usize) -> f64;
-    fn get_string(&self, index: usize) -> CefStringUserfree;
+    fn get_string(&self, index: usize) -> cef_string_userfree_t;
     fn get_binary(&self, index: usize) -> Option<BinaryValue>;
     fn get_dictionary(&self, index: usize) -> Option<DictionaryValue>;
     fn get_list(&self, index: usize) -> Option<ListValue>;
@@ -3495,7 +3495,7 @@ impl ImplListValue for ListValue {
                 .unwrap_or_default()
         }
     }
-    fn get_string(&self, index: usize) -> CefStringUserfree {
+    fn get_string(&self, index: usize) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_string
@@ -4913,13 +4913,13 @@ pub trait ImplDragData: Clone + Sized + Rc {
     fn is_link(&self) -> ::std::os::raw::c_int;
     fn is_fragment(&self) -> ::std::os::raw::c_int;
     fn is_file(&self) -> ::std::os::raw::c_int;
-    fn get_link_url(&self) -> CefStringUserfree;
-    fn get_link_title(&self) -> CefStringUserfree;
-    fn get_link_metadata(&self) -> CefStringUserfree;
-    fn get_fragment_text(&self) -> CefStringUserfree;
-    fn get_fragment_html(&self) -> CefStringUserfree;
-    fn get_fragment_base_url(&self) -> CefStringUserfree;
-    fn get_file_name(&self) -> CefStringUserfree;
+    fn get_link_url(&self) -> cef_string_userfree_t;
+    fn get_link_title(&self) -> cef_string_userfree_t;
+    fn get_link_metadata(&self) -> cef_string_userfree_t;
+    fn get_fragment_text(&self) -> cef_string_userfree_t;
+    fn get_fragment_html(&self) -> cef_string_userfree_t;
+    fn get_fragment_base_url(&self) -> cef_string_userfree_t;
+    fn get_file_name(&self) -> cef_string_userfree_t;
     fn get_file_contents(&self, writer: Option<&mut impl ImplStreamWriter>) -> usize;
     fn get_file_names(&self, names: Option<&mut CefStringList>) -> ::std::os::raw::c_int;
     fn get_file_paths(&self, paths: Option<&mut CefStringList>) -> ::std::os::raw::c_int;
@@ -5002,7 +5002,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_default()
         }
     }
-    fn get_link_url(&self) -> CefStringUserfree {
+    fn get_link_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_link_url
@@ -5014,7 +5014,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_default()
         }
     }
-    fn get_link_title(&self) -> CefStringUserfree {
+    fn get_link_title(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_link_title
@@ -5026,7 +5026,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_default()
         }
     }
-    fn get_link_metadata(&self) -> CefStringUserfree {
+    fn get_link_metadata(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_link_metadata
@@ -5038,7 +5038,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_default()
         }
     }
-    fn get_fragment_text(&self) -> CefStringUserfree {
+    fn get_fragment_text(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_fragment_text
@@ -5050,7 +5050,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_default()
         }
     }
-    fn get_fragment_html(&self) -> CefStringUserfree {
+    fn get_fragment_html(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_fragment_html
@@ -5062,7 +5062,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_default()
         }
     }
-    fn get_fragment_base_url(&self) -> CefStringUserfree {
+    fn get_fragment_base_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_fragment_base_url
@@ -5074,7 +5074,7 @@ impl ImplDragData for DragData {
                 .unwrap_or_default()
         }
     }
-    fn get_file_name(&self) -> CefStringUserfree {
+    fn get_file_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_file_name
@@ -5462,16 +5462,16 @@ pub trait ImplDomdocument: Clone + Sized + Rc {
     fn get_document(&self) -> Option<Domnode>;
     fn get_body(&self) -> Option<Domnode>;
     fn get_head(&self) -> Option<Domnode>;
-    fn get_title(&self) -> CefStringUserfree;
+    fn get_title(&self) -> cef_string_userfree_t;
     fn get_element_by_id(&self, id: Option<&CefStringUtf16>) -> Option<Domnode>;
     fn get_focused_node(&self) -> Option<Domnode>;
     fn has_selection(&self) -> ::std::os::raw::c_int;
     fn get_selection_start_offset(&self) -> ::std::os::raw::c_int;
     fn get_selection_end_offset(&self) -> ::std::os::raw::c_int;
-    fn get_selection_as_markup(&self) -> CefStringUserfree;
-    fn get_selection_as_text(&self) -> CefStringUserfree;
-    fn get_base_url(&self) -> CefStringUserfree;
-    fn get_complete_url(&self, partial_url: Option<&CefStringUtf16>) -> CefStringUserfree;
+    fn get_selection_as_markup(&self) -> cef_string_userfree_t;
+    fn get_selection_as_text(&self) -> cef_string_userfree_t;
+    fn get_base_url(&self) -> cef_string_userfree_t;
+    fn get_complete_url(&self, partial_url: Option<&CefStringUtf16>) -> cef_string_userfree_t;
     fn get_raw(&self) -> *mut _cef_domdocument_t;
 }
 impl ImplDomdocument for Domdocument {
@@ -5535,7 +5535,7 @@ impl ImplDomdocument for Domdocument {
                 .unwrap_or_default()
         }
     }
-    fn get_title(&self) -> CefStringUserfree {
+    fn get_title(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_title
@@ -5617,7 +5617,7 @@ impl ImplDomdocument for Domdocument {
                 .unwrap_or_default()
         }
     }
-    fn get_selection_as_markup(&self) -> CefStringUserfree {
+    fn get_selection_as_markup(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_selection_as_markup
@@ -5629,7 +5629,7 @@ impl ImplDomdocument for Domdocument {
                 .unwrap_or_default()
         }
     }
-    fn get_selection_as_text(&self) -> CefStringUserfree {
+    fn get_selection_as_text(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_selection_as_text
@@ -5641,7 +5641,7 @@ impl ImplDomdocument for Domdocument {
                 .unwrap_or_default()
         }
     }
-    fn get_base_url(&self) -> CefStringUserfree {
+    fn get_base_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_base_url
@@ -5653,7 +5653,7 @@ impl ImplDomdocument for Domdocument {
                 .unwrap_or_default()
         }
     }
-    fn get_complete_url(&self, partial_url: Option<&CefStringUtf16>) -> CefStringUserfree {
+    fn get_complete_url(&self, partial_url: Option<&CefStringUtf16>) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_complete_url
@@ -5722,10 +5722,10 @@ pub trait ImplDomnode: Clone + Sized + Rc {
     fn is_form_control_element(&self) -> ::std::os::raw::c_int;
     fn get_form_control_element_type(&self) -> DomFormControlType;
     fn is_same(&self, that: Option<&mut impl ImplDomnode>) -> ::std::os::raw::c_int;
-    fn get_name(&self) -> CefStringUserfree;
-    fn get_value(&self) -> CefStringUserfree;
+    fn get_name(&self) -> cef_string_userfree_t;
+    fn get_value(&self) -> cef_string_userfree_t;
     fn set_value(&self, value: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
-    fn get_as_markup(&self) -> CefStringUserfree;
+    fn get_as_markup(&self) -> cef_string_userfree_t;
     fn get_document(&self) -> Option<Domdocument>;
     fn get_parent(&self) -> Option<Domnode>;
     fn get_previous_sibling(&self) -> Option<Domnode>;
@@ -5733,17 +5733,17 @@ pub trait ImplDomnode: Clone + Sized + Rc {
     fn has_children(&self) -> ::std::os::raw::c_int;
     fn get_first_child(&self) -> Option<Domnode>;
     fn get_last_child(&self) -> Option<Domnode>;
-    fn get_element_tag_name(&self) -> CefStringUserfree;
+    fn get_element_tag_name(&self) -> cef_string_userfree_t;
     fn has_element_attributes(&self) -> ::std::os::raw::c_int;
     fn has_element_attribute(&self, attr_name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
-    fn get_element_attribute(&self, attr_name: Option<&CefStringUtf16>) -> CefStringUserfree;
+    fn get_element_attribute(&self, attr_name: Option<&CefStringUtf16>) -> cef_string_userfree_t;
     fn get_element_attributes(&self, attr_map: Option<&mut CefStringMap>);
     fn set_element_attribute(
         &self,
         attr_name: Option<&CefStringUtf16>,
         value: Option<&CefStringUtf16>,
     ) -> ::std::os::raw::c_int;
-    fn get_element_inner_text(&self) -> CefStringUserfree;
+    fn get_element_inner_text(&self) -> cef_string_userfree_t;
     fn get_element_bounds(&self) -> Rect;
     fn get_raw(&self) -> *mut _cef_domnode_t;
 }
@@ -5839,7 +5839,7 @@ impl ImplDomnode for Domnode {
                 .unwrap_or_default()
         }
     }
-    fn get_name(&self) -> CefStringUserfree {
+    fn get_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_name
@@ -5851,7 +5851,7 @@ impl ImplDomnode for Domnode {
                 .unwrap_or_default()
         }
     }
-    fn get_value(&self) -> CefStringUserfree {
+    fn get_value(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_value
@@ -5879,7 +5879,7 @@ impl ImplDomnode for Domnode {
                 .unwrap_or_default()
         }
     }
-    fn get_as_markup(&self) -> CefStringUserfree {
+    fn get_as_markup(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_as_markup
@@ -5999,7 +5999,7 @@ impl ImplDomnode for Domnode {
                 .unwrap_or_default()
         }
     }
-    fn get_element_tag_name(&self) -> CefStringUserfree {
+    fn get_element_tag_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_element_tag_name
@@ -6039,7 +6039,7 @@ impl ImplDomnode for Domnode {
                 .unwrap_or_default()
         }
     }
-    fn get_element_attribute(&self, attr_name: Option<&CefStringUtf16>) -> CefStringUserfree {
+    fn get_element_attribute(&self, attr_name: Option<&CefStringUtf16>) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_element_attribute
@@ -6094,7 +6094,7 @@ impl ImplDomnode for Domnode {
                 .unwrap_or_default()
         }
     }
-    fn get_element_inner_text(&self) -> CefStringUserfree {
+    fn get_element_inner_text(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_element_inner_text
@@ -6255,7 +6255,7 @@ pub trait ImplProcessMessage: Clone + Sized + Rc {
     fn is_valid(&self) -> ::std::os::raw::c_int;
     fn is_read_only(&self) -> ::std::os::raw::c_int;
     fn copy(&self) -> Option<ProcessMessage>;
-    fn get_name(&self) -> CefStringUserfree;
+    fn get_name(&self) -> cef_string_userfree_t;
     fn get_argument_list(&self) -> Option<ListValue>;
     fn get_shared_memory_region(&self) -> Option<SharedMemoryRegion>;
     fn get_raw(&self) -> *mut _cef_process_message_t;
@@ -6301,7 +6301,7 @@ impl ImplProcessMessage for ProcessMessage {
                 .unwrap_or_default()
         }
     }
-    fn get_name(&self) -> CefStringUserfree {
+    fn get_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_name
@@ -6392,18 +6392,18 @@ impl Default for ProcessMessage {
 pub struct Request(RefGuard<_cef_request_t>);
 pub trait ImplRequest: Clone + Sized + Rc {
     fn is_read_only(&self) -> ::std::os::raw::c_int;
-    fn get_url(&self) -> CefStringUserfree;
+    fn get_url(&self) -> cef_string_userfree_t;
     fn set_url(&self, url: Option<&CefStringUtf16>);
-    fn get_method(&self) -> CefStringUserfree;
+    fn get_method(&self) -> cef_string_userfree_t;
     fn set_method(&self, method: Option<&CefStringUtf16>);
     fn set_referrer(&self, referrer_url: Option<&CefStringUtf16>, policy: ReferrerPolicy);
-    fn get_referrer_url(&self) -> CefStringUserfree;
+    fn get_referrer_url(&self) -> cef_string_userfree_t;
     fn get_referrer_policy(&self) -> ReferrerPolicy;
     fn get_post_data(&self) -> Option<PostData>;
     fn set_post_data(&self, post_data: Option<&mut impl ImplPostData>);
     fn get_header_map(&self, header_map: Option<&mut CefStringMultimap>);
     fn set_header_map(&self, header_map: Option<&mut CefStringMultimap>);
-    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> CefStringUserfree;
+    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> cef_string_userfree_t;
     fn set_header_by_name(
         &self,
         name: Option<&CefStringUtf16>,
@@ -6419,7 +6419,7 @@ pub trait ImplRequest: Clone + Sized + Rc {
     );
     fn get_flags(&self) -> ::std::os::raw::c_int;
     fn set_flags(&self, flags: ::std::os::raw::c_int);
-    fn get_first_party_for_cookies(&self) -> CefStringUserfree;
+    fn get_first_party_for_cookies(&self) -> cef_string_userfree_t;
     fn set_first_party_for_cookies(&self, url: Option<&CefStringUtf16>);
     fn get_resource_type(&self) -> ResourceType;
     fn get_transition_type(&self) -> TransitionType;
@@ -6439,7 +6439,7 @@ impl ImplRequest for Request {
                 .unwrap_or_default()
         }
     }
-    fn get_url(&self) -> CefStringUserfree {
+    fn get_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_url
@@ -6465,7 +6465,7 @@ impl ImplRequest for Request {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_method(&self) -> CefStringUserfree {
+    fn get_method(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_method
@@ -6510,7 +6510,7 @@ impl ImplRequest for Request {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_referrer_url(&self) -> CefStringUserfree {
+    fn get_referrer_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_referrer_url
@@ -6601,7 +6601,7 @@ impl ImplRequest for Request {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> CefStringUserfree {
+    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_header_by_name
@@ -6703,7 +6703,7 @@ impl ImplRequest for Request {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_first_party_for_cookies(&self) -> CefStringUserfree {
+    fn get_first_party_for_cookies(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_first_party_for_cookies
@@ -7016,7 +7016,7 @@ pub trait ImplPostDataElement: Clone + Sized + Rc {
     fn set_to_file(&self, file_name: Option<&CefStringUtf16>);
     fn set_to_bytes(&self, size: usize, bytes: *const u8);
     fn get_type(&self) -> PostdataelementType;
-    fn get_file(&self) -> CefStringUserfree;
+    fn get_file(&self) -> cef_string_userfree_t;
     fn get_bytes_count(&self) -> usize;
     fn get_bytes(&self, size: usize, bytes: *mut u8) -> usize;
     fn get_raw(&self) -> *mut _cef_post_data_element_t;
@@ -7089,7 +7089,7 @@ impl ImplPostDataElement for PostDataElement {
                 .unwrap_or_default()
         }
     }
-    fn get_file(&self) -> CefStringUserfree {
+    fn get_file(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_file
@@ -7302,10 +7302,10 @@ pub trait ImplFrame: Clone + Sized + Rc {
     );
     fn is_main(&self) -> ::std::os::raw::c_int;
     fn is_focused(&self) -> ::std::os::raw::c_int;
-    fn get_name(&self) -> CefStringUserfree;
-    fn get_identifier(&self) -> CefStringUserfree;
+    fn get_name(&self) -> cef_string_userfree_t;
+    fn get_identifier(&self) -> cef_string_userfree_t;
     fn get_parent(&self) -> Option<Frame>;
-    fn get_url(&self) -> CefStringUserfree;
+    fn get_url(&self) -> cef_string_userfree_t;
     fn get_browser(&self) -> Option<Browser>;
     fn get_v8_context(&self) -> Option<V8Context>;
     fn visit_dom(&self, visitor: Option<&mut impl ImplDomvisitor>);
@@ -7560,7 +7560,7 @@ impl ImplFrame for Frame {
                 .unwrap_or_default()
         }
     }
-    fn get_name(&self) -> CefStringUserfree {
+    fn get_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_name
@@ -7572,7 +7572,7 @@ impl ImplFrame for Frame {
                 .unwrap_or_default()
         }
     }
-    fn get_identifier(&self) -> CefStringUserfree {
+    fn get_identifier(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_identifier
@@ -7600,7 +7600,7 @@ impl ImplFrame for Frame {
                 .unwrap_or_default()
         }
     }
-    fn get_url(&self) -> CefStringUserfree {
+    fn get_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_url
@@ -7766,17 +7766,17 @@ impl Default for Frame {
 #[derive(Clone)]
 pub struct X509CertPrincipal(RefGuard<_cef_x509_cert_principal_t>);
 pub trait ImplX509CertPrincipal: Clone + Sized + Rc {
-    fn get_display_name(&self) -> CefStringUserfree;
-    fn get_common_name(&self) -> CefStringUserfree;
-    fn get_locality_name(&self) -> CefStringUserfree;
-    fn get_state_or_province_name(&self) -> CefStringUserfree;
-    fn get_country_name(&self) -> CefStringUserfree;
+    fn get_display_name(&self) -> cef_string_userfree_t;
+    fn get_common_name(&self) -> cef_string_userfree_t;
+    fn get_locality_name(&self) -> cef_string_userfree_t;
+    fn get_state_or_province_name(&self) -> cef_string_userfree_t;
+    fn get_country_name(&self) -> cef_string_userfree_t;
     fn get_organization_names(&self, names: Option<&mut CefStringList>);
     fn get_organization_unit_names(&self, names: Option<&mut CefStringList>);
     fn get_raw(&self) -> *mut _cef_x509_cert_principal_t;
 }
 impl ImplX509CertPrincipal for X509CertPrincipal {
-    fn get_display_name(&self) -> CefStringUserfree {
+    fn get_display_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_display_name
@@ -7788,7 +7788,7 @@ impl ImplX509CertPrincipal for X509CertPrincipal {
                 .unwrap_or_default()
         }
     }
-    fn get_common_name(&self) -> CefStringUserfree {
+    fn get_common_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_common_name
@@ -7800,7 +7800,7 @@ impl ImplX509CertPrincipal for X509CertPrincipal {
                 .unwrap_or_default()
         }
     }
-    fn get_locality_name(&self) -> CefStringUserfree {
+    fn get_locality_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_locality_name
@@ -7812,7 +7812,7 @@ impl ImplX509CertPrincipal for X509CertPrincipal {
                 .unwrap_or_default()
         }
     }
-    fn get_state_or_province_name(&self) -> CefStringUserfree {
+    fn get_state_or_province_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_state_or_province_name
@@ -7824,7 +7824,7 @@ impl ImplX509CertPrincipal for X509CertPrincipal {
                 .unwrap_or_default()
         }
     }
-    fn get_country_name(&self) -> CefStringUserfree {
+    fn get_country_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_country_name
@@ -8308,10 +8308,10 @@ impl Default for Sslstatus {
 pub struct NavigationEntry(RefGuard<_cef_navigation_entry_t>);
 pub trait ImplNavigationEntry: Clone + Sized + Rc {
     fn is_valid(&self) -> ::std::os::raw::c_int;
-    fn get_url(&self) -> CefStringUserfree;
-    fn get_display_url(&self) -> CefStringUserfree;
-    fn get_original_url(&self) -> CefStringUserfree;
-    fn get_title(&self) -> CefStringUserfree;
+    fn get_url(&self) -> cef_string_userfree_t;
+    fn get_display_url(&self) -> cef_string_userfree_t;
+    fn get_original_url(&self) -> cef_string_userfree_t;
+    fn get_title(&self) -> cef_string_userfree_t;
     fn get_transition_type(&self) -> TransitionType;
     fn has_post_data(&self) -> ::std::os::raw::c_int;
     fn get_completion_time(&self) -> Basetime;
@@ -8332,7 +8332,7 @@ impl ImplNavigationEntry for NavigationEntry {
                 .unwrap_or_default()
         }
     }
-    fn get_url(&self) -> CefStringUserfree {
+    fn get_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_url
@@ -8344,7 +8344,7 @@ impl ImplNavigationEntry for NavigationEntry {
                 .unwrap_or_default()
         }
     }
-    fn get_display_url(&self) -> CefStringUserfree {
+    fn get_display_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_display_url
@@ -8356,7 +8356,7 @@ impl ImplNavigationEntry for NavigationEntry {
                 .unwrap_or_default()
         }
     }
-    fn get_original_url(&self) -> CefStringUserfree {
+    fn get_original_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_original_url
@@ -8368,7 +8368,7 @@ impl ImplNavigationEntry for NavigationEntry {
                 .unwrap_or_default()
         }
     }
-    fn get_title(&self) -> CefStringUserfree {
+    fn get_title(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_title
@@ -9727,7 +9727,7 @@ impl Default for MediaObserver {
 #[derive(Clone)]
 pub struct MediaRoute(RefGuard<_cef_media_route_t>);
 pub trait ImplMediaRoute: Clone + Sized + Rc {
-    fn get_id(&self) -> CefStringUserfree;
+    fn get_id(&self) -> cef_string_userfree_t;
     fn get_source(&self) -> Option<MediaSource>;
     fn get_sink(&self) -> Option<MediaSink>;
     fn send_route_message(&self, message: Option<&[u8]>);
@@ -9735,7 +9735,7 @@ pub trait ImplMediaRoute: Clone + Sized + Rc {
     fn get_raw(&self) -> *mut _cef_media_route_t;
 }
 impl ImplMediaRoute for MediaRoute {
-    fn get_id(&self) -> CefStringUserfree {
+    fn get_id(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_id
@@ -10000,8 +10000,8 @@ impl Default for MediaRouteCreateCallback {
 #[derive(Clone)]
 pub struct MediaSink(RefGuard<_cef_media_sink_t>);
 pub trait ImplMediaSink: Clone + Sized + Rc {
-    fn get_id(&self) -> CefStringUserfree;
-    fn get_name(&self) -> CefStringUserfree;
+    fn get_id(&self) -> cef_string_userfree_t;
+    fn get_name(&self) -> cef_string_userfree_t;
     fn get_icon_type(&self) -> MediaSinkIconType;
     fn get_device_info(&self, callback: Option<&mut impl ImplMediaSinkDeviceInfoCallback>);
     fn is_cast_sink(&self) -> ::std::os::raw::c_int;
@@ -10013,7 +10013,7 @@ pub trait ImplMediaSink: Clone + Sized + Rc {
     fn get_raw(&self) -> *mut _cef_media_sink_t;
 }
 impl ImplMediaSink for MediaSink {
-    fn get_id(&self) -> CefStringUserfree {
+    fn get_id(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_id
@@ -10025,7 +10025,7 @@ impl ImplMediaSink for MediaSink {
                 .unwrap_or_default()
         }
     }
-    fn get_name(&self) -> CefStringUserfree {
+    fn get_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_name
@@ -10277,13 +10277,13 @@ impl Default for MediaSinkDeviceInfoCallback {
 #[derive(Clone)]
 pub struct MediaSource(RefGuard<_cef_media_source_t>);
 pub trait ImplMediaSource: Clone + Sized + Rc {
-    fn get_id(&self) -> CefStringUserfree;
+    fn get_id(&self) -> cef_string_userfree_t;
     fn is_cast_source(&self) -> ::std::os::raw::c_int;
     fn is_dial_source(&self) -> ::std::os::raw::c_int;
     fn get_raw(&self) -> *mut _cef_media_source_t;
 }
 impl ImplMediaSource for MediaSource {
-    fn get_id(&self) -> CefStringUserfree {
+    fn get_id(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_id
@@ -11018,7 +11018,7 @@ pub trait ImplRequestContext: ImplPreferenceManager {
         -> ::std::os::raw::c_int;
     fn is_global(&self) -> ::std::os::raw::c_int;
     fn get_handler(&self) -> Option<RequestContextHandler>;
-    fn get_cache_path(&self) -> CefStringUserfree;
+    fn get_cache_path(&self) -> cef_string_userfree_t;
     fn get_cookie_manager(
         &self,
         callback: Option<&mut impl ImplCompletionCallback>,
@@ -11203,7 +11203,7 @@ impl ImplRequestContext for RequestContext {
                 .unwrap_or_default()
         }
     }
-    fn get_cache_path(&self) -> CefStringUserfree {
+    fn get_cache_path(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_cache_path
@@ -15087,8 +15087,8 @@ pub trait ImplMenuModel: Clone + Sized + Rc {
         index: usize,
         command_id: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
-    fn get_label(&self, command_id: ::std::os::raw::c_int) -> CefStringUserfree;
-    fn get_label_at(&self, index: usize) -> CefStringUserfree;
+    fn get_label(&self, command_id: ::std::os::raw::c_int) -> cef_string_userfree_t;
+    fn get_label_at(&self, index: usize) -> cef_string_userfree_t;
     fn set_label(
         &self,
         command_id: ::std::os::raw::c_int,
@@ -15543,7 +15543,7 @@ impl ImplMenuModel for MenuModel {
                 .unwrap_or_default()
         }
     }
-    fn get_label(&self, command_id: ::std::os::raw::c_int) -> CefStringUserfree {
+    fn get_label(&self, command_id: ::std::os::raw::c_int) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_label
@@ -15557,7 +15557,7 @@ impl ImplMenuModel for MenuModel {
                 .unwrap_or_default()
         }
     }
-    fn get_label_at(&self, index: usize) -> CefStringUserfree {
+    fn get_label_at(&self, index: usize) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_label_at
@@ -17187,18 +17187,18 @@ pub trait ImplContextMenuParams: Clone + Sized + Rc {
     fn get_xcoord(&self) -> ::std::os::raw::c_int;
     fn get_ycoord(&self) -> ::std::os::raw::c_int;
     fn get_type_flags(&self) -> ContextMenuTypeFlags;
-    fn get_link_url(&self) -> CefStringUserfree;
-    fn get_unfiltered_link_url(&self) -> CefStringUserfree;
-    fn get_source_url(&self) -> CefStringUserfree;
+    fn get_link_url(&self) -> cef_string_userfree_t;
+    fn get_unfiltered_link_url(&self) -> cef_string_userfree_t;
+    fn get_source_url(&self) -> cef_string_userfree_t;
     fn has_image_contents(&self) -> ::std::os::raw::c_int;
-    fn get_title_text(&self) -> CefStringUserfree;
-    fn get_page_url(&self) -> CefStringUserfree;
-    fn get_frame_url(&self) -> CefStringUserfree;
-    fn get_frame_charset(&self) -> CefStringUserfree;
+    fn get_title_text(&self) -> cef_string_userfree_t;
+    fn get_page_url(&self) -> cef_string_userfree_t;
+    fn get_frame_url(&self) -> cef_string_userfree_t;
+    fn get_frame_charset(&self) -> cef_string_userfree_t;
     fn get_media_type(&self) -> ContextMenuMediaType;
     fn get_media_state_flags(&self) -> ContextMenuMediaStateFlags;
-    fn get_selection_text(&self) -> CefStringUserfree;
-    fn get_misspelled_word(&self) -> CefStringUserfree;
+    fn get_selection_text(&self) -> cef_string_userfree_t;
+    fn get_misspelled_word(&self) -> cef_string_userfree_t;
     fn get_dictionary_suggestions(
         &self,
         suggestions: Option<&mut CefStringList>,
@@ -17246,7 +17246,7 @@ impl ImplContextMenuParams for ContextMenuParams {
                 .unwrap_or_default()
         }
     }
-    fn get_link_url(&self) -> CefStringUserfree {
+    fn get_link_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_link_url
@@ -17258,7 +17258,7 @@ impl ImplContextMenuParams for ContextMenuParams {
                 .unwrap_or_default()
         }
     }
-    fn get_unfiltered_link_url(&self) -> CefStringUserfree {
+    fn get_unfiltered_link_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_unfiltered_link_url
@@ -17270,7 +17270,7 @@ impl ImplContextMenuParams for ContextMenuParams {
                 .unwrap_or_default()
         }
     }
-    fn get_source_url(&self) -> CefStringUserfree {
+    fn get_source_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_source_url
@@ -17294,7 +17294,7 @@ impl ImplContextMenuParams for ContextMenuParams {
                 .unwrap_or_default()
         }
     }
-    fn get_title_text(&self) -> CefStringUserfree {
+    fn get_title_text(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_title_text
@@ -17306,7 +17306,7 @@ impl ImplContextMenuParams for ContextMenuParams {
                 .unwrap_or_default()
         }
     }
-    fn get_page_url(&self) -> CefStringUserfree {
+    fn get_page_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_page_url
@@ -17318,7 +17318,7 @@ impl ImplContextMenuParams for ContextMenuParams {
                 .unwrap_or_default()
         }
     }
-    fn get_frame_url(&self) -> CefStringUserfree {
+    fn get_frame_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_frame_url
@@ -17330,7 +17330,7 @@ impl ImplContextMenuParams for ContextMenuParams {
                 .unwrap_or_default()
         }
     }
-    fn get_frame_charset(&self) -> CefStringUserfree {
+    fn get_frame_charset(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_frame_charset
@@ -17366,7 +17366,7 @@ impl ImplContextMenuParams for ContextMenuParams {
                 .unwrap_or_default()
         }
     }
-    fn get_selection_text(&self) -> CefStringUserfree {
+    fn get_selection_text(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_selection_text
@@ -17378,7 +17378,7 @@ impl ImplContextMenuParams for ContextMenuParams {
                 .unwrap_or_default()
         }
     }
-    fn get_misspelled_word(&self) -> CefStringUserfree {
+    fn get_misspelled_word(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_misspelled_word
@@ -18571,13 +18571,13 @@ pub trait ImplDownloadItem: Clone + Sized + Rc {
     fn get_received_bytes(&self) -> i64;
     fn get_start_time(&self) -> Basetime;
     fn get_end_time(&self) -> Basetime;
-    fn get_full_path(&self) -> CefStringUserfree;
+    fn get_full_path(&self) -> cef_string_userfree_t;
     fn get_id(&self) -> u32;
-    fn get_url(&self) -> CefStringUserfree;
-    fn get_original_url(&self) -> CefStringUserfree;
-    fn get_suggested_file_name(&self) -> CefStringUserfree;
-    fn get_content_disposition(&self) -> CefStringUserfree;
-    fn get_mime_type(&self) -> CefStringUserfree;
+    fn get_url(&self) -> cef_string_userfree_t;
+    fn get_original_url(&self) -> cef_string_userfree_t;
+    fn get_suggested_file_name(&self) -> cef_string_userfree_t;
+    fn get_content_disposition(&self) -> cef_string_userfree_t;
+    fn get_mime_type(&self) -> cef_string_userfree_t;
     fn get_raw(&self) -> *mut _cef_download_item_t;
 }
 impl ImplDownloadItem for DownloadItem {
@@ -18725,7 +18725,7 @@ impl ImplDownloadItem for DownloadItem {
                 .unwrap_or_default()
         }
     }
-    fn get_full_path(&self) -> CefStringUserfree {
+    fn get_full_path(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_full_path
@@ -18749,7 +18749,7 @@ impl ImplDownloadItem for DownloadItem {
                 .unwrap_or_default()
         }
     }
-    fn get_url(&self) -> CefStringUserfree {
+    fn get_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_url
@@ -18761,7 +18761,7 @@ impl ImplDownloadItem for DownloadItem {
                 .unwrap_or_default()
         }
     }
-    fn get_original_url(&self) -> CefStringUserfree {
+    fn get_original_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_original_url
@@ -18773,7 +18773,7 @@ impl ImplDownloadItem for DownloadItem {
                 .unwrap_or_default()
         }
     }
-    fn get_suggested_file_name(&self) -> CefStringUserfree {
+    fn get_suggested_file_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_suggested_file_name
@@ -18785,7 +18785,7 @@ impl ImplDownloadItem for DownloadItem {
                 .unwrap_or_default()
         }
     }
-    fn get_content_disposition(&self) -> CefStringUserfree {
+    fn get_content_disposition(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_content_disposition
@@ -18797,7 +18797,7 @@ impl ImplDownloadItem for DownloadItem {
                 .unwrap_or_default()
         }
     }
-    fn get_mime_type(&self) -> CefStringUserfree {
+    fn get_mime_type(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_mime_type
@@ -22509,7 +22509,7 @@ pub trait ImplPrintSettings: Clone + Sized + Rc {
         landscape_needs_flip: ::std::os::raw::c_int,
     );
     fn set_device_name(&self, name: Option<&CefStringUtf16>);
-    fn get_device_name(&self) -> CefStringUserfree;
+    fn get_device_name(&self) -> cef_string_userfree_t;
     fn set_dpi(&self, dpi: ::std::os::raw::c_int);
     fn get_dpi(&self) -> ::std::os::raw::c_int;
     fn set_page_ranges(&self, ranges_count: usize, ranges: Option<&Range>);
@@ -22638,7 +22638,7 @@ impl ImplPrintSettings for PrintSettings {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_device_name(&self) -> CefStringUserfree {
+    fn get_device_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_device_name
@@ -24862,13 +24862,13 @@ pub trait ImplResponse: Clone + Sized + Rc {
     fn set_error(&self, error: Errorcode);
     fn get_status(&self) -> ::std::os::raw::c_int;
     fn set_status(&self, status: ::std::os::raw::c_int);
-    fn get_status_text(&self) -> CefStringUserfree;
+    fn get_status_text(&self) -> cef_string_userfree_t;
     fn set_status_text(&self, status_text: Option<&CefStringUtf16>);
-    fn get_mime_type(&self) -> CefStringUserfree;
+    fn get_mime_type(&self) -> cef_string_userfree_t;
     fn set_mime_type(&self, mime_type: Option<&CefStringUtf16>);
-    fn get_charset(&self) -> CefStringUserfree;
+    fn get_charset(&self) -> cef_string_userfree_t;
     fn set_charset(&self, charset: Option<&CefStringUtf16>);
-    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> CefStringUserfree;
+    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> cef_string_userfree_t;
     fn set_header_by_name(
         &self,
         name: Option<&CefStringUtf16>,
@@ -24877,7 +24877,7 @@ pub trait ImplResponse: Clone + Sized + Rc {
     );
     fn get_header_map(&self, header_map: Option<&mut CefStringMultimap>);
     fn set_header_map(&self, header_map: Option<&mut CefStringMultimap>);
-    fn get_url(&self) -> CefStringUserfree;
+    fn get_url(&self) -> cef_string_userfree_t;
     fn set_url(&self, url: Option<&CefStringUtf16>);
     fn get_raw(&self) -> *mut _cef_response_t;
 }
@@ -24946,7 +24946,7 @@ impl ImplResponse for Response {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_status_text(&self) -> CefStringUserfree {
+    fn get_status_text(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_status_text
@@ -24974,7 +24974,7 @@ impl ImplResponse for Response {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_mime_type(&self) -> CefStringUserfree {
+    fn get_mime_type(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_mime_type
@@ -25002,7 +25002,7 @@ impl ImplResponse for Response {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_charset(&self) -> CefStringUserfree {
+    fn get_charset(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_charset
@@ -25030,7 +25030,7 @@ impl ImplResponse for Response {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> CefStringUserfree {
+    fn get_header_by_name(&self, name: Option<&CefStringUtf16>) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_header_by_name
@@ -25099,7 +25099,7 @@ impl ImplResponse for Response {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_url(&self) -> CefStringUserfree {
+    fn get_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_url
@@ -29152,12 +29152,12 @@ pub trait ImplCommandLine: Clone + Sized + Rc {
     fn init_from_string(&self, command_line: Option<&CefStringUtf16>);
     fn reset(&self);
     fn get_argv(&self, argv: Option<&mut CefStringList>);
-    fn get_command_line_string(&self) -> CefStringUserfree;
-    fn get_program(&self) -> CefStringUserfree;
+    fn get_command_line_string(&self) -> cef_string_userfree_t;
+    fn get_program(&self) -> cef_string_userfree_t;
     fn set_program(&self, program: Option<&CefStringUtf16>);
     fn has_switches(&self) -> ::std::os::raw::c_int;
     fn has_switch(&self, name: Option<&CefStringUtf16>) -> ::std::os::raw::c_int;
-    fn get_switch_value(&self, name: Option<&CefStringUtf16>) -> CefStringUserfree;
+    fn get_switch_value(&self, name: Option<&CefStringUtf16>) -> cef_string_userfree_t;
     fn get_switches(&self, switches: Option<&mut CefStringMap>);
     fn append_switch(&self, name: Option<&CefStringUtf16>);
     fn append_switch_with_value(
@@ -29275,7 +29275,7 @@ impl ImplCommandLine for CommandLine {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_command_line_string(&self) -> CefStringUserfree {
+    fn get_command_line_string(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_command_line_string
@@ -29287,7 +29287,7 @@ impl ImplCommandLine for CommandLine {
                 .unwrap_or_default()
         }
     }
-    fn get_program(&self) -> CefStringUserfree {
+    fn get_program(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_program
@@ -29341,7 +29341,7 @@ impl ImplCommandLine for CommandLine {
                 .unwrap_or_default()
         }
     }
-    fn get_switch_value(&self, name: Option<&CefStringUtf16>) -> CefStringUserfree {
+    fn get_switch_value(&self, name: Option<&CefStringUtf16>) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_switch_value
@@ -31474,9 +31474,9 @@ impl Default for V8Interceptor {
 #[derive(Clone)]
 pub struct V8Exception(RefGuard<_cef_v8_exception_t>);
 pub trait ImplV8Exception: Clone + Sized + Rc {
-    fn get_message(&self) -> CefStringUserfree;
-    fn get_source_line(&self) -> CefStringUserfree;
-    fn get_script_resource_name(&self) -> CefStringUserfree;
+    fn get_message(&self) -> cef_string_userfree_t;
+    fn get_source_line(&self) -> cef_string_userfree_t;
+    fn get_script_resource_name(&self) -> cef_string_userfree_t;
     fn get_line_number(&self) -> ::std::os::raw::c_int;
     fn get_start_position(&self) -> ::std::os::raw::c_int;
     fn get_end_position(&self) -> ::std::os::raw::c_int;
@@ -31485,7 +31485,7 @@ pub trait ImplV8Exception: Clone + Sized + Rc {
     fn get_raw(&self) -> *mut _cef_v8_exception_t;
 }
 impl ImplV8Exception for V8Exception {
-    fn get_message(&self) -> CefStringUserfree {
+    fn get_message(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_message
@@ -31497,7 +31497,7 @@ impl ImplV8Exception for V8Exception {
                 .unwrap_or_default()
         }
     }
-    fn get_source_line(&self) -> CefStringUserfree {
+    fn get_source_line(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_source_line
@@ -31509,7 +31509,7 @@ impl ImplV8Exception for V8Exception {
                 .unwrap_or_default()
         }
     }
-    fn get_script_resource_name(&self) -> CefStringUserfree {
+    fn get_script_resource_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_script_resource_name
@@ -31753,7 +31753,7 @@ pub trait ImplV8Value: Clone + Sized + Rc {
     fn get_uint_value(&self) -> u32;
     fn get_double_value(&self) -> f64;
     fn get_date_value(&self) -> Basetime;
-    fn get_string_value(&self) -> CefStringUserfree;
+    fn get_string_value(&self) -> cef_string_userfree_t;
     fn is_user_created(&self) -> ::std::os::raw::c_int;
     fn has_exception(&self) -> ::std::os::raw::c_int;
     fn get_exception(&self) -> Option<V8Exception>;
@@ -31795,7 +31795,7 @@ pub trait ImplV8Value: Clone + Sized + Rc {
     fn neuter_array_buffer(&self) -> ::std::os::raw::c_int;
     fn get_array_buffer_byte_length(&self) -> usize;
     fn get_array_buffer_data(&self) -> *mut ::std::os::raw::c_void;
-    fn get_function_name(&self) -> CefStringUserfree;
+    fn get_function_name(&self) -> cef_string_userfree_t;
     fn get_function_handler(&self) -> Option<V8Handler>;
     fn execute_function(
         &self,
@@ -32060,7 +32060,7 @@ impl ImplV8Value for V8Value {
                 .unwrap_or_default()
         }
     }
-    fn get_string_value(&self) -> CefStringUserfree {
+    fn get_string_value(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_string_value
@@ -32455,7 +32455,7 @@ impl ImplV8Value for V8Value {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_function_name(&self) -> CefStringUserfree {
+    fn get_function_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_function_name
@@ -32774,9 +32774,9 @@ impl Default for V8StackTrace {
 pub struct V8StackFrame(RefGuard<_cef_v8_stack_frame_t>);
 pub trait ImplV8StackFrame: Clone + Sized + Rc {
     fn is_valid(&self) -> ::std::os::raw::c_int;
-    fn get_script_name(&self) -> CefStringUserfree;
-    fn get_script_name_or_source_url(&self) -> CefStringUserfree;
-    fn get_function_name(&self) -> CefStringUserfree;
+    fn get_script_name(&self) -> cef_string_userfree_t;
+    fn get_script_name_or_source_url(&self) -> cef_string_userfree_t;
+    fn get_function_name(&self) -> cef_string_userfree_t;
     fn get_line_number(&self) -> ::std::os::raw::c_int;
     fn get_column(&self) -> ::std::os::raw::c_int;
     fn is_eval(&self) -> ::std::os::raw::c_int;
@@ -32796,7 +32796,7 @@ impl ImplV8StackFrame for V8StackFrame {
                 .unwrap_or_default()
         }
     }
-    fn get_script_name(&self) -> CefStringUserfree {
+    fn get_script_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_script_name
@@ -32808,7 +32808,7 @@ impl ImplV8StackFrame for V8StackFrame {
                 .unwrap_or_default()
         }
     }
-    fn get_script_name_or_source_url(&self) -> CefStringUserfree {
+    fn get_script_name_or_source_url(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_script_name_or_source_url
@@ -32820,7 +32820,7 @@ impl ImplV8StackFrame for V8StackFrame {
                 .unwrap_or_default()
         }
     }
-    fn get_function_name(&self) -> CefStringUserfree {
+    fn get_function_name(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_function_name
@@ -35659,8 +35659,8 @@ pub trait ImplView: Clone + Sized + Rc {
     fn as_panel(&self) -> Option<Panel>;
     fn as_scroll_view(&self) -> Option<ScrollView>;
     fn as_textfield(&self) -> Option<Textfield>;
-    fn get_type_string(&self) -> CefStringUserfree;
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree;
+    fn get_type_string(&self) -> cef_string_userfree_t;
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> cef_string_userfree_t;
     fn is_valid(&self) -> ::std::os::raw::c_int;
     fn is_attached(&self) -> ::std::os::raw::c_int;
     fn is_same(&self, that: Option<&mut impl ImplView>) -> ::std::os::raw::c_int;
@@ -35797,7 +35797,7 @@ impl ImplView for View {
                 .unwrap_or_default()
         }
     }
-    fn get_type_string(&self) -> CefStringUserfree {
+    fn get_type_string(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_type_string
@@ -35809,7 +35809,7 @@ impl ImplView for View {
                 .unwrap_or_default()
         }
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .to_string
@@ -36559,11 +36559,11 @@ impl ImplView for Button {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> CefStringUserfree {
+    fn get_type_string(&self) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -37092,7 +37092,7 @@ pub struct LabelButton(RefGuard<_cef_label_button_t>);
 pub trait ImplLabelButton: ImplButton {
     fn as_menu_button(&self) -> Option<MenuButton>;
     fn set_text(&self, text: Option<&CefStringUtf16>);
-    fn get_text(&self) -> CefStringUserfree;
+    fn get_text(&self) -> cef_string_userfree_t;
     fn set_image(&self, button_state: ButtonState, image: Option<&mut impl ImplImage>);
     fn get_image(&self, button_state: ButtonState) -> Option<Image>;
     fn set_text_color(&self, for_state: ButtonState, color: u32);
@@ -37124,11 +37124,11 @@ impl ImplView for LabelButton {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> CefStringUserfree {
+    fn get_type_string(&self) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -37378,7 +37378,7 @@ impl ImplLabelButton for LabelButton {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_text(&self) -> CefStringUserfree {
+    fn get_text(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_text
@@ -37879,11 +37879,11 @@ impl ImplView for MenuButton {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> CefStringUserfree {
+    fn get_type_string(&self) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -38111,7 +38111,7 @@ impl ImplLabelButton for MenuButton {
         LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .set_text(text)
     }
-    fn get_text(&self) -> CefStringUserfree {
+    fn get_text(&self) -> cef_string_userfree_t {
         LabelButton(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_text()
     }
@@ -38479,12 +38479,12 @@ pub trait ImplTextfield: ImplView {
     fn is_password_input(&self) -> ::std::os::raw::c_int;
     fn set_read_only(&self, read_only: ::std::os::raw::c_int);
     fn is_read_only(&self) -> ::std::os::raw::c_int;
-    fn get_text(&self) -> CefStringUserfree;
+    fn get_text(&self) -> cef_string_userfree_t;
     fn set_text(&self, text: Option<&CefStringUtf16>);
     fn append_text(&self, text: Option<&CefStringUtf16>);
     fn insert_or_replace_text(&self, text: Option<&CefStringUtf16>);
     fn has_selection(&self) -> ::std::os::raw::c_int;
-    fn get_selected_text(&self) -> CefStringUserfree;
+    fn get_selected_text(&self) -> cef_string_userfree_t;
     fn select_all(&self, reversed: ::std::os::raw::c_int);
     fn clear_selection(&self);
     fn get_selected_range(&self) -> Range;
@@ -38503,7 +38503,7 @@ pub trait ImplTextfield: ImplView {
     fn execute_command(&self, command_id: TextFieldCommands);
     fn clear_edit_history(&self);
     fn set_placeholder_text(&self, text: Option<&CefStringUtf16>);
-    fn get_placeholder_text(&self) -> CefStringUserfree;
+    fn get_placeholder_text(&self) -> cef_string_userfree_t;
     fn set_placeholder_text_color(&self, color: u32);
     fn set_accessible_name(&self, name: Option<&CefStringUtf16>);
     fn get_raw(&self) -> *mut _cef_textfield_t {
@@ -38529,11 +38529,11 @@ impl ImplView for Textfield {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> CefStringUserfree {
+    fn get_type_string(&self) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -38776,7 +38776,7 @@ impl ImplTextfield for Textfield {
                 .unwrap_or_default()
         }
     }
-    fn get_text(&self) -> CefStringUserfree {
+    fn get_text(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_text
@@ -38842,7 +38842,7 @@ impl ImplTextfield for Textfield {
                 .unwrap_or_default()
         }
     }
-    fn get_selected_text(&self) -> CefStringUserfree {
+    fn get_selected_text(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_selected_text
@@ -39114,7 +39114,7 @@ impl ImplTextfield for Textfield {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_placeholder_text(&self) -> CefStringUserfree {
+    fn get_placeholder_text(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_placeholder_text
@@ -39803,11 +39803,11 @@ impl ImplView for BrowserView {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> CefStringUserfree {
+    fn get_type_string(&self) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -40132,11 +40132,11 @@ impl ImplView for ScrollView {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> CefStringUserfree {
+    fn get_type_string(&self) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -41131,11 +41131,11 @@ impl ImplView for Panel {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> CefStringUserfree {
+    fn get_type_string(&self) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -42723,7 +42723,7 @@ pub trait ImplWindow: ImplPanel {
     fn is_fullscreen(&self) -> ::std::os::raw::c_int;
     fn get_focused_view(&self) -> Option<View>;
     fn set_title(&self, title: Option<&CefStringUtf16>);
-    fn get_title(&self) -> CefStringUserfree;
+    fn get_title(&self) -> cef_string_userfree_t;
     fn set_window_icon(&self, image: Option<&mut impl ImplImage>);
     fn get_window_icon(&self) -> Option<Image>;
     fn set_window_app_icon(&self, image: Option<&mut impl ImplImage>);
@@ -42790,11 +42790,11 @@ impl ImplView for Window {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .as_textfield()
     }
-    fn get_type_string(&self) -> CefStringUserfree {
+    fn get_type_string(&self) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .get_type_string()
     }
-    fn to_string(&self, include_children: ::std::os::raw::c_int) -> CefStringUserfree {
+    fn to_string(&self, include_children: ::std::os::raw::c_int) -> cef_string_userfree_t {
         View(unsafe { RefGuard::from_raw_add_ref(RefGuard::as_raw(&self.0) as *mut _) })
             .to_string(include_children)
     }
@@ -43314,7 +43314,7 @@ impl ImplWindow for Window {
                 .unwrap_or_else(|| std::mem::zeroed())
         }
     }
-    fn get_title(&self) -> CefStringUserfree {
+    fn get_title(&self) -> cef_string_userfree_t {
         unsafe {
             self.0
                 .get_title
