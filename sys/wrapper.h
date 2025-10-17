@@ -13,6 +13,8 @@
 
 #include "include/capi/cef_app_capi.h"
 #include "include/capi/cef_client_capi.h"
+
+#include "include/capi/cef_parser_capi.h"
 #include "include/capi/cef_urlrequest_capi.h"
 
 #include "include/capi/views/cef_layout_capi.h"
