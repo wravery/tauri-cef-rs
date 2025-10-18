@@ -16,6 +16,7 @@
 
 #include "include/capi/cef_parser_capi.h"
 #include "include/capi/cef_urlrequest_capi.h"
+#include "include/capi/cef_zip_reader_capi.h"
 
 #include "include/capi/views/cef_layout_capi.h"
 #include "include/capi/views/cef_box_layout_capi.h"
