@@ -13792,6 +13792,101 @@ unsafe extern "C" {
     #[doc = "\n Set to true (1) before calling OS APIs on the CEF UI thread that will enter\n a native message loop (see usage restrictions below). Set to false (0) after\n exiting the native message loop. On Windows, use the CefSetOSModalLoop\n function instead in cases like native top menus where resize of the browser\n content is not required, or in cases like printer APIs where reentrancy\n safety cannot be guaranteed.\n\n Nested processing of Chromium tasks is disabled by default because common\n controls and/or printer functions may use nested native message loops that\n lead to unplanned reentrancy. This function re-enables nested processing in\n the scope of an upcoming native message loop. It must only be used in cases\n where the stack is reentrancy safe and processing nestable tasks is\n explicitly safe. Do not use in cases (like the printer example) where an OS\n API may experience unplanned reentrancy as a result of a new task executing\n immediately.\n\n For instance,\n - The UI thread is running a message loop.\n - It receives a task #1 and executes it.\n - The task #1 implicitly starts a nested message loop. For example, via\n   Windows APIs such as MessageBox or GetSaveFileName, or default handling of\n   a user-initiated drag/resize operation (e.g. DefWindowProc handling of\n   WM_SYSCOMMAND for SC_MOVE/SC_SIZE).\n - The UI thread receives a task #2 before or while in this second message\n   loop.\n - With NestableTasksAllowed set to true (1), the task #2 will run right\n   away. Otherwise, it will be executed right after task #1 completes at\n   \"thread message loop level\".\n"]
     pub fn cef_set_nestable_tasks_allowed(allowed: ::std::os::raw::c_int);
 }
+unsafe extern "C" {
+    #[doc = "\n Combines specified |base_url| and |relative_url| into |resolved_url|.\n Returns false (0) if one of the URLs is NULL or invalid.\n"]
+    pub fn cef_resolve_url(
+        base_url: *const cef_string_t,
+        relative_url: *const cef_string_t,
+        resolved_url: *mut cef_string_t,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Parse the specified |url| into its component parts. Returns false (0) if the\n URL is NULL or invalid.\n"]
+    pub fn cef_parse_url(
+        url: *const cef_string_t,
+        parts: *mut _cef_urlparts_t,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n Creates a URL from the specified |parts|, which must contain a non-NULL spec\n or a non-NULL host and path (at a minimum), but not both. Returns false (0)\n if |parts| isn't initialized as described.\n"]
+    pub fn cef_create_url(
+        parts: *const _cef_urlparts_t,
+        url: *mut cef_string_t,
+    ) -> ::std::os::raw::c_int;
+}
+unsafe extern "C" {
+    #[doc = "\n This is a convenience function for formatting a URL in a concise and human-\n friendly way to help users make security-related decisions (or in other\n circumstances when people need to distinguish sites, origins, or otherwise-\n simplified URLs from each other). Internationalized domain names (IDN) may\n be presented in Unicode if the conversion is considered safe. The returned\n value will (a) omit the path for standard schemes, excepting file and\n filesystem, and (b) omit the port if it is the default for the scheme. Do\n not use this for URLs which will be parsed or sent to other applications.\n"]
+    pub fn cef_format_url_for_security_display(
+        origin_url: *const cef_string_t,
+    ) -> cef_string_userfree_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Returns the mime type for the specified file extension or an NULL string if\n unknown.\n"]
+    pub fn cef_get_mime_type(extension: *const cef_string_t) -> cef_string_userfree_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Get the extensions associated with the given mime type. This should be\n passed in lower case. There could be multiple extensions for a given mime\n type, like \"html,htm\" for \"text/html\", or \"txt,text,html,...\" for \"text/*\".\n Any existing elements in the provided vector will not be erased.\n"]
+    pub fn cef_get_extensions_for_mime_type(
+        mime_type: *const cef_string_t,
+        extensions: cef_string_list_t,
+    );
+}
+unsafe extern "C" {
+    #[doc = "\n Encodes |data| as a base64 string.\n"]
+    pub fn cef_base64_encode(
+        data: *const ::std::os::raw::c_void,
+        data_size: usize,
+    ) -> cef_string_userfree_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Decodes the base64 encoded string |data|. The returned value will be NULL if\n the decoding fails.\n"]
+    pub fn cef_base64_decode(data: *const cef_string_t) -> *mut _cef_binary_value_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Escapes characters in |text| which are unsuitable for use as a query\n parameter value. Everything except alphanumerics and -_.!~*'() will be\n converted to \"%XX\". If |use_plus| is true (1) spaces will change to \"+\". The\n result is basically the same as encodeURIComponent in Javacript.\n"]
+    pub fn cef_uriencode(
+        text: *const cef_string_t,
+        use_plus: ::std::os::raw::c_int,
+    ) -> cef_string_userfree_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Unescapes |text| and returns the result. Unescaping consists of looking for\n the exact pattern \"%XX\" where each X is a hex digit and converting to the\n character with the numerical value of those digits (e.g. \"i%20=%203%3b\"\n unescapes to \"i = 3;\"). If |convert_to_utf8| is true (1) this function will\n attempt to interpret the initial decoded result as UTF-8. If the result is\n convertable into UTF-8 it will be returned as converted. Otherwise the\n initial decoded result will be returned.  The |unescape_rule| parameter\n supports further customization the decoding process.\n"]
+    pub fn cef_uridecode(
+        text: *const cef_string_t,
+        convert_to_utf8: ::std::os::raw::c_int,
+        unescape_rule: cef_uri_unescape_rule_t,
+    ) -> cef_string_userfree_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Parses the specified |json_string| and returns a dictionary or list\n representation. If JSON parsing fails this function returns NULL.\n"]
+    pub fn cef_parse_json(
+        json_string: *const cef_string_t,
+        options: cef_json_parser_options_t,
+    ) -> *mut _cef_value_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Parses the specified UTF8-encoded |json| buffer of size |json_size| and\n returns a dictionary or list representation. If JSON parsing fails this\n function returns NULL.\n"]
+    pub fn cef_parse_json_buffer(
+        json: *const ::std::os::raw::c_void,
+        json_size: usize,
+        options: cef_json_parser_options_t,
+    ) -> *mut _cef_value_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Parses the specified |json_string| and returns a dictionary or list\n representation. If JSON parsing fails this function returns NULL and\n populates |error_msg_out| with a formatted error message.\n"]
+    pub fn cef_parse_jsonand_return_error(
+        json_string: *const cef_string_t,
+        options: cef_json_parser_options_t,
+        error_msg_out: *mut cef_string_t,
+    ) -> *mut _cef_value_t;
+}
+unsafe extern "C" {
+    #[doc = "\n Generates a JSON string from the specified root |node| which should be a\n dictionary or list value. Returns an NULL string on failure. This function\n requires exclusive access to |node| including any underlying data.\n"]
+    pub fn cef_write_json(
+        node: *mut _cef_value_t,
+        options: cef_json_writer_options_t,
+    ) -> cef_string_userfree_t;
+}
 #[doc = "\n Structure used to make a URL request. URL requests are not associated with a\n browser instance so no cef_client_t callbacks will be executed. URL requests\n can be created on any valid CEF thread in either the browser or render\n process. Once created the functions of the URL request object must be\n accessed on the same thread that created it.\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

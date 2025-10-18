@@ -47157,6 +47157,252 @@ pub fn set_nestable_tasks_allowed(allowed: ::std::os::raw::c_int) {
     }
 }
 
+/// See [`cef_resolve_url`] for more documentation.
+pub fn resolve_url(
+    base_url: Option<&CefString>,
+    relative_url: Option<&CefString>,
+    resolved_url: Option<&mut CefString>,
+) -> ::std::os::raw::c_int {
+    unsafe {
+        let (arg_base_url, arg_relative_url, arg_resolved_url) =
+            (base_url, relative_url, resolved_url);
+        let arg_base_url = arg_base_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_relative_url = arg_relative_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_resolved_url = arg_resolved_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_resolve_url(arg_base_url, arg_relative_url, arg_resolved_url);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_parse_url`] for more documentation.
+pub fn parse_url(url: Option<&CefString>, parts: Option<&mut Urlparts>) -> ::std::os::raw::c_int {
+    unsafe {
+        let (arg_url, arg_parts) = (url, parts);
+        let arg_url = arg_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let mut arg_parts = arg_parts.cloned().map(|arg| arg.into());
+        let arg_parts = arg_parts
+            .as_mut()
+            .map(std::ptr::from_mut)
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_parse_url(arg_url, arg_parts);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_create_url`] for more documentation.
+pub fn create_url(parts: Option<&Urlparts>, url: Option<&mut CefString>) -> ::std::os::raw::c_int {
+    unsafe {
+        let (arg_parts, arg_url) = (parts, url);
+        let arg_parts = arg_parts.cloned().map(|arg| arg.into());
+        let arg_parts = arg_parts
+            .as_ref()
+            .map(std::ptr::from_ref)
+            .unwrap_or(std::ptr::null());
+        let arg_url = arg_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_create_url(arg_parts, arg_url);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_format_url_for_security_display`] for more documentation.
+pub fn format_url_for_security_display(origin_url: Option<&CefString>) -> CefStringUserfree {
+    unsafe {
+        let arg_origin_url = origin_url;
+        let arg_origin_url = arg_origin_url
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_format_url_for_security_display(arg_origin_url);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_get_mime_type`] for more documentation.
+pub fn get_mime_type(extension: Option<&CefString>) -> CefStringUserfree {
+    unsafe {
+        let arg_extension = extension;
+        let arg_extension = arg_extension
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_get_mime_type(arg_extension);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_get_extensions_for_mime_type`] for more documentation.
+pub fn get_extensions_for_mime_type(
+    mime_type: Option<&CefString>,
+    extensions: Option<&mut CefStringList>,
+) {
+    unsafe {
+        let (arg_mime_type, arg_extensions) = (mime_type, extensions);
+        let arg_mime_type = arg_mime_type
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_extensions = arg_extensions
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null_mut());
+        cef_get_extensions_for_mime_type(arg_mime_type, arg_extensions);
+    }
+}
+
+/// See [`cef_base64_encode`] for more documentation.
+pub fn base64_encode(data: Option<&[u8]>) -> CefStringUserfree {
+    unsafe {
+        let arg_data = data;
+        let arg_data_size = arg_data.as_ref().map(|arg| arg.len()).unwrap_or_default();
+        let arg_data = arg_data
+            .and_then(|arg| {
+                if arg.is_empty() {
+                    None
+                } else {
+                    Some(arg.as_ptr().cast())
+                }
+            })
+            .unwrap_or(std::ptr::null());
+        let result = cef_base64_encode(arg_data, arg_data_size);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_base64_decode`] for more documentation.
+pub fn base64_decode(data: Option<&CefString>) -> Option<BinaryValue> {
+    unsafe {
+        let arg_data = data;
+        let arg_data = arg_data
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_base64_decode(arg_data);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_uriencode`] for more documentation.
+pub fn uriencode(text: Option<&CefString>, use_plus: ::std::os::raw::c_int) -> CefStringUserfree {
+    unsafe {
+        let (arg_text, arg_use_plus) = (text, use_plus);
+        let arg_text = arg_text
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let result = cef_uriencode(arg_text, arg_use_plus);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_uridecode`] for more documentation.
+pub fn uridecode(
+    text: Option<&CefString>,
+    convert_to_utf_8: ::std::os::raw::c_int,
+    unescape_rule: UriUnescapeRule,
+) -> CefStringUserfree {
+    unsafe {
+        let (arg_text, arg_convert_to_utf_8, arg_unescape_rule) =
+            (text, convert_to_utf_8, unescape_rule);
+        let arg_text = arg_text
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_unescape_rule = arg_unescape_rule.into_raw();
+        let result = cef_uridecode(arg_text, arg_convert_to_utf_8, arg_unescape_rule);
+        result.wrap_result()
+    }
+}
+
+/// See [`cef_parse_json`] for more documentation.
+pub fn parse_json(json_string: Option<&CefString>, options: JsonParserOptions) -> Option<Value> {
+    unsafe {
+        let (arg_json_string, arg_options) = (json_string, options);
+        let arg_json_string = arg_json_string
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_options = arg_options.into_raw();
+        let result = cef_parse_json(arg_json_string, arg_options);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_parse_json_buffer`] for more documentation.
+pub fn parse_json_buffer(json: Option<&[u8]>, options: JsonParserOptions) -> Option<Value> {
+    unsafe {
+        let (arg_json, arg_options) = (json, options);
+        let arg_json_size = arg_json.as_ref().map(|arg| arg.len()).unwrap_or_default();
+        let arg_json = arg_json
+            .and_then(|arg| {
+                if arg.is_empty() {
+                    None
+                } else {
+                    Some(arg.as_ptr().cast())
+                }
+            })
+            .unwrap_or(std::ptr::null());
+        let arg_options = arg_options.into_raw();
+        let result = cef_parse_json_buffer(arg_json, arg_json_size, arg_options);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_parse_jsonand_return_error`] for more documentation.
+pub fn parse_jsonand_return_error(
+    json_string: Option<&CefString>,
+    options: JsonParserOptions,
+    error_msg_out: Option<&mut CefString>,
+) -> Option<Value> {
+    unsafe {
+        let (arg_json_string, arg_options, arg_error_msg_out) =
+            (json_string, options, error_msg_out);
+        let arg_json_string = arg_json_string
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null());
+        let arg_options = arg_options.into_raw();
+        let arg_error_msg_out = arg_error_msg_out
+            .map(|arg| arg.into_raw())
+            .unwrap_or(std::ptr::null_mut());
+        let result =
+            cef_parse_jsonand_return_error(arg_json_string, arg_options, arg_error_msg_out);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_write_json`] for more documentation.
+pub fn write_json(node: Option<&mut Value>, options: JsonWriterOptions) -> CefStringUserfree {
+    unsafe {
+        let (arg_node, arg_options) = (node, options);
+        let arg_node = arg_node
+            .map(|arg| {
+                arg.add_ref();
+                ImplValue::get_raw(arg)
+            })
+            .unwrap_or(std::ptr::null_mut());
+        let arg_options = arg_options.into_raw();
+        let result = cef_write_json(arg_node, arg_options);
+        result.wrap_result()
+    }
+}
+
 /// See [`cef_urlrequest_create`] for more documentation.
 pub fn urlrequest_create(
     request: Option<&mut Request>,
