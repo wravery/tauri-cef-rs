@@ -27,6 +27,8 @@ cef = { path = "cef", default-features = false }
 cef-dll-sys = { version = "151.4.0", path = "sys" }
 download-cef = { version = "2.3", path = "download-cef" }
 
+tests_shared = { path = "examples/tests_shared" }
+
 anyhow = "1"
 ash = "0.38"
 bindgen = "0.72"
