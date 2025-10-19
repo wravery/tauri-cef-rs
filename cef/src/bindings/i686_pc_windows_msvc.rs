@@ -11064,6 +11064,100 @@ impl Default for UrlrequestClient {
     }
 }
 
+/// See [`_cef_zip_reader_t`] for more documentation.
+#[derive(Clone)]
+pub struct ZipReader {
+    pub base: BaseRefCounted,
+    pub move_to_first_file: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub move_to_next_file: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub move_to_file: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_zip_reader_t,
+            fileName: *const cef_string_t,
+            caseSensitive: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub close: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub get_file_name: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> cef_string_userfree_t,
+    >,
+    pub get_file_size:
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> i64>,
+    pub get_file_last_modified: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> cef_basetime_t,
+    >,
+    pub open_file: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_zip_reader_t,
+            password: *const cef_string_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub close_file: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    pub read_file: ::std::option::Option<
+        unsafe extern "stdcall" fn(
+            self_: *mut _cef_zip_reader_t,
+            buffer: *mut ::std::os::raw::c_void,
+            bufferSize: usize,
+        ) -> ::std::os::raw::c_int,
+    >,
+    pub tell:
+        ::std::option::Option<unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> i64>,
+    pub eof: ::std::option::Option<
+        unsafe extern "stdcall" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+}
+impl From<_cef_zip_reader_t> for ZipReader {
+    fn from(value: _cef_zip_reader_t) -> Self {
+        Self {
+            base: value.base.into(),
+            move_to_first_file: value.move_to_first_file,
+            move_to_next_file: value.move_to_next_file,
+            move_to_file: value.move_to_file,
+            close: value.close,
+            get_file_name: value.get_file_name,
+            get_file_size: value.get_file_size,
+            get_file_last_modified: value.get_file_last_modified,
+            open_file: value.open_file,
+            close_file: value.close_file,
+            read_file: value.read_file,
+            tell: value.tell,
+            eof: value.eof,
+        }
+    }
+}
+impl From<ZipReader> for _cef_zip_reader_t {
+    fn from(value: ZipReader) -> Self {
+        Self {
+            base: value.base.into(),
+            move_to_first_file: value.move_to_first_file,
+            move_to_next_file: value.move_to_next_file,
+            move_to_file: value.move_to_file,
+            close: value.close,
+            get_file_name: value.get_file_name,
+            get_file_size: value.get_file_size,
+            get_file_last_modified: value.get_file_last_modified,
+            open_file: value.open_file,
+            close_file: value.close_file,
+            read_file: value.read_file,
+            tell: value.tell,
+            eof: value.eof,
+        }
+    }
+}
+impl Default for ZipReader {
+    fn default() -> Self {
+        unsafe { std::mem::zeroed() }
+    }
+}
+
 /// See [`_cef_layout_t`] for more documentation.
 #[derive(Clone)]
 pub struct Layout {
@@ -18262,6 +18356,24 @@ pub fn urlrequest_create(
             .map(std::ptr::from_mut)
             .unwrap_or(std::ptr::null_mut());
         let result = cef_urlrequest_create(arg_request, arg_client, arg_request_context);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_zip_reader_create`] for more documentation.
+pub fn zip_reader_create(stream: Option<&mut StreamReader>) -> Option<ZipReader> {
+    unsafe {
+        let arg_stream = stream;
+        let mut arg_stream = arg_stream.cloned().map(|arg| arg.into());
+        let arg_stream = arg_stream
+            .as_mut()
+            .map(std::ptr::from_mut)
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_zip_reader_create(arg_stream);
         if result.is_null() {
             None
         } else {

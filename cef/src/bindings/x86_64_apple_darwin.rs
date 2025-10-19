@@ -33943,6 +33943,248 @@ impl From<UrlrequestClient> for *mut _cef_urlrequest_client_t {
     }
 }
 
+/// See [`_cef_zip_reader_t`] for more documentation.
+#[derive(Clone)]
+pub struct ZipReader(RefGuard<_cef_zip_reader_t>);
+pub trait ImplZipReader: Clone + Sized + Rc {
+    #[doc = "See [`_cef_zip_reader_t::move_to_first_file`] for more documentation."]
+    fn move_to_first_file(&self) -> ::std::os::raw::c_int;
+    #[doc = "See [`_cef_zip_reader_t::move_to_next_file`] for more documentation."]
+    fn move_to_next_file(&self) -> ::std::os::raw::c_int;
+    #[doc = "See [`_cef_zip_reader_t::move_to_file`] for more documentation."]
+    fn move_to_file(
+        &self,
+        file_name: Option<&CefString>,
+        case_sensitive: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+    #[doc = "See [`_cef_zip_reader_t::close`] for more documentation."]
+    fn close(&self) -> ::std::os::raw::c_int;
+    #[doc = "See [`_cef_zip_reader_t::get_file_name`] for more documentation."]
+    fn file_name(&self) -> CefStringUserfree;
+    #[doc = "See [`_cef_zip_reader_t::get_file_size`] for more documentation."]
+    fn file_size(&self) -> i64;
+    #[doc = "See [`_cef_zip_reader_t::get_file_last_modified`] for more documentation."]
+    fn file_last_modified(&self) -> Basetime;
+    #[doc = "See [`_cef_zip_reader_t::open_file`] for more documentation."]
+    fn open_file(&self, password: Option<&CefString>) -> ::std::os::raw::c_int;
+    #[doc = "See [`_cef_zip_reader_t::close_file`] for more documentation."]
+    fn close_file(&self) -> ::std::os::raw::c_int;
+    #[doc = "See [`_cef_zip_reader_t::read_file`] for more documentation."]
+    fn read_file(&self, buffer: Option<&mut Vec<u8>>) -> ::std::os::raw::c_int;
+    #[doc = "See [`_cef_zip_reader_t::tell`] for more documentation."]
+    fn tell(&self) -> i64;
+    #[doc = "See [`_cef_zip_reader_t::eof`] for more documentation."]
+    fn eof(&self) -> ::std::os::raw::c_int;
+    fn get_raw(&self) -> *mut _cef_zip_reader_t;
+}
+impl ImplZipReader for ZipReader {
+    fn move_to_first_file(&self) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .move_to_first_file
+                .map(|f| {
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn move_to_next_file(&self) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .move_to_next_file
+                .map(|f| {
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn move_to_file(
+        &self,
+        file_name: Option<&CefString>,
+        case_sensitive: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .move_to_file
+                .map(|f| {
+                    let (arg_file_name, arg_case_sensitive) = (file_name, case_sensitive);
+                    let arg_self_ = self.into_raw();
+                    let arg_file_name = arg_file_name
+                        .map(|arg| arg.into_raw())
+                        .unwrap_or(std::ptr::null());
+                    let result = f(arg_self_, arg_file_name, arg_case_sensitive);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn close(&self) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .close
+                .map(|f| {
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn file_name(&self) -> CefStringUserfree {
+        unsafe {
+            self.0
+                .get_file_name
+                .map(|f| {
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn file_size(&self) -> i64 {
+        unsafe {
+            self.0
+                .get_file_size
+                .map(|f| {
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn file_last_modified(&self) -> Basetime {
+        unsafe {
+            self.0
+                .get_file_last_modified
+                .map(|f| {
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn open_file(&self, password: Option<&CefString>) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .open_file
+                .map(|f| {
+                    let arg_password = password;
+                    let arg_self_ = self.into_raw();
+                    let arg_password = arg_password
+                        .map(|arg| arg.into_raw())
+                        .unwrap_or(std::ptr::null());
+                    let result = f(arg_self_, arg_password);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn close_file(&self) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .close_file
+                .map(|f| {
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn read_file(&self, buffer: Option<&mut Vec<u8>>) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .read_file
+                .map(|f| {
+                    let arg_buffer = buffer;
+                    let arg_self_ = self.into_raw();
+                    let arg_buffer_size =
+                        arg_buffer.as_ref().map(|arg| arg.len()).unwrap_or_default();
+                    let mut out_buffer = arg_buffer;
+                    let arg_buffer = out_buffer
+                        .as_mut()
+                        .and_then(|arg| {
+                            if arg.is_empty() {
+                                None
+                            } else {
+                                Some(arg.as_mut_ptr().cast())
+                            }
+                        })
+                        .unwrap_or(std::ptr::null_mut());
+                    let result = f(arg_self_, arg_buffer, arg_buffer_size);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn tell(&self) -> i64 {
+        unsafe {
+            self.0
+                .tell
+                .map(|f| {
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn eof(&self) -> ::std::os::raw::c_int {
+        unsafe {
+            self.0
+                .eof
+                .map(|f| {
+                    let arg_self_ = self.into_raw();
+                    let result = f(arg_self_);
+                    result.wrap_result()
+                })
+                .unwrap_or_default()
+        }
+    }
+    fn get_raw(&self) -> *mut _cef_zip_reader_t {
+        unsafe { RefGuard::into_raw(&self.0) }
+    }
+}
+impl Rc for _cef_zip_reader_t {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.base.as_base()
+    }
+}
+impl Rc for ZipReader {
+    fn as_base(&self) -> &_cef_base_ref_counted_t {
+        self.0.as_base()
+    }
+}
+impl ConvertParam<*mut _cef_zip_reader_t> for &ZipReader {
+    fn into_raw(self) -> *mut _cef_zip_reader_t {
+        ImplZipReader::get_raw(self)
+    }
+}
+impl ConvertParam<*mut _cef_zip_reader_t> for &mut ZipReader {
+    fn into_raw(self) -> *mut _cef_zip_reader_t {
+        ImplZipReader::get_raw(self)
+    }
+}
+impl ConvertReturnValue<ZipReader> for *mut _cef_zip_reader_t {
+    fn wrap_result(self) -> ZipReader {
+        ZipReader(unsafe { RefGuard::from_raw(self) })
+    }
+}
+impl From<ZipReader> for *mut _cef_zip_reader_t {
+    fn from(value: ZipReader) -> Self {
+        let object = ImplZipReader::get_raw(&value);
+        std::mem::forget(value);
+        object
+    }
+}
+
 /// See [`_cef_layout_t`] for more documentation.
 #[derive(Clone)]
 pub struct Layout(RefGuard<_cef_layout_t>);
@@ -47396,6 +47638,25 @@ pub fn urlrequest_create(
             })
             .unwrap_or(std::ptr::null_mut());
         let result = cef_urlrequest_create(arg_request, arg_client, arg_request_context);
+        if result.is_null() {
+            None
+        } else {
+            Some(result.wrap_result())
+        }
+    }
+}
+
+/// See [`cef_zip_reader_create`] for more documentation.
+pub fn zip_reader_create(stream: Option<&mut StreamReader>) -> Option<ZipReader> {
+    unsafe {
+        let arg_stream = stream;
+        let arg_stream = arg_stream
+            .map(|arg| {
+                arg.add_ref();
+                ImplStreamReader::get_raw(arg)
+            })
+            .unwrap_or(std::ptr::null_mut());
+        let result = cef_zip_reader_create(arg_stream);
         if result.is_null() {
             None
         } else {

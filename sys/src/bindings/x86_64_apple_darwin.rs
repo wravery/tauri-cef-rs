@@ -13946,6 +13946,106 @@ const _: () = {
 };
 #[doc = "\n Structure that should be implemented by the cef_urlrequest_t client. The\n functions of this structure will be called on the same thread that created\n the request unless otherwise documented.\n\n NOTE: This struct is allocated client-side.\n"]
 pub type cef_urlrequest_client_t = _cef_urlrequest_client_t;
+#[doc = "\n Structure that supports the reading of zip archives via the zlib unzip API.\n The functions of this structure should only be called on the thread that\n creates the object.\n\n NOTE: This struct is allocated DLL-side.\n"]
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _cef_zip_reader_t {
+    #[doc = "\n Base structure.\n"]
+    pub base: cef_base_ref_counted_t,
+    #[doc = "\n Moves the cursor to the first file in the archive. Returns true (1) if the\n cursor position was set successfully.\n"]
+    pub move_to_first_file: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Moves the cursor to the next file in the archive. Returns true (1) if the\n cursor position was set successfully.\n"]
+    pub move_to_next_file: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Moves the cursor to the specified file in the archive. If |caseSensitive|\n is true (1) then the search will be case sensitive. Returns true (1) if\n the cursor position was set successfully.\n"]
+    pub move_to_file: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_zip_reader_t,
+            fileName: *const cef_string_t,
+            caseSensitive: ::std::os::raw::c_int,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Closes the archive. This should be called directly to ensure that cleanup\n occurs on the correct thread.\n"]
+    pub close: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the name of the file.\n"]
+    pub get_file_name: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> cef_string_userfree_t,
+    >,
+    #[doc = "\n Returns the uncompressed size of the file.\n"]
+    pub get_file_size:
+        ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> i64>,
+    #[doc = "\n Returns the last modified timestamp for the file.\n"]
+    pub get_file_last_modified: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> cef_basetime_t,
+    >,
+    #[doc = "\n Opens the file for reading of uncompressed data. A read password may\n optionally be specified.\n"]
+    pub open_file: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_zip_reader_t,
+            password: *const cef_string_t,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Closes the file.\n"]
+    pub close_file: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Read uncompressed file contents into the specified buffer. Returns < 0 if\n an error occurred, 0 if at the end of file, or the number of bytes read.\n"]
+    pub read_file: ::std::option::Option<
+        unsafe extern "C" fn(
+            self_: *mut _cef_zip_reader_t,
+            buffer: *mut ::std::os::raw::c_void,
+            bufferSize: usize,
+        ) -> ::std::os::raw::c_int,
+    >,
+    #[doc = "\n Returns the current offset in the uncompressed file contents.\n"]
+    pub tell: ::std::option::Option<unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> i64>,
+    #[doc = "\n Returns true (1) if at end of the file contents.\n"]
+    pub eof: ::std::option::Option<
+        unsafe extern "C" fn(self_: *mut _cef_zip_reader_t) -> ::std::os::raw::c_int,
+    >,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _cef_zip_reader_t"][::std::mem::size_of::<_cef_zip_reader_t>() - 136usize];
+    ["Alignment of _cef_zip_reader_t"][::std::mem::align_of::<_cef_zip_reader_t>() - 8usize];
+    ["Offset of field: _cef_zip_reader_t::base"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, base) - 0usize];
+    ["Offset of field: _cef_zip_reader_t::move_to_first_file"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, move_to_first_file) - 40usize];
+    ["Offset of field: _cef_zip_reader_t::move_to_next_file"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, move_to_next_file) - 48usize];
+    ["Offset of field: _cef_zip_reader_t::move_to_file"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, move_to_file) - 56usize];
+    ["Offset of field: _cef_zip_reader_t::close"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, close) - 64usize];
+    ["Offset of field: _cef_zip_reader_t::get_file_name"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, get_file_name) - 72usize];
+    ["Offset of field: _cef_zip_reader_t::get_file_size"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, get_file_size) - 80usize];
+    ["Offset of field: _cef_zip_reader_t::get_file_last_modified"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, get_file_last_modified) - 88usize];
+    ["Offset of field: _cef_zip_reader_t::open_file"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, open_file) - 96usize];
+    ["Offset of field: _cef_zip_reader_t::close_file"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, close_file) - 104usize];
+    ["Offset of field: _cef_zip_reader_t::read_file"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, read_file) - 112usize];
+    ["Offset of field: _cef_zip_reader_t::tell"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, tell) - 120usize];
+    ["Offset of field: _cef_zip_reader_t::eof"]
+        [::std::mem::offset_of!(_cef_zip_reader_t, eof) - 128usize];
+};
+#[doc = "\n Structure that supports the reading of zip archives via the zlib unzip API.\n The functions of this structure should only be called on the thread that\n creates the object.\n\n NOTE: This struct is allocated DLL-side.\n"]
+pub type cef_zip_reader_t = _cef_zip_reader_t;
+unsafe extern "C" {
+    #[doc = "\n Create a new cef_zip_reader_t object. The returned object's functions can\n only be called from the thread that created the object.\n"]
+    pub fn cef_zip_reader_create(stream: *mut _cef_stream_reader_t) -> *mut cef_zip_reader_t;
+}
 #[doc = "\n A Layout handles the sizing of the children of a Panel according to\n implementation-specific heuristics. Methods must be called on the browser\n process UI thread unless otherwise indicated.\n\n NOTE: This struct is allocated DLL-side.\n"]
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
