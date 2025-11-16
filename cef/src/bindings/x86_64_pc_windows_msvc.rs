@@ -42853,7 +42853,7 @@ impl From<V8Propertyattribute> for cef_v8_propertyattribute_t {
 }
 impl Default for V8Propertyattribute {
     fn default() -> Self {
-        Self(cef_v8_propertyattribute_t::V8_PROPERTY_ATTRIBUTE_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -42969,7 +42969,7 @@ impl From<UrlrequestFlags> for cef_urlrequest_flags_t {
 }
 impl Default for UrlrequestFlags {
     fn default() -> Self {
-        Self(cef_urlrequest_flags_t::UR_FLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -43375,7 +43375,7 @@ impl From<EventFlags> for cef_event_flags_t {
 }
 impl Default for EventFlags {
     fn default() -> Self {
-        Self(cef_event_flags_t::EVENTFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -43433,7 +43433,7 @@ impl From<ContextMenuTypeFlags> for cef_context_menu_type_flags_t {
 }
 impl Default for ContextMenuTypeFlags {
     fn default() -> Self {
-        Self(cef_context_menu_type_flags_t::CM_TYPEFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -43491,7 +43491,7 @@ impl From<ContextMenuMediaStateFlags> for cef_context_menu_media_state_flags_t {
 }
 impl Default for ContextMenuMediaStateFlags {
     fn default() -> Self {
-        Self(cef_context_menu_media_state_flags_t::CM_MEDIAFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -43520,7 +43520,7 @@ impl From<ContextMenuEditStateFlags> for cef_context_menu_edit_state_flags_t {
 }
 impl Default for ContextMenuEditStateFlags {
     fn default() -> Self {
-        Self(cef_context_menu_edit_state_flags_t::CM_EDITFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -43549,7 +43549,7 @@ impl From<QuickMenuEditStateFlags> for cef_quick_menu_edit_state_flags_t {
 }
 impl Default for QuickMenuEditStateFlags {
     fn default() -> Self {
-        Self(cef_quick_menu_edit_state_flags_t::QM_EDITFLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
@@ -44796,7 +44796,7 @@ impl From<TouchHandleStateFlags> for cef_touch_handle_state_flags_t {
 }
 impl Default for TouchHandleStateFlags {
     fn default() -> Self {
-        Self(cef_touch_handle_state_flags_t::CEF_THS_FLAG_NONE)
+        unsafe { std::mem::zeroed() }
     }
 }
 
