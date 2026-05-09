@@ -232,7 +232,6 @@ pub fn get_error_string(error_code: Errorcode) -> String {
         Errorcode::ADDRESS_UNREACHABLE => "ERR_ADDRESS_UNREACHABLE",
         Errorcode::SSL_CLIENT_AUTH_CERT_NEEDED => "ERR_SSL_CLIENT_AUTH_CERT_NEEDED",
         Errorcode::TUNNEL_CONNECTION_FAILED => "ERR_TUNNEL_CONNECTION_FAILED",
-        Errorcode::NO_SSL_VERSIONS_ENABLED => "ERR_NO_SSL_VERSIONS_ENABLED",
         Errorcode::SSL_VERSION_OR_CIPHER_MISMATCH => "ERR_SSL_VERSION_OR_CIPHER_MISMATCH",
         Errorcode::SSL_RENEGOTIATION_REQUESTED => "ERR_SSL_RENEGOTIATION_REQUESTED",
         Errorcode::CERT_COMMON_NAME_INVALID => "ERR_CERT_COMMON_NAME_INVALID",
@@ -262,6 +261,19 @@ pub fn get_error_string(error_code: Errorcode) -> String {
             let error_code = error_code.get_raw();
             return error_code.to_string();
         }
+    }
+    .to_string()
+}
+
+pub fn get_termination_status_string(termination_status: TerminationStatus) -> String {
+    match termination_status {
+        TerminationStatus::ABNORMAL_TERMINATION => "ABNORMAL_TERMINATION",
+        TerminationStatus::PROCESS_WAS_KILLED => "PROCESS_WAS_KILLED",
+        TerminationStatus::PROCESS_CRASHED => "PROCESS_CRASHED",
+        TerminationStatus::PROCESS_OOM => "PROCESS_OOM",
+        TerminationStatus::LAUNCH_FAILED => "LAUNCH_FAILED",
+        TerminationStatus::INTEGRITY_FAILURE => "INTEGRITY_FAILURE",
+        _ => "",
     }
     .to_string()
 }
