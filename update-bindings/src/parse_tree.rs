@@ -1299,6 +1299,7 @@ impl<'a> TryFrom<&'a syn::Field> for SignatureRef<'a> {
         let syn::Type::Path(syn::TypePath {
             qself: None,
             path: syn::Path { segments, .. },
+            ..
         }) = &value.ty
         else {
             return Err(Unrecognized::FieldType);
@@ -1341,7 +1342,7 @@ impl<'a> TryFrom<&'a syn::Field> for SignatureRef<'a> {
         // See if the Option<T> type is a function pointer
         let mut args = args.iter();
         let (
-            Some(syn::GenericArgument::Type(syn::Type::BareFn(syn::TypeBareFn {
+            Some(syn::GenericArgument::Type(syn::Type::FnPtr(syn::TypeFnPtr {
                 unsafety: Some(_),
                 abi: Some(syn::Abi {
                     name: Some(abi), ..
@@ -1778,7 +1779,9 @@ impl ParseTree<'_> {
 
     fn resolve_type_aliases(&self, ty: &syn::Type) -> proc_macro2::TokenStream {
         match ty {
-            syn::Type::Path(syn::TypePath { qself: None, path }) => {
+            syn::Type::Path(syn::TypePath {
+                qself: None, path, ..
+            }) => {
                 let ty = path.to_token_stream().to_string();
                 if is_custom_string_userfree_alias(ty.as_str()) {
                     path.to_token_stream()
@@ -1811,10 +1814,10 @@ impl ParseTree<'_> {
                 quote! { [#elem] }
             }
             syn::Type::Ptr(syn::TypePtr {
-                const_token, elem, ..
+                mutability, elem, ..
             }) => {
                 let elem = self.resolve_type_aliases(elem.as_ref());
-                if const_token.is_some() {
+                if matches!(mutability, syn::PointerMutability::Const(_)) {
                     quote! { *const #elem }
                 } else {
                     quote! { *mut #elem }
@@ -2451,7 +2454,7 @@ methods implemented by the [`Impl{rust_name}`] trait.
 
 # Example
 ```rust
-# use cef::{{*, rc::*}};
+# use cef::*;
 
 {wrap_type_macro}! {{
     struct My{rust_name} {{
@@ -3602,6 +3605,12 @@ fn make_my_struct() -> {rust_name} {{
 
         for global_fn in self.global_function_declarations.iter() {
             let original_name = global_fn.name.as_str();
+            if original_name.starts_with("cef_id_for_") {
+                // Skip over the cef_id_for_... functions, we'll emit accessors for each ID
+                // separately in write_resources.
+                continue;
+            }
+
             writeln!(f, "\n/// See [`{original_name}`] for more documentation.")?;
             let name = pattern
                 .captures(original_name)
@@ -3924,7 +3933,7 @@ impl<'a> From<&'a syn::File> for ParseTree<'a> {
             .struct_declarations
             .iter()
             .filter_map(|s| match s.fields.as_slice() {
-                [FieldRef { name, ty }] if name.as_str() == "base" => {
+                [FieldRef { name, ty }, ..] if name.as_str() == "base" => {
                     Some((s.name.clone(), tree.resolve_type_aliases(ty).to_string()))
                 }
                 _ => None,
@@ -3936,8 +3945,8 @@ impl<'a> From<&'a syn::File> for ParseTree<'a> {
 }
 
 fn format_bindings(source_path: &Path) -> crate::Result<()> {
-    let mut cmd = Command::new("rustfmt");
-    cmd.arg(source_path);
+    let mut cmd = Command::new("cargo");
+    cmd.args(&["fmt", "--", &source_path.display().to_string()]);
     cmd.output()?;
     Ok(())
 }
