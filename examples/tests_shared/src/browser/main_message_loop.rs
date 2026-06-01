@@ -73,7 +73,7 @@ pub fn main_post_repeating(closure: Box<dyn Send + FnMut()>) {
 pub type OnceClosureCallback = Arc<Mutex<Option<Box<dyn Send + FnOnce()>>>>;
 
 wrap_task! {
-    struct OnceClosure {
+    pub struct OnceClosure {
         closure: OnceClosureCallback,
     }
 
@@ -90,10 +90,17 @@ wrap_task! {
     }
 }
 
+impl OnceClosure {
+    pub fn post_once(thread: ThreadId, closure: Box<dyn Send + FnOnce()>) -> bool {
+        let mut task = OnceClosure::new(Arc::new(Mutex::new(Some(closure))));
+        post_task(thread, Some(&mut task)) != 0
+    }
+}
+
 pub type RepeatingClosureCallback = Arc<Mutex<Option<Box<dyn Send + FnMut()>>>>;
 
 wrap_task! {
-    struct RepeatingClosure {
+    pub struct RepeatingClosure {
         closure: RepeatingClosureCallback,
     }
 
@@ -107,6 +114,13 @@ wrap_task! {
             };
             closure();
         }
+    }
+}
+
+impl RepeatingClosure {
+    pub fn post_repeating(thread: ThreadId, closure: Box<dyn Send + FnMut()>) -> bool {
+        let mut task = RepeatingClosure::new(Arc::new(Mutex::new(Some(closure))));
+        post_task(thread, Some(&mut task)) != 0
     }
 }
 

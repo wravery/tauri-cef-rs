@@ -33,6 +33,23 @@ const TEST_HOST: &str = "tests";
 const LOCAL_HOST: &str = "localhost";
 const TEST_ORIGIN: &str = "http://tests/";
 
+pub fn alert(browser: &Browser, message: &str) {
+    let Some(frame) = browser.main_frame() else {
+        return;
+    };
+
+    // Escape special characters in the message.
+    let message = message.replace("\\", "\\\\").replace("'", "\\'");
+
+    // Execute a JavaScript alert().
+    let script = format!("alert('{message}');");
+    frame.execute_java_script(
+        Some(&CefString::from(script.as_str())),
+        Some(&CefString::from(&frame.url())),
+        0,
+    );
+}
+
 /// Returns "https://tests/<path>".
 pub fn get_test_url(name: &str) -> String {
     format!("{TEST_ORIGIN}{name}")
@@ -205,6 +222,12 @@ fn dump_request_context(request: &Request) -> String {
     }
 
     lines.join("\n")
+}
+
+pub fn get_data_uri(data: &[u8], mime_type: &str) -> String {
+    let data = CefString::from(&base64_encode(Some(data)));
+    let uri = CefString::from(&uriencode(Some(&data), 0)).to_string();
+    format!("data:{mime_type};base64,{uri}")
 }
 
 pub fn get_error_string(error_code: Errorcode) -> String {

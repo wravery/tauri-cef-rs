@@ -1,11 +1,6 @@
+use super::browser::test_runner;
 use cef::*;
 use std::sync::{Arc, Mutex, OnceLock, Weak};
-
-fn get_data_uri(data: &[u8], mime_type: &str) -> String {
-    let data = CefString::from(&base64_encode(Some(data)));
-    let uri = CefString::from(&uriencode(Some(&data), 0)).to_string();
-    format!("data:{mime_type};base64,{uri}")
-}
 
 #[cfg(target_os = "macos")]
 mod mac;
@@ -162,7 +157,7 @@ impl SimpleHandler {
             "#
         );
 
-        let uri = get_data_uri(data.as_bytes(), "text/html");
+        let uri = test_runner::get_data_uri(data.as_bytes(), "text/html");
         let uri = CefString::from(uri.as_str());
         frame.load_url(Some(&uri));
     }

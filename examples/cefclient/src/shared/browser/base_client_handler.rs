@@ -129,7 +129,24 @@ impl BaseClientHandler {
             }) == 0
     }
 
-    fn on_after_created(&mut self, browser: Option<Browser>) {
+    pub fn on_process_message_received(
+        &self,
+        browser: Option<Browser>,
+        frame: Option<Frame>,
+        source_process: ProcessId,
+        message: Option<ProcessMessage>,
+    ) -> bool {
+        let Some(message_router) = self.message_router.get() else {
+            return false;
+        };
+        message_router.on_process_message_received(browser, frame, source_process, message)
+    }
+
+    pub fn on_set_focus(&self) -> bool {
+        !self.should_request_focus()
+    }
+
+    pub fn on_after_created(&mut self, browser: &Browser) {
         debug_assert_ne!(currently_on(ThreadId::UI), 0);
         self.browser_count += 1;
 
@@ -148,15 +165,14 @@ impl BaseClientHandler {
         });
 
         if self.delegate.track_as_other_browser()
-            && let (Some(root_window_manager), Some(browser), Some(host)) = (
+            && let (Some(root_window_manager), Some(host)) = (
                 get_main_context().and_then(|context| {
                     context
                         .lock()
                         .ok()
                         .and_then(|context| context.root_window_manager())
                 }),
-                browser.as_ref(),
-                browser.as_ref().and_then(|browser| browser.host()),
+                browser.host(),
             )
         {
             let opener_id = host.opener_identifier();
@@ -171,7 +187,7 @@ impl BaseClientHandler {
         }
     }
 
-    fn on_before_close(&mut self, browser: Option<Browser>) {
+    pub fn on_before_close(&mut self, browser: &Browser) {
         debug_assert_ne!(currently_on(ThreadId::UI), 0);
         self.browser_count -= 1;
         if self.browser_count == 0 {
@@ -198,15 +214,14 @@ impl BaseClientHandler {
         });
 
         if self.delegate.track_as_other_browser()
-            && let (Some(root_window_manager), Some(browser), Some(host)) = (
+            && let (Some(root_window_manager), Some(host)) = (
                 get_main_context().and_then(|context| {
                     context
                         .lock()
                         .ok()
                         .and_then(|context| context.root_window_manager())
                 }),
-                browser.as_ref(),
-                browser.as_ref().and_then(|browser| browser.host()),
+                browser.host(),
             )
         {
             let opener_id = host.opener_identifier();
@@ -221,10 +236,17 @@ impl BaseClientHandler {
         }
     }
 
-    fn on_loading_state_change(&mut self, is_loading: bool) {
+    pub fn on_loading_state_change(&mut self, is_loading: bool) {
         debug_assert_ne!(currently_on(ThreadId::UI), 0);
         if !is_loading && self.initial_navigation {
             self.initial_navigation = false;
+        }
+    }
+
+    pub fn on_render_process_terminated(&self, browser: &Browser) {
+        debug_assert_ne!(currently_on(ThreadId::UI), 0);
+        if let Some(message_router) = self.message_router.get() {
+            message_router.on_render_process_terminated(Some(browser.clone()));
         }
     }
 }
@@ -261,15 +283,7 @@ wrap_client! {
             let Ok(inner) = self.inner.lock() else {
                 return 0;
             };
-            let Some(message_router) = inner.message_router.get() else {
-                return 0;
-            };
-            if message_router.on_process_message_received(
-                browser.cloned(),
-                frame.cloned(),
-                source_process,
-                message.cloned(),
-            ) {
+            if inner.on_process_message_received(browser.cloned(), frame.cloned(), source_process, message.cloned()) {
                 1
             } else {
                 0
@@ -308,17 +322,17 @@ wrap_life_span_handler! {
 
     impl LifeSpanHandler {
         fn on_after_created(&self, browser: Option<&mut Browser>) {
-            let Ok(mut inner) = self.inner.lock() else {
+            let (Some(browser), Ok(mut inner)) = (browser, self.inner.lock()) else {
                 return;
             };
-            inner.on_after_created(browser.cloned());
+            inner.on_after_created(browser);
         }
 
         fn on_before_close(&self, browser: Option<&mut Browser>) {
-            let Ok(mut inner) = self.inner.lock() else {
+            let (Some(browser), Ok(mut inner)) = (browser, self.inner.lock()) else {
                 return;
             };
-            inner.on_before_close(browser.cloned());
+            inner.on_before_close(browser);
         }
     }
 }

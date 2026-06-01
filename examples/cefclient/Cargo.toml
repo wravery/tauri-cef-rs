@@ -31,6 +31,7 @@ resources_path = "resources"
 [dependencies]
 cef = { workspace = true, features = [
     "build-util",
+    "resources",
 ] }
 serde.workspace = true
 serde_json.workspace = true

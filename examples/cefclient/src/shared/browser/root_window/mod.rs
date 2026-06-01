@@ -1,8 +1,17 @@
-use super::{image_cache::*, main_context::*, *};
+use super::{image_cache::*, main_context::*, temp_window::*, *};
 use cef::*;
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    sync::{
+        Arc, Mutex,
+        atomic::{AtomicBool, AtomicUsize, Ordering},
+    },
+};
 use tests_shared::common::client_switches;
 
+#[derive(Default)]
 pub enum WindowType {
+    #[default]
     Normal,
     /// The window is a modal dialog.
     Dialog,
@@ -11,6 +20,7 @@ pub enum WindowType {
 }
 
 /// Used to configure how a RootWindow is created.
+#[derive(Default)]
 pub struct RootWindowConfig {
     /// Associated command-line.
     pub command_line: Option<CommandLine>,
@@ -92,7 +102,7 @@ impl RootWindowConfig {
 
 pub type RequestContextCallback = Box<dyn Send + FnOnce(RequestContext)>;
 
-pub trait RootWindowDelegate {
+pub trait RootWindowDelegate: Send + Sync {
     /// Called to asynchronously retrieve the CefRequestContext for browser. Only
     /// called for non-popup browsers. Save to call on any thread. |callback|
     /// will be executed on the UI thread after the request context is
@@ -124,9 +134,68 @@ pub struct PopupWindowConfig {
     window_info: WindowInfo,
 }
 
-pub trait RootWindow {
+#[derive(Default)]
+struct RootWindowInner {
+    // Members set during initialization. Safe to access from any thread.
+    pub delegate: Option<Arc<dyn RootWindowDelegate>>,
+    pub initialized: bool,
+    // Only accessed on the main thread.
+    pub window_created: bool,
+
+    use_alloy_style: bool,
+
+    // Members set during initialization. Safe to access from any thread.
+    opener_browser_id: i32,
+    popup_id: i32,
+}
+
+impl RootWindowInner {
+    pub fn new(use_alloy_style: bool) -> Self {
+        Self {
+            use_alloy_style,
+            ..Default::default()
+        }
+    }
+
+    pub fn use_alloy_style(&self) -> bool {
+        self.use_alloy_style
+    }
+
+    /// Used to uniquely identify popup windows.
+    pub fn set_popup_id(&mut self, opener_browser_id: i32, popup_id: i32) {
+        debug_assert!(opener_browser_id > 0);
+        debug_assert!(popup_id > 0);
+        self.opener_browser_id = opener_browser_id;
+        self.popup_id = popup_id;
+    }
+
+    /// If |popup_id| is -1 only match |opener_browser_id|.
+    pub fn is_popup_id_match(&self, opener_browser_id: i32, popup_id: i32) -> bool {
+        if opener_browser_id == 0 || popup_id == 0 {
+            // Not a popup.
+            return false;
+        }
+        if popup_id < 0 {
+            // Only checking the opener.
+            return self.opener_browser_id == opener_browser_id;
+        }
+        self.opener_browser_id == opener_browser_id && self.popup_id == popup_id
+    }
+
+    pub fn opened_browser_id(&self) -> i32 {
+        self.opener_browser_id
+    }
+
+    pub fn popup_id(&self) -> i32 {
+        self.popup_id
+    }
+}
+
+pub trait RootWindow: Send + Sync {
     /// Returns true if the RootWindow is Views-hosted.
-    fn is_views_hosted(&self) -> bool;
+    fn is_views_hosted(&self) -> bool {
+        false
+    }
     /// Returns true if the RootWindow is Alloy style, otherwise Chrome style.
     fn is_alloy_style(&self) -> bool;
     /// Initialize as a normal window. This will create and show a native window
@@ -136,7 +205,7 @@ pub trait RootWindow {
     /// directly.
     fn initialize(
         &mut self,
-        delegate: &dyn RootWindowDelegate,
+        delegate: Arc<dyn RootWindowDelegate>,
         config: RootWindowConfig,
         settings: &BrowserSettings,
     );
@@ -148,7 +217,7 @@ pub trait RootWindow {
     /// this method directly. Called on the UI thread.
     fn initialize_as_popup(
         &mut self,
-        delegate: &dyn RootWindowDelegate,
+        delegate: Arc<dyn RootWindowDelegate>,
         popup_config: &PopupWindowConfig,
         client: Option<&Client>,
         settings: &BrowserSettings,
@@ -183,7 +252,7 @@ pub trait RootWindow {
     fn set_device_scale_factor(&mut self, factor: f32);
     /// Returns the device scale factor. Only used in combination with off-screen
     /// rendering.
-    fn device_scale_factor(&self) -> f32;
+    fn device_scale_factor(&self) -> Option<f32>;
     /// Returns the browser that this window contains, if any.
     fn browser(&self) -> Option<&Browser>;
     /// Returns the native handle for this window, if any.
@@ -202,9 +271,150 @@ pub trait RootWindow {
     fn popup_id(&self) -> i32;
 }
 
-pub struct RootWindowManager;
+fn sanity_check_window_config(
+    is_devtools: bool,
+    use_views: bool,
+    use_alloy_style: &mut bool,
+    with_osr: &mut bool,
+) {
+    // This configuration is not supported by cefclient architecture and
+    // should use default window creation instead.
+    assert!(!(is_devtools && !use_views));
+
+    if is_devtools && *use_alloy_style {
+        eprintln!("Alloy style is not supported with Chrome runtime DevTools; using Chrome style.");
+        *use_alloy_style = false;
+    }
+
+    if !*use_alloy_style && *with_osr {
+        eprintln!(
+            "Windowless rendering is not supported with Chrome style; using windowed rendering."
+        );
+        *with_osr = false;
+    }
+
+    if use_views && *with_osr {
+        eprintln!("Windowless rendering is not supported with Views; using windowed rendering.");
+        *with_osr = false;
+    }
+}
+
+type BrowserIdSet = BTreeSet<i32>;
+type BrowserOwnerMap = BTreeMap<i32, BrowserIdSet>;
+
+pub struct RootWindowManager {
+    terminate_when_all_windows_closed: bool,
+    request_context_per_browser: AtomicBool,
+    request_context_shared_cache: AtomicBool,
+    /// Existing root windows. Only accessed on the main thread.
+    root_windows: BTreeMap<ClientWindowHandle, Arc<dyn RootWindow>>,
+    /// Count of browsers that are not directly associated with a RootWindow. Only
+    /// accessed on the main thread.
+    other_browser_count: AtomicUsize,
+    /// Map of owner browser ID to popup browser IDs for popups that don't have a
+    /// RootWindow. Only accessed on the main thread.
+    other_browser_owners: BrowserOwnerMap,
+    /// The currently active/foreground RootWindow. Only accessed on the main
+    /// thread.
+    active_root_window: Mutex<Option<Arc<dyn RootWindow>>>,
+    /// Singleton window used as the temporary parent for popup browsers.
+    temp_window: TempWindow,
+}
 
 impl RootWindowManager {
+    pub fn new(terminate_when_all_windows_closed: bool) -> Self {
+        let (request_context_per_browser, request_context_shared_cache) = command_line_get_global()
+            .map_or((false, false), |cmd| {
+                (
+                    cmd.has_switch(Some(&CefString::from(
+                        client_switches::REQUEST_CONTEXT_PER_BROWSER,
+                    ))) != 0,
+                    cmd.has_switch(Some(&CefString::from(
+                        client_switches::REQUEST_CONTEXT_SHARED_CACHE,
+                    ))) != 0,
+                )
+            });
+        Self {
+            terminate_when_all_windows_closed,
+            request_context_per_browser: AtomicBool::new(request_context_per_browser),
+            request_context_shared_cache: AtomicBool::new(request_context_shared_cache),
+            root_windows: BTreeMap::new(),
+            other_browser_count: Default::default(),
+            other_browser_owners: BTreeMap::new(),
+            active_root_window: Mutex::new(None),
+            temp_window: TempWindow,
+        }
+    }
+
+    /// Create a new top-level native window. This method can be called from
+    /// anywhere.
+    pub fn create_root_window(&self, mut config: RootWindowConfig) -> Option<Arc<dyn RootWindow>> {
+        let settings = get_main_context()
+            .and_then(|context| {
+                let context = context.lock().ok()?;
+                Some(context.populate_browser_settings(Default::default()))
+            })
+            .unwrap_or_default();
+
+        sanity_check_window_config(
+            false,
+            config.use_views,
+            &mut config.use_alloy_style,
+            &mut config.with_osr,
+        );
+        todo!("Implement create_root_window")
+    }
+
+    /// Create a new native popup window.
+    /// If |with_controls| is true the window will show controls.
+    /// If |with_osr| is true the window will use off-screen rendering.
+    /// This method is called from ClientHandler::CreatePopupWindow() to
+    /// create a new popup or DevTools window. Must be called on the UI thread.
+    pub fn create_root_window_as_popup(
+        &self,
+        _use_views: bool,
+        _use_alloy_style: bool,
+        _with_controls: bool,
+        _with_osr: bool,
+        _opener_browser_id: i32,
+        _popup_id: i32,
+        _is_devtools: bool,
+        _popup_features: &PopupFeatures,
+        _window_info: &mut WindowInfo,
+        _client: &mut Option<Client>,
+        _settings: &mut BrowserSettings,
+    ) -> Option<Arc<dyn RootWindow>> {
+        todo!("Implement create_root_window_as_popup")
+    }
+
+    /// Abort or close the popup matching the specified identifiers. If |popup_id|
+    /// is -1 then all popups for |opener_browser_id| will be impacted.
+    pub fn abort_or_close_popup(&self, _opener_browser_id: i32, _popup_id: i32) {
+        todo!("Implement abort_or_close_popup")
+    }
+
+    /// Returns the RootWindow associated with the specified browser ID. Must be
+    /// called on the main thread.
+    pub fn window_for_browser_id(&self, _browser_id: i32) -> Option<Arc<dyn RootWindow>> {
+        todo!("Implement window_for_browser_id")
+    }
+
+    /// Returns the currently active/foreground RootWindow. May return nullptr.
+    /// Must be called on the main thread.
+    pub fn active_root_window(&self) -> Option<Arc<dyn RootWindow>> {
+        todo!("Implement active_root_window")
+    }
+
+    /// Close all existing windows. If |force| is true onunload handlers will not
+    /// be executed.
+    pub fn close_all_windows(&self, _force: bool) {
+        todo!("Implement close_all_windows")
+    }
+
+    pub fn request_context_per_browser(&self) -> bool {
+        self.request_context_per_browser.load(Ordering::Relaxed)
+    }
+
     /// Track other browsers that are not directly associated with a RootWindow.
     /// This may be an overlay browser, a popup created with `--use-default-popup`,
     /// or a browser using default Chrome UI. |opener_browser_id| will be > 0 for
@@ -260,14 +470,27 @@ impl RootWindowDelegate for RootWindowManager {
 #[cfg(target_os = "macos")]
 mod mac;
 #[cfg(target_os = "macos")]
-use mac::*;
+pub use mac::*;
 
 #[cfg(target_os = "windows")]
 mod win;
 #[cfg(target_os = "windows")]
-use win::*;
+pub use win::*;
 
 #[cfg(target_os = "linux")]
 mod linux;
 #[cfg(target_os = "linux")]
-use linux::*;
+pub use linux::*;
+
+pub fn create_root_window(use_views: bool, use_alloy_style: bool) -> Arc<dyn RootWindow> {
+    if use_views {
+        todo!("Implement create_root_window for Views");
+    } else {
+        #[cfg(target_os = "macos")]
+        todo!("Implement create_root_window for MacOS");
+        #[cfg(target_os = "windows")]
+        todo!("Implement create_root_window for Windows");
+        #[cfg(target_os = "linux")]
+        RootWindowGtk::create(use_alloy_style)
+    }
+}

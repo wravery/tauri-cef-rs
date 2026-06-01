@@ -109,7 +109,7 @@ pub fn initialize_main_context(
 
     // Need to create the RootWindowManager after calling CefInitialize because
     // TempWindowX11 uses cef_get_xdisplay().
-    context.root_window_manager = Some(Arc::new(RootWindowManager));
+    context.root_window_manager = Some(Arc::new(RootWindowManager::new(true)));
     context.state = ContextState::Initialized;
     true
 }

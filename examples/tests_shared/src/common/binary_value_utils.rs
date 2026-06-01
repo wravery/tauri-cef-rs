@@ -47,6 +47,12 @@ impl ElapsedMicros {
             duration: start_time.elapsed().as_micros(),
         }
     }
+
+    pub fn elapsed(&self, end_time: &Self) -> Self {
+        Self {
+            duration: end_time.duration.saturating_sub(self.duration),
+        }
+    }
 }
 
 impl From<&[u8]> for ElapsedMicros {
@@ -75,14 +81,14 @@ impl Debug for ElapsedMicros {
 }
 
 #[derive(Debug)]
-pub struct BrowserMessage {
+pub struct RendererMessage {
     pub test_id: MessageId,
     pub start_time: ElapsedMicros,
 }
 
-impl From<&BinaryValue> for BrowserMessage {
+impl From<&BinaryValue> for RendererMessage {
     fn from(message: &BinaryValue) -> Self {
-        assert_eq!(message.size(), 20);
+        assert!(message.size() >= 20);
 
         let mut data = vec![0; message.size()];
         message.data(Some(&mut data), 0);
@@ -94,8 +100,8 @@ impl From<&BinaryValue> for BrowserMessage {
     }
 }
 
-impl From<&BrowserMessage> for Option<BinaryValue> {
-    fn from(message: &BrowserMessage) -> Self {
+impl From<&RendererMessage> for Option<BinaryValue> {
+    fn from(message: &RendererMessage) -> Self {
         let mut data = vec![0; 20];
 
         let test_id: [u8; 4] = (&message.test_id).into();
@@ -109,15 +115,15 @@ impl From<&BrowserMessage> for Option<BinaryValue> {
 }
 
 #[derive(Debug)]
-pub struct RendererMessage {
+pub struct BrowserMessage {
     pub test_id: MessageId,
     pub duration: ElapsedMicros,
     pub start_time: ElapsedMicros,
 }
 
-impl From<&BinaryValue> for RendererMessage {
+impl From<&BinaryValue> for BrowserMessage {
     fn from(message: &BinaryValue) -> Self {
-        assert_eq!(message.size(), 36);
+        assert!(message.size() >= 36);
 
         let mut data = vec![0; message.size()];
         message.data(Some(&mut data), 0);
@@ -130,8 +136,8 @@ impl From<&BinaryValue> for RendererMessage {
     }
 }
 
-impl From<&RendererMessage> for Option<BinaryValue> {
-    fn from(message: &RendererMessage) -> Self {
+impl From<&BrowserMessage> for Option<BinaryValue> {
+    fn from(message: &BrowserMessage) -> Self {
         let mut data = vec![0; 36];
 
         let test_id: [u8; 4] = (&message.test_id).into();
