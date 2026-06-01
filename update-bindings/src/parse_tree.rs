@@ -3942,8 +3942,8 @@ impl<'a> From<&'a syn::File> for ParseTree<'a> {
 }
 
 fn format_bindings(source_path: &Path) -> crate::Result<()> {
-    let mut cmd = Command::new("cargo");
-    cmd.args(&["fmt", "--", &source_path.display().to_string()]);
+    let mut cmd = Command::new(env!("CARGO"));
+    cmd.args(["fmt", "--", &source_path.display().to_string()]);
     cmd.output()?;
     Ok(())
 }
