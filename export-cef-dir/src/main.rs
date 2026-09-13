@@ -99,7 +99,7 @@ fn main() -> anyhow::Result<()> {
             let cef_version = args.version.as_str();
 
             if args.nix {
-                return Ok(download_cef::install_nix_cef(&cef_version, &output, false)?);
+                return Ok(download_cef::install_nix_cef(cef_version, &output, false)?);
             } else {
                 let index = CefIndex::download_from(url)?;
                 let platform = index.platform(target)?;
